@@ -7,6 +7,7 @@ import '../data/zone_1/mission_01_data.dart';
 import '../data/zone_1/mission_02_data.dart';
 import '../data/zone_1/mission_03_data.dart';
 import '../data/zone_1/mission_04_data.dart';
+import '../data/zone_1/mission_05_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
 import '../screens/avatar/avatar_screen.dart';
@@ -29,6 +30,7 @@ class AppRoutes {
   static const mission2 = '/zone-1/mission-2';
   static const mission3 = '/zone-1/mission-3';
   static const mission4 = '/zone-1/mission-4';
+  static const mission5 = '/zone-1/mission-5';
   static const missionResult = '/mission-result';
 
   static Route<dynamic> onGenerateRoute(
@@ -127,6 +129,20 @@ class AppRoutes {
           nextMissionId: 'Z1_M05',
         );
 
+      case mission5:
+        final profile = controller.profile;
+        if (profile == null) {
+          return _invalidRoute(settings);
+        }
+        if (!controller.progress.unlockedMissions.contains('Z1_M05')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone1Mission05(profile.type),
+        );
+
       case missionResult:
         final result = settings.arguments;
         if (result is! MissionResult) {
@@ -146,7 +162,7 @@ class AppRoutes {
     required RouteSettings settings,
     required PlayerController controller,
     required Mission mission,
-    required String nextMissionId,
+    String? nextMissionId,
   }) {
     return MaterialPageRoute<void>(
       settings: settings,

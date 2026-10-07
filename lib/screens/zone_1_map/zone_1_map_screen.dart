@@ -190,7 +190,11 @@ class _MissionTile extends StatelessWidget {
   final bool special;
 
   bool get _isImplemented =>
-      id == 'Z1_M01' || id == 'Z1_M02' || id == 'Z1_M03' || id == 'Z1_M04';
+      id == 'Z1_M01' ||
+      id == 'Z1_M02' ||
+      id == 'Z1_M03' ||
+      id == 'Z1_M04' ||
+      id == 'Z1_M05';
 
   String? get _route {
     switch (id) {
@@ -202,6 +206,8 @@ class _MissionTile extends StatelessWidget {
         return AppRoutes.mission3;
       case 'Z1_M04':
         return AppRoutes.mission4;
+      case 'Z1_M05':
+        return AppRoutes.mission5;
       default:
         return null;
     }

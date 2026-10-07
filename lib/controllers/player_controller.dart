@@ -9,6 +9,17 @@ import '../services/storage_service.dart';
 class PlayerController extends ChangeNotifier {
   PlayerController(this._storage);
 
+  static const _zone1RegularMissionIds = <String>{
+    'Z1_M01',
+    'Z1_M02',
+    'Z1_M03',
+    'Z1_M04',
+    'Z1_M05',
+  };
+
+  static const _zone1SpecialMissionId = 'Z1_SPECIAL';
+  static const _zone1SpecialMinimumStars = 9;
+
   final StorageService _storage;
 
   PlayerProfile? _profile;
@@ -53,8 +64,23 @@ class PlayerController extends ChangeNotifier {
     }
 
     final unlockedMissions = Set<String>.from(_progress.unlockedMissions);
+
     if (nextMissionId != null) {
       unlockedMissions.add(nextMissionId);
+    }
+
+    final completedAllRegularMissions = _zone1RegularMissionIds.every(
+      completedMissions.contains,
+    );
+
+    final regularMissionStars = _zone1RegularMissionIds.fold<int>(
+      0,
+      (total, missionId) => total + (missionStars[missionId] ?? 0),
+    );
+
+    if (completedAllRegularMissions &&
+        regularMissionStars >= _zone1SpecialMinimumStars) {
+      unlockedMissions.add(_zone1SpecialMissionId);
     }
 
     _progress = GameProgress(

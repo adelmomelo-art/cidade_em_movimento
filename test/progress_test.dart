@@ -4,171 +4,200 @@ import 'package:cidade_em_movimento/services/storage_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  test('concluir missao 1 libera missao 2 e persiste progresso', () async {
-    SharedPreferences.setMockInitialValues({});
-    final preferences = await SharedPreferences.getInstance();
-    final storage = StorageService(preferences);
-    final controller = PlayerController(storage);
-    await controller.initialize();
+Future<PlayerController> _controller() async {
+  SharedPreferences.setMockInitialValues({});
+  final preferences = await SharedPreferences.getInstance();
+  final storage = StorageService(preferences);
+  final controller = PlayerController(storage);
+  await controller.initialize();
+  return controller;
+}
 
-    const result = MissionResult(
+MissionResult _result({
+  required String missionId,
+  required int stars,
+  required int citizenship,
+  required int knowledge,
+  required int coins,
+}) {
+  return MissionResult(
+    missionId: missionId,
+    stars: stars,
+    score: stars == 3 ? 100 : (stars == 2 ? 80 : 60),
+    citizenship: citizenship,
+    knowledge: knowledge,
+    coins: coins,
+    errors: 3 - stars,
+  );
+}
+
+Future<void> _completeFirstFour(
+  PlayerController controller, {
+  required List<int> stars,
+}) async {
+  await controller.completeMission(
+    result: _result(
       missionId: 'Z1_M01',
-      stars: 3,
-      score: 100,
+      stars: stars[0],
       citizenship: 20,
       knowledge: 10,
       coins: 15,
-      errors: 0,
-    );
+    ),
+    nextMissionId: 'Z1_M02',
+  );
 
-    await controller.completeMission(result: result, nextMissionId: 'Z1_M02');
-
-    expect(controller.progress.completedMissions.contains('Z1_M01'), isTrue);
-    expect(controller.progress.unlockedMissions.contains('Z1_M02'), isTrue);
-    expect(controller.progress.missionStars['Z1_M01'], 3);
-
-    final secondController = PlayerController(storage);
-    await secondController.initialize();
-    expect(
-      secondController.progress.unlockedMissions.contains('Z1_M02'),
-      isTrue,
-    );
-    expect(secondController.progress.citizenshipXp, 20);
-  });
-
-  test('concluir missao 2 libera missao 3 e persiste progresso', () async {
-    SharedPreferences.setMockInitialValues({});
-    final preferences = await SharedPreferences.getInstance();
-    final storage = StorageService(preferences);
-    final controller = PlayerController(storage);
-    await controller.initialize();
-
-    const result = MissionResult(
+  await controller.completeMission(
+    result: _result(
       missionId: 'Z1_M02',
-      stars: 3,
-      score: 100,
+      stars: stars[1],
       citizenship: 20,
       knowledge: 15,
       coins: 20,
-      errors: 0,
-    );
+    ),
+    nextMissionId: 'Z1_M03',
+  );
 
-    await controller.completeMission(result: result, nextMissionId: 'Z1_M03');
-
-    expect(controller.progress.completedMissions.contains('Z1_M02'), isTrue);
-    expect(controller.progress.unlockedMissions.contains('Z1_M03'), isTrue);
-    expect(controller.progress.missionStars['Z1_M02'], 3);
-    expect(controller.progress.citizenshipXp, 20);
-    expect(controller.progress.knowledge, 15);
-    expect(controller.progress.coins, 20);
-  });
-
-  test('concluir missao 3 libera missao 4 e persiste progresso', () async {
-    SharedPreferences.setMockInitialValues({});
-    final preferences = await SharedPreferences.getInstance();
-    final storage = StorageService(preferences);
-    final controller = PlayerController(storage);
-    await controller.initialize();
-
-    const result = MissionResult(
+  await controller.completeMission(
+    result: _result(
       missionId: 'Z1_M03',
-      stars: 3,
-      score: 100,
+      stars: stars[2],
       citizenship: 25,
       knowledge: 15,
       coins: 20,
-      errors: 0,
-    );
+    ),
+    nextMissionId: 'Z1_M04',
+  );
 
-    await controller.completeMission(result: result, nextMissionId: 'Z1_M04');
-
-    expect(controller.progress.completedMissions.contains('Z1_M03'), isTrue);
-    expect(controller.progress.unlockedMissions.contains('Z1_M04'), isTrue);
-    expect(controller.progress.missionStars['Z1_M03'], 3);
-    expect(controller.progress.citizenshipXp, 25);
-    expect(controller.progress.knowledge, 15);
-    expect(controller.progress.coins, 20);
-  });
-
-  test('concluir missao 4 libera missao 5 e persiste progresso', () async {
-    SharedPreferences.setMockInitialValues({});
-    final preferences = await SharedPreferences.getInstance();
-    final storage = StorageService(preferences);
-    final controller = PlayerController(storage);
-    await controller.initialize();
-
-    const result = MissionResult(
+  await controller.completeMission(
+    result: _result(
       missionId: 'Z1_M04',
-      stars: 3,
-      score: 100,
+      stars: stars[3],
       citizenship: 25,
       knowledge: 15,
       coins: 25,
-      errors: 0,
+    ),
+    nextMissionId: 'Z1_M05',
+  );
+}
+
+void main() {
+  test('concluir missao 5 persiste recompensas e conclusao', () async {
+    final controller = await _controller();
+
+    await _completeFirstFour(controller, stars: const [3, 3, 3, 3]);
+
+    await controller.completeMission(
+      result: _result(
+        missionId: 'Z1_M05',
+        stars: 3,
+        citizenship: 30,
+        knowledge: 20,
+        coins: 30,
+      ),
     );
 
-    await controller.completeMission(result: result, nextMissionId: 'Z1_M05');
+    expect(controller.progress.completedMissions.contains('Z1_M05'), isTrue);
+    expect(controller.progress.missionStars['Z1_M05'], 3);
 
-    expect(controller.progress.completedMissions.contains('Z1_M04'), isTrue);
-    expect(controller.progress.unlockedMissions.contains('Z1_M05'), isTrue);
-    expect(controller.progress.missionStars['Z1_M04'], 3);
-    expect(controller.progress.citizenshipXp, 25);
-    expect(controller.progress.knowledge, 15);
-    expect(controller.progress.coins, 25);
+    expect(controller.progress.citizenshipXp, 120);
+    expect(controller.progress.knowledge, 75);
+    expect(controller.progress.coins, 110);
 
-    final secondController = PlayerController(storage);
-    await secondController.initialize();
+    expect(controller.progress.unlockedMissions.contains('Z1_SPECIAL'), isTrue);
+  });
+
+  test(
+    'missao especial nao desbloqueia com cinco missoes e menos de 9 estrelas',
+    () async {
+      final controller = await _controller();
+
+      await _completeFirstFour(controller, stars: const [2, 2, 1, 1]);
+
+      await controller.completeMission(
+        result: _result(
+          missionId: 'Z1_M05',
+          stars: 2,
+          citizenship: 30,
+          knowledge: 20,
+          coins: 30,
+        ),
+      );
+
+      final totalStars = controller.progress.missionStars.values.fold<int>(
+        0,
+        (total, value) => total + value,
+      );
+
+      expect(totalStars, 8);
+      expect(
+        controller.progress.unlockedMissions.contains('Z1_SPECIAL'),
+        isFalse,
+      );
+    },
+  );
+
+  test(
+    'missao especial desbloqueia com cinco missoes e minimo de 9 estrelas',
+    () async {
+      final controller = await _controller();
+
+      await _completeFirstFour(controller, stars: const [2, 2, 1, 1]);
+
+      await controller.completeMission(
+        result: _result(
+          missionId: 'Z1_M05',
+          stars: 3,
+          citizenship: 30,
+          knowledge: 20,
+          coins: 30,
+        ),
+      );
+
+      expect(
+        controller.progress.unlockedMissions.contains('Z1_SPECIAL'),
+        isTrue,
+      );
+    },
+  );
+
+  test('replay pode atingir 9 estrelas sem duplicar recompensas', () async {
+    final controller = await _controller();
+
+    await _completeFirstFour(controller, stars: const [2, 2, 1, 1]);
+
+    await controller.completeMission(
+      result: _result(
+        missionId: 'Z1_M05',
+        stars: 2,
+        citizenship: 30,
+        knowledge: 20,
+        coins: 30,
+      ),
+    );
 
     expect(
-      secondController.progress.unlockedMissions.contains('Z1_M05'),
-      isTrue,
+      controller.progress.unlockedMissions.contains('Z1_SPECIAL'),
+      isFalse,
     );
-    expect(secondController.progress.citizenshipXp, 25);
-    expect(secondController.progress.knowledge, 15);
-    expect(secondController.progress.coins, 25);
-  });
 
-  test('repetir missao concluida nao duplica recompensas', () async {
-    SharedPreferences.setMockInitialValues({});
-    final preferences = await SharedPreferences.getInstance();
-    final storage = StorageService(preferences);
-    final controller = PlayerController(storage);
-    await controller.initialize();
-
-    const firstResult = MissionResult(
-      missionId: 'Z1_M04',
-      stars: 2,
-      score: 80,
-      citizenship: 25,
-      knowledge: 15,
-      coins: 25,
-      errors: 1,
-    );
+    final citizenshipBefore = controller.progress.citizenshipXp;
+    final knowledgeBefore = controller.progress.knowledge;
+    final coinsBefore = controller.progress.coins;
 
     await controller.completeMission(
-      result: firstResult,
-      nextMissionId: 'Z1_M05',
+      result: _result(
+        missionId: 'Z1_M05',
+        stars: 3,
+        citizenship: 30,
+        knowledge: 20,
+        coins: 30,
+      ),
     );
 
-    const replayResult = MissionResult(
-      missionId: 'Z1_M04',
-      stars: 3,
-      score: 100,
-      citizenship: 25,
-      knowledge: 15,
-      coins: 25,
-      errors: 0,
-    );
-
-    await controller.completeMission(
-      result: replayResult,
-      nextMissionId: 'Z1_M05',
-    );
-
-    expect(controller.progress.citizenshipXp, 25);
-    expect(controller.progress.knowledge, 15);
-    expect(controller.progress.coins, 25);
-    expect(controller.progress.missionStars['Z1_M04'], 3);
+    expect(controller.progress.citizenshipXp, citizenshipBefore);
+    expect(controller.progress.knowledge, knowledgeBefore);
+    expect(controller.progress.coins, coinsBefore);
+    expect(controller.progress.missionStars['Z1_M05'], 3);
+    expect(controller.progress.unlockedMissions.contains('Z1_SPECIAL'), isTrue);
   });
 }
