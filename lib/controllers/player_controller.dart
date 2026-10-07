@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../core/enums/player_type.dart';
+import '../data/zone_1/upgrade_data.dart';
 import '../models/game_progress.dart';
 import '../models/mission_result.dart';
 import '../models/player_profile.dart';
@@ -109,5 +110,48 @@ class PlayerController extends ChangeNotifier {
 
     await _storage.saveProgress(_progress);
     notifyListeners();
+  }
+
+  Future<bool> purchaseUpgrade(String upgradeId) async {
+    Zone1Upgrade? selected;
+
+    for (final upgrade in zone1Upgrades) {
+      if (upgrade.id == upgradeId) {
+        selected = upgrade;
+        break;
+      }
+    }
+
+    if (selected == null) {
+      return false;
+    }
+
+    if (_progress.purchasedUpgrades.contains(selected.id)) {
+      return false;
+    }
+
+    if (_progress.coins < selected.cost) {
+      return false;
+    }
+
+    final purchasedUpgrades = Set<String>.from(_progress.purchasedUpgrades)
+      ..add(selected.id);
+
+    _progress = GameProgress(
+      citizenshipXp: _progress.citizenshipXp,
+      knowledge: _progress.knowledge,
+      coins: _progress.coins - selected.cost,
+      completedMissions: Set<String>.from(_progress.completedMissions),
+      missionStars: Map<String, int>.from(_progress.missionStars),
+      unlockedMissions: Set<String>.from(_progress.unlockedMissions),
+      purchasedUpgrades: purchasedUpgrades,
+      medals: Set<String>.from(_progress.medals),
+      zone1Completed: _progress.zone1Completed,
+    );
+
+    await _storage.saveProgress(_progress);
+    notifyListeners();
+
+    return true;
   }
 }
