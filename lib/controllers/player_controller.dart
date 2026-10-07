@@ -29,10 +29,8 @@ class PlayerController extends ChangeNotifier {
     required String avatarId,
   }) async {
     _profile = PlayerProfile(type: type, avatarId: avatarId);
-
     await _storage.saveProfile(_profile!);
     await _storage.saveProgress(_progress);
-
     notifyListeners();
   }
 
@@ -40,11 +38,14 @@ class PlayerController extends ChangeNotifier {
     required MissionResult result,
     String? nextMissionId,
   }) async {
+    final wasAlreadyCompleted = _progress.completedMissions.contains(
+      result.missionId,
+    );
+
     final completedMissions = Set<String>.from(_progress.completedMissions)
       ..add(result.missionId);
 
     final missionStars = Map<String, int>.from(_progress.missionStars);
-
     final previousStars = missionStars[result.missionId] ?? 0;
 
     if (result.stars > previousStars) {
@@ -52,15 +53,17 @@ class PlayerController extends ChangeNotifier {
     }
 
     final unlockedMissions = Set<String>.from(_progress.unlockedMissions);
-
     if (nextMissionId != null) {
       unlockedMissions.add(nextMissionId);
     }
 
     _progress = GameProgress(
-      citizenshipXp: _progress.citizenshipXp + result.citizenship,
-      knowledge: _progress.knowledge + result.knowledge,
-      coins: _progress.coins + result.coins,
+      citizenshipXp:
+          _progress.citizenshipXp +
+          (wasAlreadyCompleted ? 0 : result.citizenship),
+      knowledge:
+          _progress.knowledge + (wasAlreadyCompleted ? 0 : result.knowledge),
+      coins: _progress.coins + (wasAlreadyCompleted ? 0 : result.coins),
       completedMissions: completedMissions,
       missionStars: missionStars,
       unlockedMissions: unlockedMissions,
@@ -70,7 +73,6 @@ class PlayerController extends ChangeNotifier {
     );
 
     await _storage.saveProgress(_progress);
-
     notifyListeners();
   }
 }

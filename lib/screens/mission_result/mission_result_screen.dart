@@ -62,7 +62,8 @@ class MissionResultScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 26),
                       const Text(
-                        'Voc\u00ea ajudou a tornar a travessia mais segura.',
+                        'Voc\u00ea concluiu mais uma etapa e ajudou '
+                        'a tornar o bairro mais seguro.',
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 26),

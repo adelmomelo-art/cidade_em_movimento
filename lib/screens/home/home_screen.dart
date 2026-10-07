@@ -55,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           const Text(
-                            'Agente de Tr�nsito e guia da sua jornada.',
+                            'Agente de Tr\u00e2nsito e guia da sua jornada.',
                             textAlign: TextAlign.center,
                           ),
                         ],

@@ -23,7 +23,6 @@ class Zone1MapScreen extends StatelessWidget {
       animation: controller,
       builder: (context, _) {
         final progress = controller.progress;
-
         final totalStars = progress.missionStars.values.fold<int>(
           0,
           (total, value) => total + value,
@@ -188,10 +187,21 @@ class _MissionTile extends StatelessWidget {
   final int stars;
   final bool special;
 
+  bool get _isImplemented => id == 'Z1_M01' || id == 'Z1_M02';
+
+  String? get _route {
+    switch (id) {
+      case 'Z1_M01':
+        return AppRoutes.mission1;
+      case 'Z1_M02':
+        return AppRoutes.mission2;
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isImplemented = id == 'Z1_M01';
-
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -213,18 +223,18 @@ class _MissionTile extends StatelessWidget {
         subtitle: unlocked
             ? Text(
                 stars == 0
-                    ? (isImplemented
+                    ? (_isImplemented
                           ? 'Dispon\u00edvel'
                           : 'Desbloqueada \u2014 pr\u00f3ximo pacote')
                     : '${'\u2605' * stars}${'\u2606' * (3 - stars)}',
               )
             : const Text('Bloqueada'),
-        trailing: unlocked && isImplemented
+        trailing: unlocked && _isImplemented
             ? const Icon(Icons.play_circle_outline_rounded)
             : null,
-        onTap: unlocked && isImplemented
+        onTap: unlocked && _isImplemented && _route != null
             ? () {
-                Navigator.of(context).pushNamed(AppRoutes.mission1);
+                Navigator.of(context).pushNamed(_route!);
               }
             : null,
       ),
