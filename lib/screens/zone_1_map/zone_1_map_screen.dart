@@ -23,6 +23,7 @@ class Zone1MapScreen extends StatelessWidget {
       animation: controller,
       builder: (context, _) {
         final progress = controller.progress;
+
         final totalStars = progress.missionStars.values.fold<int>(
           0,
           (total, value) => total + value,
@@ -60,8 +61,9 @@ class Zone1MapScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Observe o bairro, aprenda com as situa\u00e7\u00f5es '
-                              'e ajude a transformar a \u00e1rea escolar.',
+                              'Observe o bairro, aprenda com as '
+                              'situa\u00e7\u00f5es e ajude a transformar '
+                              'a \u00e1rea escolar.',
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -187,7 +189,7 @@ class _MissionTile extends StatelessWidget {
   final int stars;
   final bool special;
 
-  bool get _isImplemented => id == 'Z1_M01' || id == 'Z1_M02';
+  bool get _isImplemented => id == 'Z1_M01' || id == 'Z1_M02' || id == 'Z1_M03';
 
   String? get _route {
     switch (id) {
@@ -195,6 +197,8 @@ class _MissionTile extends StatelessWidget {
         return AppRoutes.mission1;
       case 'Z1_M02':
         return AppRoutes.mission2;
+      case 'Z1_M03':
+        return AppRoutes.mission3;
       default:
         return null;
     }
@@ -225,8 +229,10 @@ class _MissionTile extends StatelessWidget {
                 stars == 0
                     ? (_isImplemented
                           ? 'Dispon\u00edvel'
-                          : 'Desbloqueada \u2014 pr\u00f3ximo pacote')
-                    : '${'\u2605' * stars}${'\u2606' * (3 - stars)}',
+                          : 'Desbloqueada \u2014 '
+                                'pr\u00f3ximo pacote')
+                    : '${'\u2605' * stars}'
+                          '${'\u2606' * (3 - stars)}',
               )
             : const Text('Bloqueada'),
         trailing: unlocked && _isImplemented
