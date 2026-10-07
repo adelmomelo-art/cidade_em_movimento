@@ -19,6 +19,7 @@ class PlayerController extends ChangeNotifier {
 
   static const _zone1SpecialMissionId = 'Z1_SPECIAL';
   static const _zone1SpecialMinimumStars = 9;
+  static const _zone1MedalId = 'PROTETOR_DA_ESCOLA';
 
   final StorageService _storage;
 
@@ -83,6 +84,14 @@ class PlayerController extends ChangeNotifier {
       unlockedMissions.add(_zone1SpecialMissionId);
     }
 
+    final medals = Set<String>.from(_progress.medals);
+    var zone1Completed = _progress.zone1Completed;
+
+    if (result.missionId == _zone1SpecialMissionId) {
+      medals.add(_zone1MedalId);
+      zone1Completed = true;
+    }
+
     _progress = GameProgress(
       citizenshipXp:
           _progress.citizenshipXp +
@@ -94,8 +103,8 @@ class PlayerController extends ChangeNotifier {
       missionStars: missionStars,
       unlockedMissions: unlockedMissions,
       purchasedUpgrades: Set<String>.from(_progress.purchasedUpgrades),
-      medals: Set<String>.from(_progress.medals),
-      zone1Completed: _progress.zone1Completed,
+      medals: medals,
+      zone1Completed: zone1Completed,
     );
 
     await _storage.saveProgress(_progress);

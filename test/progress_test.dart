@@ -31,14 +31,11 @@ MissionResult _result({
   );
 }
 
-Future<void> _completeFirstFour(
-  PlayerController controller, {
-  required List<int> stars,
-}) async {
+Future<void> _completeZoneRegular(PlayerController controller) async {
   await controller.completeMission(
     result: _result(
       missionId: 'Z1_M01',
-      stars: stars[0],
+      stars: 3,
       citizenship: 20,
       knowledge: 10,
       coins: 15,
@@ -49,7 +46,7 @@ Future<void> _completeFirstFour(
   await controller.completeMission(
     result: _result(
       missionId: 'Z1_M02',
-      stars: stars[1],
+      stars: 3,
       citizenship: 20,
       knowledge: 15,
       coins: 20,
@@ -60,7 +57,7 @@ Future<void> _completeFirstFour(
   await controller.completeMission(
     result: _result(
       missionId: 'Z1_M03',
-      stars: stars[2],
+      stars: 3,
       citizenship: 25,
       knowledge: 15,
       coins: 20,
@@ -71,87 +68,37 @@ Future<void> _completeFirstFour(
   await controller.completeMission(
     result: _result(
       missionId: 'Z1_M04',
-      stars: stars[3],
+      stars: 3,
       citizenship: 25,
       knowledge: 15,
       coins: 25,
     ),
     nextMissionId: 'Z1_M05',
   );
+
+  await controller.completeMission(
+    result: _result(
+      missionId: 'Z1_M05',
+      stars: 3,
+      citizenship: 30,
+      knowledge: 20,
+      coins: 30,
+    ),
+  );
 }
 
 void main() {
-  test('concluir missao 5 persiste recompensas e conclusao', () async {
-    final controller = await _controller();
-
-    await _completeFirstFour(controller, stars: const [3, 3, 3, 3]);
-
-    await controller.completeMission(
-      result: _result(
-        missionId: 'Z1_M05',
-        stars: 3,
-        citizenship: 30,
-        knowledge: 20,
-        coins: 30,
-      ),
-    );
-
-    expect(controller.progress.completedMissions.contains('Z1_M05'), isTrue);
-    expect(controller.progress.missionStars['Z1_M05'], 3);
-
-    expect(controller.progress.citizenshipXp, 120);
-    expect(controller.progress.knowledge, 75);
-    expect(controller.progress.coins, 110);
-
-    expect(controller.progress.unlockedMissions.contains('Z1_SPECIAL'), isTrue);
-  });
-
   test(
-    'missao especial nao desbloqueia com cinco missoes e menos de 9 estrelas',
+    'missao especial continua protegida por 5 missoes e 9 estrelas',
     () async {
       final controller = await _controller();
 
-      await _completeFirstFour(controller, stars: const [2, 2, 1, 1]);
-
-      await controller.completeMission(
-        result: _result(
-          missionId: 'Z1_M05',
-          stars: 2,
-          citizenship: 30,
-          knowledge: 20,
-          coins: 30,
-        ),
-      );
-
-      final totalStars = controller.progress.missionStars.values.fold<int>(
-        0,
-        (total, value) => total + value,
-      );
-
-      expect(totalStars, 8);
       expect(
         controller.progress.unlockedMissions.contains('Z1_SPECIAL'),
         isFalse,
       );
-    },
-  );
 
-  test(
-    'missao especial desbloqueia com cinco missoes e minimo de 9 estrelas',
-    () async {
-      final controller = await _controller();
-
-      await _completeFirstFour(controller, stars: const [2, 2, 1, 1]);
-
-      await controller.completeMission(
-        result: _result(
-          missionId: 'Z1_M05',
-          stars: 3,
-          citizenship: 30,
-          knowledge: 20,
-          coins: 30,
-        ),
-      );
+      await _completeZoneRegular(controller);
 
       expect(
         controller.progress.unlockedMissions.contains('Z1_SPECIAL'),
@@ -160,24 +107,47 @@ void main() {
     },
   );
 
-  test('replay pode atingir 9 estrelas sem duplicar recompensas', () async {
+  test('concluir especial fecha zona 1 e concede medalha', () async {
     final controller = await _controller();
 
-    await _completeFirstFour(controller, stars: const [2, 2, 1, 1]);
+    await _completeZoneRegular(controller);
 
     await controller.completeMission(
       result: _result(
-        missionId: 'Z1_M05',
-        stars: 2,
-        citizenship: 30,
-        knowledge: 20,
-        coins: 30,
+        missionId: 'Z1_SPECIAL',
+        stars: 3,
+        citizenship: 50,
+        knowledge: 30,
+        coins: 50,
       ),
     );
 
     expect(
-      controller.progress.unlockedMissions.contains('Z1_SPECIAL'),
-      isFalse,
+      controller.progress.completedMissions.contains('Z1_SPECIAL'),
+      isTrue,
+    );
+    expect(controller.progress.missionStars['Z1_SPECIAL'], 3);
+    expect(controller.progress.zone1Completed, isTrue);
+    expect(controller.progress.medals.contains('PROTETOR_DA_ESCOLA'), isTrue);
+
+    expect(controller.progress.citizenshipXp, 170);
+    expect(controller.progress.knowledge, 105);
+    expect(controller.progress.coins, 160);
+  });
+
+  test('replay da especial nao duplica recompensa nem medalha', () async {
+    final controller = await _controller();
+
+    await _completeZoneRegular(controller);
+
+    await controller.completeMission(
+      result: _result(
+        missionId: 'Z1_SPECIAL',
+        stars: 2,
+        citizenship: 50,
+        knowledge: 30,
+        coins: 50,
+      ),
     );
 
     final citizenshipBefore = controller.progress.citizenshipXp;
@@ -186,18 +156,54 @@ void main() {
 
     await controller.completeMission(
       result: _result(
-        missionId: 'Z1_M05',
+        missionId: 'Z1_SPECIAL',
         stars: 3,
-        citizenship: 30,
-        knowledge: 20,
-        coins: 30,
+        citizenship: 50,
+        knowledge: 30,
+        coins: 50,
       ),
     );
 
     expect(controller.progress.citizenshipXp, citizenshipBefore);
     expect(controller.progress.knowledge, knowledgeBefore);
     expect(controller.progress.coins, coinsBefore);
-    expect(controller.progress.missionStars['Z1_M05'], 3);
-    expect(controller.progress.unlockedMissions.contains('Z1_SPECIAL'), isTrue);
+    expect(controller.progress.missionStars['Z1_SPECIAL'], 3);
+    expect(controller.progress.medals.length, 1);
+    expect(controller.progress.medals.contains('PROTETOR_DA_ESCOLA'), isTrue);
+    expect(controller.progress.zone1Completed, isTrue);
+  });
+
+  test('fechamento da zona 1 persiste', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final storage = StorageService(preferences);
+
+    final controller = PlayerController(storage);
+    await controller.initialize();
+
+    await _completeZoneRegular(controller);
+
+    await controller.completeMission(
+      result: _result(
+        missionId: 'Z1_SPECIAL',
+        stars: 3,
+        citizenship: 50,
+        knowledge: 30,
+        coins: 50,
+      ),
+    );
+
+    final secondController = PlayerController(storage);
+    await secondController.initialize();
+
+    expect(secondController.progress.zone1Completed, isTrue);
+    expect(
+      secondController.progress.medals.contains('PROTETOR_DA_ESCOLA'),
+      isTrue,
+    );
+    expect(
+      secondController.progress.completedMissions.contains('Z1_SPECIAL'),
+      isTrue,
+    );
   });
 }

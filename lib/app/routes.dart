@@ -8,6 +8,7 @@ import '../data/zone_1/mission_02_data.dart';
 import '../data/zone_1/mission_03_data.dart';
 import '../data/zone_1/mission_04_data.dart';
 import '../data/zone_1/mission_05_data.dart';
+import '../data/zone_1/special_mission_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
 import '../screens/avatar/avatar_screen.dart';
@@ -31,6 +32,7 @@ class AppRoutes {
   static const mission3 = '/zone-1/mission-3';
   static const mission4 = '/zone-1/mission-4';
   static const mission5 = '/zone-1/mission-5';
+  static const specialMission = '/zone-1/special';
   static const missionResult = '/mission-result';
 
   static Route<dynamic> onGenerateRoute(
@@ -141,6 +143,20 @@ class AppRoutes {
           settings: settings,
           controller: controller,
           mission: buildZone1Mission05(profile.type),
+        );
+
+      case specialMission:
+        final profile = controller.profile;
+        if (profile == null) {
+          return _invalidRoute(settings);
+        }
+        if (!controller.progress.unlockedMissions.contains('Z1_SPECIAL')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone1SpecialMission(profile.type),
         );
 
       case missionResult:

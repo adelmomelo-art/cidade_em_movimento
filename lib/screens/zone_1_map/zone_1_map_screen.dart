@@ -39,6 +39,20 @@ class Zone1MapScreen extends StatelessWidget {
                 coins: progress.coins,
                 stars: totalStars,
               ),
+              if (progress.zone1Completed)
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  child: Card(
+                    child: ListTile(
+                      leading: Icon(Icons.emoji_events_rounded),
+                      title: Text(
+                        'Zona 1 conclu\u00edda',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text('Medalha: Protetor da Escola'),
+                    ),
+                  ),
+                ),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(20),
@@ -194,7 +208,8 @@ class _MissionTile extends StatelessWidget {
       id == 'Z1_M02' ||
       id == 'Z1_M03' ||
       id == 'Z1_M04' ||
-      id == 'Z1_M05';
+      id == 'Z1_M05' ||
+      id == 'Z1_SPECIAL';
 
   String? get _route {
     switch (id) {
@@ -208,6 +223,8 @@ class _MissionTile extends StatelessWidget {
         return AppRoutes.mission4;
       case 'Z1_M05':
         return AppRoutes.mission5;
+      case 'Z1_SPECIAL':
+        return AppRoutes.specialMission;
       default:
         return null;
     }
