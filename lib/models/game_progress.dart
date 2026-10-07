@@ -1,5 +1,5 @@
 class GameProgress {
-  const GameProgress({
+  GameProgress({
     required this.citizenshipXp,
     required this.knowledge,
     required this.coins,
@@ -8,8 +8,12 @@ class GameProgress {
     required this.unlockedMissions,
     required this.purchasedUpgrades,
     required this.medals,
-    required this.zone1Completed,
-  });
+    Set<String> completedZones = const <String>{},
+    bool zone1Completed = false,
+  }) : completedZones = <String>{
+         ...completedZones,
+         if (zone1Completed) 'ZONE_1',
+       };
 
   final int citizenshipXp;
   final int knowledge;
@@ -20,11 +24,16 @@ class GameProgress {
   final Set<String> unlockedMissions;
   final Set<String> purchasedUpgrades;
   final Set<String> medals;
+  final Set<String> completedZones;
 
-  final bool zone1Completed;
+  bool get zone1Completed => completedZones.contains('ZONE_1');
+
+  bool isZoneCompleted(String zoneId) {
+    return completedZones.contains(zoneId);
+  }
 
   factory GameProgress.initial() {
-    return const GameProgress(
+    return GameProgress(
       citizenshipXp: 0,
       knowledge: 0,
       coins: 0,
@@ -33,7 +42,7 @@ class GameProgress {
       unlockedMissions: <String>{'Z1_M01'},
       purchasedUpgrades: <String>{},
       medals: <String>{},
-      zone1Completed: false,
+      completedZones: <String>{},
     );
   }
 
@@ -47,6 +56,7 @@ class GameProgress {
       'unlockedMissions': unlockedMissions.toList(),
       'purchasedUpgrades': purchasedUpgrades.toList(),
       'medals': medals.toList(),
+      'completedZones': completedZones.toList(),
       'zone1Completed': zone1Completed,
     };
   }
@@ -55,6 +65,12 @@ class GameProgress {
     final starsRaw =
         (json['missionStars'] as Map?)?.cast<String, dynamic>() ??
         <String, dynamic>{};
+
+    final completedZones = _stringSet(json['completedZones']);
+
+    if (json['zone1Completed'] as bool? ?? false) {
+      completedZones.add('ZONE_1');
+    }
 
     return GameProgress(
       citizenshipXp: (json['citizenshipXp'] as num?)?.toInt() ?? 0,
@@ -70,7 +86,7 @@ class GameProgress {
       ),
       purchasedUpgrades: _stringSet(json['purchasedUpgrades']),
       medals: _stringSet(json['medals']),
-      zone1Completed: json['zone1Completed'] as bool? ?? false,
+      completedZones: completedZones,
     );
   }
 

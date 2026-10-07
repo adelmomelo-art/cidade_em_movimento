@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../core/enums/player_type.dart';
 import '../data/zone_1/upgrade_data.dart';
+import '../data/zones/zone_catalog.dart';
 import '../models/game_progress.dart';
 import '../models/mission_result.dart';
 import '../models/player_profile.dart';
@@ -9,18 +10,6 @@ import '../services/storage_service.dart';
 
 class PlayerController extends ChangeNotifier {
   PlayerController(this._storage);
-
-  static const _zone1RegularMissionIds = <String>{
-    'Z1_M01',
-    'Z1_M02',
-    'Z1_M03',
-    'Z1_M04',
-    'Z1_M05',
-  };
-
-  static const _zone1SpecialMissionId = 'Z1_SPECIAL';
-  static const _zone1SpecialMinimumStars = 9;
-  static const _zone1MedalId = 'PROTETOR_DA_ESCOLA';
 
   final StorageService _storage;
 
@@ -71,26 +60,24 @@ class PlayerController extends ChangeNotifier {
       unlockedMissions.add(nextMissionId);
     }
 
-    final completedAllRegularMissions = _zone1RegularMissionIds.every(
-      completedMissions.contains,
-    );
-
-    final regularMissionStars = _zone1RegularMissionIds.fold<int>(
-      0,
-      (total, missionId) => total + (missionStars[missionId] ?? 0),
-    );
-
-    if (completedAllRegularMissions &&
-        regularMissionStars >= _zone1SpecialMinimumStars) {
-      unlockedMissions.add(_zone1SpecialMissionId);
+    for (final zone in zoneCatalog) {
+      if (zone.canUnlockSpecial(
+        completedMissions: completedMissions,
+        missionStars: missionStars,
+      )) {
+        unlockedMissions.add(zone.specialMissionId);
+      }
     }
 
     final medals = Set<String>.from(_progress.medals);
-    var zone1Completed = _progress.zone1Completed;
+    final completedZones = Set<String>.from(_progress.completedZones);
 
-    if (result.missionId == _zone1SpecialMissionId) {
-      medals.add(_zone1MedalId);
-      zone1Completed = true;
+    final missionZone = findZoneByMission(result.missionId);
+
+    if (missionZone != null &&
+        result.missionId == missionZone.specialMissionId) {
+      medals.add(missionZone.medalId);
+      completedZones.add(missionZone.id);
     }
 
     _progress = GameProgress(
@@ -105,7 +92,7 @@ class PlayerController extends ChangeNotifier {
       unlockedMissions: unlockedMissions,
       purchasedUpgrades: Set<String>.from(_progress.purchasedUpgrades),
       medals: medals,
-      zone1Completed: zone1Completed,
+      completedZones: completedZones,
     );
 
     await _storage.saveProgress(_progress);
@@ -146,7 +133,7 @@ class PlayerController extends ChangeNotifier {
       unlockedMissions: Set<String>.from(_progress.unlockedMissions),
       purchasedUpgrades: purchasedUpgrades,
       medals: Set<String>.from(_progress.medals),
-      zone1Completed: _progress.zone1Completed,
+      completedZones: Set<String>.from(_progress.completedZones),
     );
 
     await _storage.saveProgress(_progress);
