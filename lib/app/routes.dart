@@ -6,6 +6,7 @@ import '../core/enums/player_type.dart';
 import '../data/zone_1/mission_01_data.dart';
 import '../data/zone_1/mission_02_data.dart';
 import '../data/zone_1/mission_03_data.dart';
+import '../data/zone_1/mission_04_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
 import '../screens/avatar/avatar_screen.dart';
@@ -27,6 +28,7 @@ class AppRoutes {
   static const mission1 = '/zone-1/mission-1';
   static const mission2 = '/zone-1/mission-2';
   static const mission3 = '/zone-1/mission-3';
+  static const mission4 = '/zone-1/mission-4';
   static const missionResult = '/mission-result';
 
   static Route<dynamic> onGenerateRoute(
@@ -48,11 +50,9 @@ class AppRoutes {
 
       case avatar:
         final type = settings.arguments;
-
         if (type is! PlayerType) {
           return _invalidRoute(settings);
         }
-
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => AvatarScreen(controller: controller, type: type),
@@ -72,11 +72,9 @@ class AppRoutes {
 
       case mission1:
         final profile = controller.profile;
-
         if (profile == null) {
           return _invalidRoute(settings);
         }
-
         return _missionRoute(
           settings: settings,
           controller: controller,
@@ -86,15 +84,12 @@ class AppRoutes {
 
       case mission2:
         final profile = controller.profile;
-
         if (profile == null) {
           return _invalidRoute(settings);
         }
-
         if (!controller.progress.unlockedMissions.contains('Z1_M02')) {
           return _invalidRoute(settings);
         }
-
         return _missionRoute(
           settings: settings,
           controller: controller,
@@ -104,15 +99,12 @@ class AppRoutes {
 
       case mission3:
         final profile = controller.profile;
-
         if (profile == null) {
           return _invalidRoute(settings);
         }
-
         if (!controller.progress.unlockedMissions.contains('Z1_M03')) {
           return _invalidRoute(settings);
         }
-
         return _missionRoute(
           settings: settings,
           controller: controller,
@@ -120,13 +112,26 @@ class AppRoutes {
           nextMissionId: 'Z1_M04',
         );
 
+      case mission4:
+        final profile = controller.profile;
+        if (profile == null) {
+          return _invalidRoute(settings);
+        }
+        if (!controller.progress.unlockedMissions.contains('Z1_M04')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone1Mission04(profile.type),
+          nextMissionId: 'Z1_M05',
+        );
+
       case missionResult:
         final result = settings.arguments;
-
         if (result is! MissionResult) {
           return _invalidRoute(settings);
         }
-
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => MissionResultScreen(result: result),
@@ -149,7 +154,6 @@ class AppRoutes {
         mission: mission,
         onMissionCompleted: (MissionController missionController) async {
           final result = missionController.result;
-
           if (result == null) {
             return;
           }
@@ -160,7 +164,6 @@ class AppRoutes {
           );
 
           final navigator = rootNavigatorKey.currentState;
-
           if (navigator == null) {
             return;
           }

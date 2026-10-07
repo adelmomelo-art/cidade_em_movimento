@@ -189,7 +189,8 @@ class _MissionTile extends StatelessWidget {
   final int stars;
   final bool special;
 
-  bool get _isImplemented => id == 'Z1_M01' || id == 'Z1_M02' || id == 'Z1_M03';
+  bool get _isImplemented =>
+      id == 'Z1_M01' || id == 'Z1_M02' || id == 'Z1_M03' || id == 'Z1_M04';
 
   String? get _route {
     switch (id) {
@@ -199,6 +200,8 @@ class _MissionTile extends StatelessWidget {
         return AppRoutes.mission2;
       case 'Z1_M03':
         return AppRoutes.mission3;
+      case 'Z1_M04':
+        return AppRoutes.mission4;
       default:
         return null;
     }
@@ -229,10 +232,8 @@ class _MissionTile extends StatelessWidget {
                 stars == 0
                     ? (_isImplemented
                           ? 'Dispon\u00edvel'
-                          : 'Desbloqueada \u2014 '
-                                'pr\u00f3ximo pacote')
-                    : '${'\u2605' * stars}'
-                          '${'\u2606' * (3 - stars)}',
+                          : 'Desbloqueada \u2014 pr\u00f3ximo pacote')
+                    : '${'\u2605' * stars}${'\u2606' * (3 - stars)}',
               )
             : const Text('Bloqueada'),
         trailing: unlocked && _isImplemented
