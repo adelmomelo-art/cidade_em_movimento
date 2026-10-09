@@ -4,6 +4,7 @@ import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
 import '../../data/zone_1/upgrade_data.dart';
 import '../../models/upgrade_definition.dart';
+import '../../widgets/zone_1_evolving_scene.dart';
 
 class Zone1MapScreen extends StatelessWidget {
   const Zone1MapScreen({super.key, required this.controller});
@@ -64,6 +65,10 @@ class Zone1MapScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                       ],
                       _NeighborhoodCard(
+                        purchasedUpgrades: progress.purchasedUpgrades,
+                      ),
+                      const SizedBox(height: 16),
+                      Zone1EvolvingScene(
                         purchasedUpgrades: progress.purchasedUpgrades,
                       ),
                       const SizedBox(height: 16),
