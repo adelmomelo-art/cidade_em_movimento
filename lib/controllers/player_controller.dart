@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../core/enums/player_type.dart';
-import '../data/zone_1/upgrade_data.dart';
+import '../data/upgrades/upgrade_catalog.dart';
 import '../data/zones/zone_catalog.dart';
 import '../models/game_progress.dart';
 import '../models/mission_result.dart';
@@ -100,14 +100,7 @@ class PlayerController extends ChangeNotifier {
   }
 
   Future<bool> purchaseUpgrade(String upgradeId) async {
-    Zone1Upgrade? selected;
-
-    for (final upgrade in zone1Upgrades) {
-      if (upgrade.id == upgradeId) {
-        selected = upgrade;
-        break;
-      }
-    }
+    final selected = findUpgradeById(upgradeId);
 
     if (selected == null) {
       return false;

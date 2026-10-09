@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
 import '../../data/zone_1/upgrade_data.dart';
+import '../../models/upgrade_definition.dart';
 
 class Zone1MapScreen extends StatelessWidget {
   const Zone1MapScreen({super.key, required this.controller});
@@ -260,7 +261,7 @@ class _UpgradeCard extends StatelessWidget {
     required this.onPurchase,
   });
 
-  final Zone1Upgrade upgrade;
+  final UpgradeDefinition upgrade;
   final bool purchased;
   final bool canAfford;
   final Future<void> Function() onPurchase;

@@ -1,36 +1,27 @@
-class Zone1Upgrade {
-  const Zone1Upgrade({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.cost,
-  });
+import '../../models/upgrade_definition.dart';
 
-  final String id;
-  final String title;
-  final String description;
-  final int cost;
-}
-
-const zone1Upgrades = <Zone1Upgrade>[
-  Zone1Upgrade(
+const zone1Upgrades = <UpgradeDefinition>[
+  UpgradeDefinition(
     id: 'FAIXA_SEGURA',
+    zoneId: 'ZONE_1',
     title: 'Faixa Segura',
     description:
         'Refor\u00e7a a travessia de pedestres e torna o caminho '
         'escolar mais vis\u00edvel.',
     cost: 50,
   ),
-  Zone1Upgrade(
+  UpgradeDefinition(
     id: 'ILUMINACAO_ESCOLAR',
+    zoneId: 'ZONE_1',
     title: 'Ilumina\u00e7\u00e3o Escolar',
     description:
         'Melhora a visibilidade do entorno da escola e dos pontos '
         'de travessia.',
     cost: 70,
   ),
-  Zone1Upgrade(
+  UpgradeDefinition(
     id: 'TRECHO_CICLOVIARIO',
+    zoneId: 'ZONE_1',
     title: 'Trecho Ciclovi\u00e1rio',
     description:
         'Cria um trecho dedicado para tornar a rota de bicicleta '
