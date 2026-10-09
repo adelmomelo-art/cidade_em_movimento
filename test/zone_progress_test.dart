@@ -6,6 +6,7 @@ void main() {
     final progress = GameProgress.initial();
 
     expect(progress.completedZones, isEmpty);
+    expect(progress.claimedZoneCompletionBonuses, isEmpty);
     expect(progress.zone1Completed, isFalse);
     expect(progress.isZoneCompleted('ZONE_1'), isFalse);
   });
@@ -25,24 +26,27 @@ void main() {
 
     expect(progress.zone1Completed, isTrue);
     expect(progress.completedZones.contains('ZONE_1'), isTrue);
+    expect(progress.claimedZoneCompletionBonuses, isEmpty);
   });
 
-  test('serializacao grava completedZones e compatibilidade Zona 1', () {
+  test('serializacao grava zonas e bonus de conclusao reclamados', () {
     final progress = GameProgress(
       citizenshipXp: 0,
       knowledge: 0,
-      coins: 0,
+      coins: 60,
       completedMissions: <String>{},
       missionStars: <String, int>{},
       unlockedMissions: <String>{'Z1_M01'},
       purchasedUpgrades: <String>{},
       medals: <String>{},
       completedZones: <String>{'ZONE_1'},
+      claimedZoneCompletionBonuses: <String>{'ZONE_1'},
     );
 
     final json = progress.toJson();
 
     expect(json['completedZones'], contains('ZONE_1'));
+    expect(json['claimedZoneCompletionBonuses'], contains('ZONE_1'));
     expect(json['zone1Completed'], isTrue);
   });
 }

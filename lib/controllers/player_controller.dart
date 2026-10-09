@@ -24,6 +24,13 @@ class PlayerController extends ChangeNotifier {
   Future<void> initialize() async {
     _profile = _storage.loadProfile();
     _progress = _storage.loadProgress();
+
+    final reconciled = _withPendingZoneCompletionBonuses(_progress);
+
+    if (!identical(reconciled, _progress)) {
+      _progress = reconciled;
+      await _storage.saveProgress(_progress);
+    }
   }
 
   Future<void> createProfile({
@@ -80,7 +87,7 @@ class PlayerController extends ChangeNotifier {
       completedZones.add(missionZone.id);
     }
 
-    _progress = GameProgress(
+    var updated = GameProgress(
       citizenshipXp:
           _progress.citizenshipXp +
           (wasAlreadyCompleted ? 0 : result.citizenship),
@@ -93,7 +100,13 @@ class PlayerController extends ChangeNotifier {
       purchasedUpgrades: Set<String>.from(_progress.purchasedUpgrades),
       medals: medals,
       completedZones: completedZones,
+      claimedZoneCompletionBonuses: Set<String>.from(
+        _progress.claimedZoneCompletionBonuses,
+      ),
     );
+
+    updated = _withPendingZoneCompletionBonuses(updated);
+    _progress = updated;
 
     await _storage.saveProgress(_progress);
     notifyListeners();
@@ -127,11 +140,51 @@ class PlayerController extends ChangeNotifier {
       purchasedUpgrades: purchasedUpgrades,
       medals: Set<String>.from(_progress.medals),
       completedZones: Set<String>.from(_progress.completedZones),
+      claimedZoneCompletionBonuses: Set<String>.from(
+        _progress.claimedZoneCompletionBonuses,
+      ),
     );
 
     await _storage.saveProgress(_progress);
     notifyListeners();
 
     return true;
+  }
+
+  GameProgress _withPendingZoneCompletionBonuses(GameProgress source) {
+    var bonusCoins = 0;
+    final claimed = Set<String>.from(source.claimedZoneCompletionBonuses);
+
+    for (final zoneId in source.completedZones) {
+      if (claimed.contains(zoneId)) {
+        continue;
+      }
+
+      final zone = findZoneById(zoneId);
+      if (zone == null) {
+        continue;
+      }
+
+      bonusCoins += zone.completionBonusCoins;
+      claimed.add(zoneId);
+    }
+
+    if (bonusCoins == 0 &&
+        claimed.length == source.claimedZoneCompletionBonuses.length) {
+      return source;
+    }
+
+    return GameProgress(
+      citizenshipXp: source.citizenshipXp,
+      knowledge: source.knowledge,
+      coins: source.coins + bonusCoins,
+      completedMissions: Set<String>.from(source.completedMissions),
+      missionStars: Map<String, int>.from(source.missionStars),
+      unlockedMissions: Set<String>.from(source.unlockedMissions),
+      purchasedUpgrades: Set<String>.from(source.purchasedUpgrades),
+      medals: Set<String>.from(source.medals),
+      completedZones: Set<String>.from(source.completedZones),
+      claimedZoneCompletionBonuses: claimed,
+    );
   }
 }

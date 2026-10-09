@@ -132,7 +132,7 @@ void main() {
 
     expect(controller.progress.citizenshipXp, 170);
     expect(controller.progress.knowledge, 105);
-    expect(controller.progress.coins, 160);
+    expect(controller.progress.coins, 220);
   });
 
   test('replay da especial nao duplica recompensa nem medalha', () async {

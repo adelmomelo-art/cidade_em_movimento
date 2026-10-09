@@ -9,11 +9,15 @@ class GameProgress {
     required this.purchasedUpgrades,
     required this.medals,
     Set<String> completedZones = const <String>{},
+    Set<String> claimedZoneCompletionBonuses = const <String>{},
     bool zone1Completed = false,
   }) : completedZones = <String>{
          ...completedZones,
          if (zone1Completed) 'ZONE_1',
-       };
+       },
+       claimedZoneCompletionBonuses = Set<String>.from(
+         claimedZoneCompletionBonuses,
+       );
 
   final int citizenshipXp;
   final int knowledge;
@@ -25,11 +29,16 @@ class GameProgress {
   final Set<String> purchasedUpgrades;
   final Set<String> medals;
   final Set<String> completedZones;
+  final Set<String> claimedZoneCompletionBonuses;
 
   bool get zone1Completed => completedZones.contains('ZONE_1');
 
   bool isZoneCompleted(String zoneId) {
     return completedZones.contains(zoneId);
+  }
+
+  bool hasClaimedZoneCompletionBonus(String zoneId) {
+    return claimedZoneCompletionBonuses.contains(zoneId);
   }
 
   factory GameProgress.initial() {
@@ -43,6 +52,7 @@ class GameProgress {
       purchasedUpgrades: <String>{},
       medals: <String>{},
       completedZones: <String>{},
+      claimedZoneCompletionBonuses: <String>{},
     );
   }
 
@@ -57,6 +67,7 @@ class GameProgress {
       'purchasedUpgrades': purchasedUpgrades.toList(),
       'medals': medals.toList(),
       'completedZones': completedZones.toList(),
+      'claimedZoneCompletionBonuses': claimedZoneCompletionBonuses.toList(),
       'zone1Completed': zone1Completed,
     };
   }
@@ -87,6 +98,9 @@ class GameProgress {
       purchasedUpgrades: _stringSet(json['purchasedUpgrades']),
       medals: _stringSet(json['medals']),
       completedZones: completedZones,
+      claimedZoneCompletionBonuses: _stringSet(
+        json['claimedZoneCompletionBonuses'],
+      ),
     );
   }
 

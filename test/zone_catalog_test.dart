@@ -15,11 +15,15 @@ void main() {
     expect(zone1Definition.specialMissionId, 'Z1_SPECIAL');
     expect(zone1Definition.specialMinimumStars, 9);
     expect(zone1Definition.medalId, 'PROTETOR_DA_ESCOLA');
+    expect(zone1Definition.completionBonusCoins, 60);
   });
 
-  test('localiza zona por missao', () {
+  test('localiza zona por missao e por id', () {
     expect(findZoneByMission('Z1_M03')?.id, 'ZONE_1');
     expect(findZoneByMission('Z1_SPECIAL')?.id, 'ZONE_1');
     expect(findZoneByMission('INEXISTENTE'), isNull);
+
+    expect(findZoneById('ZONE_1')?.title, 'Bairro / Escola');
+    expect(findZoneById('ZONE_X'), isNull);
   });
 }

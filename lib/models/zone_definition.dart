@@ -6,6 +6,7 @@ class ZoneDefinition {
     required this.specialMissionId,
     required this.specialMinimumStars,
     required this.medalId,
+    required this.completionBonusCoins,
   });
 
   final String id;
@@ -14,6 +15,7 @@ class ZoneDefinition {
   final String specialMissionId;
   final int specialMinimumStars;
   final String medalId;
+  final int completionBonusCoins;
 
   bool containsMission(String missionId) {
     return regularMissionIds.contains(missionId) ||

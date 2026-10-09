@@ -7,6 +7,7 @@ const zone1Definition = ZoneDefinition(
   specialMissionId: 'Z1_SPECIAL',
   specialMinimumStars: 9,
   medalId: 'PROTETOR_DA_ESCOLA',
+  completionBonusCoins: 60,
 );
 
 const zoneCatalog = <ZoneDefinition>[zone1Definition];
@@ -14,6 +15,16 @@ const zoneCatalog = <ZoneDefinition>[zone1Definition];
 ZoneDefinition? findZoneByMission(String missionId) {
   for (final zone in zoneCatalog) {
     if (zone.containsMission(missionId)) {
+      return zone;
+    }
+  }
+
+  return null;
+}
+
+ZoneDefinition? findZoneById(String zoneId) {
+  for (final zone in zoneCatalog) {
+    if (zone.id == zoneId) {
       return zone;
     }
   }
