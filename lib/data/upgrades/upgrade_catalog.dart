@@ -1,7 +1,8 @@
 import '../../models/upgrade_definition.dart';
 import '../zone_1/upgrade_data.dart';
+import '../zone_2/upgrade_data.dart';
 
-const upgradeCatalog = <UpgradeDefinition>[...zone1Upgrades];
+const upgradeCatalog = <UpgradeDefinition>[...zone1Upgrades, ...zone2Upgrades];
 
 UpgradeDefinition? findUpgradeById(String upgradeId) {
   for (final upgrade in upgradeCatalog) {

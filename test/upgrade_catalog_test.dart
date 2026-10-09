@@ -2,38 +2,37 @@ import 'package:cidade_em_movimento/data/upgrades/upgrade_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('catalogo generico contem somente as melhorias aprovadas', () {
-    expect(upgradeCatalog.length, 3);
+  test('catalogo generico contem as seis melhorias oficiais', () {
+    expect(upgradeCatalog.length, 6);
     expect(upgradeCatalog.map((upgrade) => upgrade.id).toSet(), {
       'FAIXA_SEGURA',
       'ILUMINACAO_ESCOLAR',
       'TRECHO_CICLOVIARIO',
+      'TRAVESSIA_ACESSIVEL',
+      'PONTO_SEGURO',
+      'ROTA_COMPARTILHADA',
     });
   });
 
-  test('todas as melhorias atuais pertencem a Zona 1', () {
+  test('Zona 1 preserva tres melhorias e custo total 220', () {
     final upgrades = upgradesForZone('ZONE_1');
     expect(upgrades.length, 3);
     expect(upgrades.every((upgrade) => upgrade.zoneId == 'ZONE_1'), isTrue);
-    expect(upgradesForZone('ZONE_2'), isEmpty);
+    expect(upgrades.fold<int>(0, (sum, item) => sum + item.cost), 220);
   });
 
-  test('busca generica localiza melhoria por id', () {
-    final faixa = findUpgradeById('FAIXA_SEGURA');
-    expect(faixa, isNotNull);
-    expect(faixa!.zoneId, 'ZONE_1');
-    expect(faixa.cost, 50);
+  test('Zona 2 possui tres melhorias e custo total 240', () {
+    final upgrades = upgradesForZone('ZONE_2');
+    expect(upgrades.length, 3);
+    expect(upgrades.every((upgrade) => upgrade.zoneId == 'ZONE_2'), isTrue);
+    expect(upgrades.fold<int>(0, (sum, item) => sum + item.cost), 240);
+  });
+
+  test('busca generica localiza melhorias por id', () {
+    expect(findUpgradeById('FAIXA_SEGURA')?.cost, 50);
+    expect(findUpgradeById('TRAVESSIA_ACESSIVEL')?.cost, 60);
+    expect(findUpgradeById('PONTO_SEGURO')?.cost, 80);
+    expect(findUpgradeById('ROTA_COMPARTILHADA')?.cost, 100);
     expect(findUpgradeById('MELHORIA_INEXISTENTE'), isNull);
-  });
-
-  test('economia aprovada permanece 50 70 100', () {
-    final costs = {
-      for (final upgrade in upgradeCatalog) upgrade.id: upgrade.cost,
-    };
-
-    expect(costs['FAIXA_SEGURA'], 50);
-    expect(costs['ILUMINACAO_ESCOLAR'], 70);
-    expect(costs['TRECHO_CICLOVIARIO'], 100);
-    expect(upgradeCatalog.fold<int>(0, (sum, item) => sum + item.cost), 220);
   });
 }

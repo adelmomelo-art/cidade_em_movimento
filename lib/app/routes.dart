@@ -19,6 +19,7 @@ import '../screens/mission_result/mission_result_screen.dart';
 import '../screens/player_progress/player_progress_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/zone_1_map/zone_1_map_screen.dart';
+import '../screens/zone_2_map/zone_2_map_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -28,6 +29,7 @@ class AppRoutes {
   static const avatar = '/avatar';
   static const intro = '/intro';
   static const zone1 = '/zone-1';
+  static const zone2 = '/zone-2';
   static const playerProgress = '/player-progress';
   static const mission1 = '/zone-1/mission-1';
   static const mission2 = '/zone-1/mission-2';
@@ -76,6 +78,14 @@ class AppRoutes {
           builder: (_) => Zone1MapScreen(controller: controller),
         );
 
+      case zone2:
+        if (!controller.isZoneUnlocked('ZONE_2')) {
+          return _invalidRoute(settings);
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => Zone2MapScreen(controller: controller),
+        );
       case playerProgress:
         if (!controller.hasProfile) {
           return _invalidRoute(settings);

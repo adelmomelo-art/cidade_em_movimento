@@ -7,6 +7,9 @@ class ZoneDefinition {
     required this.specialMinimumStars,
     required this.medalId,
     required this.completionBonusCoins,
+    this.initialMissionId,
+    this.prerequisiteZoneId,
+    this.prerequisiteMedalId,
   });
 
   final String id;
@@ -16,6 +19,12 @@ class ZoneDefinition {
   final int specialMinimumStars;
   final String medalId;
   final int completionBonusCoins;
+  final String? initialMissionId;
+  final String? prerequisiteZoneId;
+  final String? prerequisiteMedalId;
+
+  String get effectiveInitialMissionId =>
+      initialMissionId ?? regularMissionIds.first;
 
   bool containsMission(String missionId) {
     return regularMissionIds.contains(missionId) ||
@@ -39,5 +48,22 @@ class ZoneDefinition {
 
     return completedAllRegular &&
         regularStars(missionStars) >= specialMinimumStars;
+  }
+
+  bool canUnlockZone({
+    required Set<String> completedZones,
+    required Set<String> medals,
+  }) {
+    final requiredZone = prerequisiteZoneId;
+    if (requiredZone != null && !completedZones.contains(requiredZone)) {
+      return false;
+    }
+
+    final requiredMedal = prerequisiteMedalId;
+    if (requiredMedal != null && !medals.contains(requiredMedal)) {
+      return false;
+    }
+
+    return true;
   }
 }

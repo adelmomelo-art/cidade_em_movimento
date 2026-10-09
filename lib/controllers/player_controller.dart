@@ -21,6 +21,18 @@ class PlayerController extends ChangeNotifier {
 
   bool get hasProfile => _profile != null;
 
+  bool isZoneUnlocked(String zoneId) {
+    final zone = findZoneById(zoneId);
+    if (zone == null) {
+      return false;
+    }
+
+    return zone.canUnlockZone(
+      completedZones: _progress.completedZones,
+      medals: _progress.medals,
+    );
+  }
+
   Future<void> initialize() async {
     _profile = _storage.loadProfile();
     _progress = _storage.loadProgress();
@@ -85,6 +97,11 @@ class PlayerController extends ChangeNotifier {
         result.missionId == missionZone.specialMissionId) {
       medals.add(missionZone.medalId);
       completedZones.add(missionZone.id);
+    }
+    for (final zone in zoneCatalog) {
+      if (zone.canUnlockZone(completedZones: completedZones, medals: medals)) {
+        unlockedMissions.add(zone.effectiveInitialMissionId);
+      }
     }
 
     var updated = GameProgress(

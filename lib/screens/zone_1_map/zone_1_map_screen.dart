@@ -62,6 +62,20 @@ class Zone1MapScreen extends StatelessWidget {
                     delegate: SliverChildListDelegate([
                       if (progress.zone1Completed) ...[
                         const _ZoneCompletedCard(),
+                        const SizedBox(height: 10),
+                        FilledButton.icon(
+                          onPressed: controller.isZoneUnlocked('ZONE_2')
+                              ? () {
+                                  Navigator.of(
+                                    context,
+                                  ).pushNamed(AppRoutes.zone2);
+                                }
+                              : null,
+                          icon: const Icon(Icons.location_city_rounded),
+                          label: const Text(
+                            'AVAN\u00c7AR PARA O CENTRO HIST\u00d3RICO',
+                          ),
+                        ),
                         const SizedBox(height: 16),
                       ],
                       _NeighborhoodCard(

@@ -8,9 +8,23 @@ const zone1Definition = ZoneDefinition(
   specialMinimumStars: 9,
   medalId: 'PROTETOR_DA_ESCOLA',
   completionBonusCoins: 60,
+  initialMissionId: 'Z1_M01',
 );
 
-const zoneCatalog = <ZoneDefinition>[zone1Definition];
+const zone2Definition = ZoneDefinition(
+  id: 'ZONE_2',
+  title: 'Centro Hist\u00f3rico',
+  regularMissionIds: <String>{'Z2_M01', 'Z2_M02', 'Z2_M03', 'Z2_M04', 'Z2_M05'},
+  specialMissionId: 'Z2_SPECIAL',
+  specialMinimumStars: 9,
+  medalId: 'GUARDIAO_DO_CENTRO',
+  completionBonusCoins: 60,
+  initialMissionId: 'Z2_M01',
+  prerequisiteZoneId: 'ZONE_1',
+  prerequisiteMedalId: 'PROTETOR_DA_ESCOLA',
+);
+
+const zoneCatalog = <ZoneDefinition>[zone1Definition, zone2Definition];
 
 ZoneDefinition? findZoneByMission(String missionId) {
   for (final zone in zoneCatalog) {
