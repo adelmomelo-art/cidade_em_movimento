@@ -16,6 +16,7 @@ import '../screens/home/home_screen.dart';
 import '../screens/intro/intro_screen.dart';
 import '../screens/mission/mission_screen.dart';
 import '../screens/mission_result/mission_result_screen.dart';
+import '../screens/player_progress/player_progress_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/zone_1_map/zone_1_map_screen.dart';
 
@@ -27,6 +28,7 @@ class AppRoutes {
   static const avatar = '/avatar';
   static const intro = '/intro';
   static const zone1 = '/zone-1';
+  static const playerProgress = '/player-progress';
   static const mission1 = '/zone-1/mission-1';
   static const mission2 = '/zone-1/mission-2';
   static const mission3 = '/zone-1/mission-3';
@@ -74,6 +76,14 @@ class AppRoutes {
           builder: (_) => Zone1MapScreen(controller: controller),
         );
 
+      case playerProgress:
+        if (!controller.hasProfile) {
+          return _invalidRoute(settings);
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => PlayerProgressScreen(controller: controller),
+        );
       case mission1:
         final profile = controller.profile;
         if (profile == null) {

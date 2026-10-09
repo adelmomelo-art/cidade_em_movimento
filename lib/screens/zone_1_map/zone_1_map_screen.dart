@@ -32,7 +32,18 @@ class Zone1MapScreen extends StatelessWidget {
         );
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Bairro / Escola')),
+          appBar: AppBar(
+            title: const Text('Bairro / Escola'),
+            actions: [
+              IconButton(
+                tooltip: 'Meu Progresso',
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.playerProgress);
+                },
+                icon: const Icon(Icons.insights_rounded),
+              ),
+            ],
+          ),
           body: SafeArea(
             child: CustomScrollView(
               slivers: [
