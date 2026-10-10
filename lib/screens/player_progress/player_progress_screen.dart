@@ -12,13 +12,15 @@ class PlayerProgressScreen extends StatelessWidget {
 
   static const _zone1MedalId = 'PROTETOR_DA_ESCOLA';
   static const _zone2MedalId = 'GUARDIAO_DO_CENTRO';
-
+  static const _zone3MedalId = 'GUARDIAO_DA_ORLA';
   String _medalLabel(String medalId) {
     switch (medalId) {
       case _zone1MedalId:
         return 'Protetor da Escola';
       case _zone2MedalId:
         return 'Guardi\u00e3o do Centro';
+      case _zone3MedalId:
+        return 'Guardi\u00e3o da Orla';
       default:
         return medalId;
     }

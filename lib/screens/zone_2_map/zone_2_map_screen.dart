@@ -62,6 +62,20 @@ class Zone2MapScreen extends StatelessWidget {
                     delegate: SliverChildListDelegate([
                       if (progress.isZoneCompleted('ZONE_2')) ...[
                         const _ZoneCompletedCard(),
+                        const SizedBox(height: 10),
+                        FilledButton.icon(
+                          onPressed: controller.isZoneUnlocked('ZONE_3')
+                              ? () {
+                                  Navigator.of(
+                                    context,
+                                  ).pushNamed(AppRoutes.zone3);
+                                }
+                              : null,
+                          icon: const Icon(Icons.beach_access_rounded),
+                          label: const Text(
+                            'AVAN\u00c7AR PARA A ORLA / PRAIA DE IRACEMA',
+                          ),
+                        ),
                         const SizedBox(height: 16),
                       ],
                       _CenterCard(

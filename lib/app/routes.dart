@@ -15,6 +15,12 @@ import '../data/zone_2/mission_03_data.dart';
 import '../data/zone_2/mission_04_data.dart';
 import '../data/zone_2/mission_05_data.dart';
 import '../data/zone_2/special_mission_data.dart';
+import '../data/zone_3/mission_01_data.dart';
+import '../data/zone_3/mission_02_data.dart';
+import '../data/zone_3/mission_03_data.dart';
+import '../data/zone_3/mission_04_data.dart';
+import '../data/zone_3/mission_05_data.dart';
+import '../data/zone_3/special_mission_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
 import '../screens/avatar/avatar_screen.dart';
@@ -26,6 +32,7 @@ import '../screens/player_progress/player_progress_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/zone_1_map/zone_1_map_screen.dart';
 import '../screens/zone_2_map/zone_2_map_screen.dart';
+import '../screens/zone_3_map/zone_3_map_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -42,6 +49,13 @@ class AppRoutes {
   static const zone2Mission4 = '/zone-2/mission-4';
   static const zone2Mission5 = '/zone-2/mission-5';
   static const zone2SpecialMission = '/zone-2/special';
+  static const zone3 = '/zone-3';
+  static const zone3Mission1 = '/zone-3/mission-1';
+  static const zone3Mission2 = '/zone-3/mission-2';
+  static const zone3Mission3 = '/zone-3/mission-3';
+  static const zone3Mission4 = '/zone-3/mission-4';
+  static const zone3Mission5 = '/zone-3/mission-5';
+  static const zone3SpecialMission = '/zone-3/special';
   static const playerProgress = '/player-progress';
   static const mission1 = '/zone-1/mission-1';
   static const mission2 = '/zone-1/mission-2';
@@ -97,6 +111,91 @@ class AppRoutes {
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => Zone2MapScreen(controller: controller),
+        );
+      case zone3:
+        if (!controller.isZoneUnlocked('ZONE_3')) {
+          return _invalidRoute(settings);
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => Zone3MapScreen(controller: controller),
+        );
+
+      case zone3Mission1:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.isZoneUnlocked('ZONE_3') ||
+            !controller.progress.unlockedMissions.contains('Z3_M01')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone3Mission01(profile.type),
+          nextMissionId: 'Z3_M02',
+        );
+
+      case zone3Mission2:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z3_M02')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone3Mission02(profile.type),
+          nextMissionId: 'Z3_M03',
+        );
+
+      case zone3Mission3:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z3_M03')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone3Mission03(profile.type),
+          nextMissionId: 'Z3_M04',
+        );
+
+      case zone3Mission4:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z3_M04')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone3Mission04(profile.type),
+          nextMissionId: 'Z3_M05',
+        );
+
+      case zone3Mission5:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z3_M05')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone3Mission05(profile.type),
+        );
+
+      case zone3SpecialMission:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z3_SPECIAL')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone3SpecialMission(profile.type),
         );
       case playerProgress:
         if (!controller.hasProfile) {
