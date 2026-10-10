@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
 import '../../data/zone_6/upgrade_data.dart';
+import '../../models/upgrade_definition.dart';
+import '../../widgets/zone_6_evolving_scene.dart';
 
 class Zone6MapScreen extends StatelessWidget {
   const Zone6MapScreen({super.key, required this.controller});
@@ -62,9 +64,17 @@ class Zone6MapScreen extends StatelessWidget {
                           const _ZoneCompletedCard(),
                           const SizedBox(height: 16),
                         ],
-                        const _CastelaoCard(),
+                        _CastelaoCard(
+                          purchasedUpgrades: progress.purchasedUpgrades,
+                        ),
                         const SizedBox(height: 16),
-                        const _UpgradePreview(),
+                        IgnorePointer(
+                          child: Zone6EvolvingScene(
+                            purchasedUpgrades: progress.purchasedUpgrades,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _UpgradeSection(controller: controller),
                         const SizedBox(height: 20),
                         Text(
                           'Missoes da Zona 6',
@@ -135,10 +145,22 @@ class _ZoneCompletedCard extends StatelessWidget {
 }
 
 class _CastelaoCard extends StatelessWidget {
-  const _CastelaoCard();
+  const _CastelaoCard({required this.purchasedUpgrades});
+
+  final Set<String> purchasedUpgrades;
 
   @override
   Widget build(BuildContext context) {
+    final hasPedestrianCorridor = purchasedUpgrades.contains(
+      'CORREDOR_PEDESTRE_CASTELAO',
+    );
+    final hasLighting = purchasedUpgrades.contains(
+      'ILUMINACAO_ENTORNO_CASTELAO',
+    );
+    final hasBoarding = purchasedUpgrades.contains(
+      'EMBARQUE_INTEGRADO_CASTELAO',
+    );
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(22),
@@ -167,6 +189,23 @@ class _CastelaoCard extends StatelessWidget {
               'organizados de transporte.',
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                _TransformationBadge(
+                  label: 'Pedestres',
+                  installed: hasPedestrianCorridor,
+                ),
+                _TransformationBadge(
+                  label: 'Iluminacao',
+                  installed: hasLighting,
+                ),
+                _TransformationBadge(label: 'Embarque', installed: hasBoarding),
+              ],
+            ),
           ],
         ),
       ),
@@ -174,11 +213,35 @@ class _CastelaoCard extends StatelessWidget {
   }
 }
 
-class _UpgradePreview extends StatelessWidget {
-  const _UpgradePreview();
+class _TransformationBadge extends StatelessWidget {
+  const _TransformationBadge({required this.label, required this.installed});
+
+  final String label;
+  final bool installed;
 
   @override
   Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(
+        installed
+            ? Icons.check_circle_rounded
+            : Icons.radio_button_unchecked_rounded,
+        size: 18,
+      ),
+      label: Text(label),
+    );
+  }
+}
+
+class _UpgradeSection extends StatelessWidget {
+  const _UpgradeSection({required this.controller});
+
+  final PlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = controller.progress;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -186,31 +249,123 @@ class _UpgradePreview extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Transformacoes do Polo Castelao',
+              'Transforme o Polo Castelao',
               style: Theme.of(
                 context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             const Text(
-              'As melhorias ja estao definidas. A compra e a transformacao '
-              'visual entram no proximo pacote.',
+              'Use as moedas conquistadas para instalar melhorias urbanas. '
+              'As compras sao opcionais e nao bloqueiam a progressao.',
             ),
-            const SizedBox(height: 12),
-            for (final upgrade in zone6Upgrades)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    const Icon(Icons.construction_rounded, size: 22),
-                    const SizedBox(width: 10),
-                    Expanded(child: Text(upgrade.title)),
-                    Text('${upgrade.cost} moedas'),
-                  ],
-                ),
+            const SizedBox(height: 14),
+            for (final upgrade in zone6Upgrades) ...[
+              _UpgradeCard(
+                controller: controller,
+                upgrade: upgrade,
+                purchased: progress.purchasedUpgrades.contains(upgrade.id),
+                canAfford: progress.coins >= upgrade.cost,
               ),
+              if (upgrade != zone6Upgrades.last) const SizedBox(height: 10),
+            ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _UpgradeCard extends StatelessWidget {
+  const _UpgradeCard({
+    required this.controller,
+    required this.upgrade,
+    required this.purchased,
+    required this.canAfford,
+  });
+
+  final PlayerController controller;
+  final UpgradeDefinition upgrade;
+  final bool purchased;
+  final bool canAfford;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: Key('zone6-upgrade-${upgrade.id}'),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            child: Icon(
+              purchased
+                  ? Icons.check_circle_rounded
+                  : Icons.construction_rounded,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  upgrade.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(upgrade.description),
+                const SizedBox(height: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.monetization_on_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text('${upgrade.cost} moedas'),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    FilledButton(
+                      key: Key('zone6-install-${upgrade.id}'),
+                      onPressed: purchased || !canAfford
+                          ? null
+                          : () async {
+                              final ok = await controller.purchaseUpgrade(
+                                upgrade.id,
+                              );
+
+                              if (!context.mounted) {
+                                return;
+                              }
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    ok
+                                        ? '${upgrade.title} instalada.'
+                                        : 'Nao foi possivel instalar ${upgrade.title}.',
+                                  ),
+                                ),
+                              );
+                            },
+                      child: Text(purchased ? 'INSTALADA' : 'INSTALAR'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
