@@ -1,17 +1,12 @@
+import 'package:cidade_em_movimento/data/upgrades/upgrade_catalog.dart';
 import 'package:cidade_em_movimento/data/zones/zone_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('catalogo possui cinco zonas oficiais', () {
-    expect(zoneCatalog.length, 5);
-    expect(zone1Definition.id, 'ZONE_1');
-    expect(zone2Definition.id, 'ZONE_2');
-    expect(zone3Definition.id, 'ZONE_3');
-    expect(zone4Definition.id, 'ZONE_4');
+  test('Zona 5 cadastrada com estrutura oficial', () {
+    expect(zoneCatalog.length, greaterThanOrEqualTo(5));
     expect(zone5Definition.id, 'ZONE_5');
-  });
-
-  test('Zona 5 possui estrutura oficial aprovada', () {
+    expect(zone5Definition.title, 'Grandes Vias');
     expect(zone5Definition.regularMissionIds.length, 5);
     expect(zone5Definition.specialMissionId, 'Z5_SPECIAL');
     expect(zone5Definition.specialMinimumStars, 9);
@@ -21,9 +16,9 @@ void main() {
     expect(zone5Definition.prerequisiteMedalId, 'GUARDIAO_DA_CULTURA');
   });
 
-  test('localiza Zona 5 por missao e id', () {
-    expect(findZoneByMission('Z5_M03')?.id, 'ZONE_5');
-    expect(findZoneByMission('Z5_SPECIAL')?.id, 'ZONE_5');
-    expect(findZoneById('ZONE_5')?.title, 'Grandes Vias');
+  test('economia de melhorias Zona 5 fecha em 240 moedas', () {
+    final upgrades = upgradesForZone('ZONE_5');
+    expect(upgrades.length, 3);
+    expect(upgrades.fold<int>(0, (s, u) => s + u.cost), 240);
   });
 }

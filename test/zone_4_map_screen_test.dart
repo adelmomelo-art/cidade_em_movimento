@@ -1,3 +1,4 @@
+import 'package:cidade_em_movimento/app/theme.dart';
 import 'package:cidade_em_movimento/controllers/player_controller.dart';
 import 'package:cidade_em_movimento/models/mission_result.dart';
 import 'package:cidade_em_movimento/screens/zone_4_map/zone_4_map_screen.dart';
@@ -60,7 +61,10 @@ void main() {
     final controller = await _controllerWithCoins(60);
 
     await tester.pumpWidget(
-      MaterialApp(home: Zone4MapScreen(controller: controller)),
+      MaterialApp(
+        theme: AppTheme.light,
+        home: Zone4MapScreen(controller: controller),
+      ),
     );
     await tester.pumpAndSettle();
 

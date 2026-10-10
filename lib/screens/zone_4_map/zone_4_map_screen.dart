@@ -57,47 +57,62 @@ class Zone4MapScreen extends StatelessWidget {
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      if (progress.isZoneCompleted('ZONE_4')) ...[
-                        const _ZoneCompletedCard(),
-                        const SizedBox(height: 16),
-                      ],
-                      _CultureCard(
-                        purchasedUpgrades: progress.purchasedUpgrades,
-                      ),
-                      const SizedBox(height: 16),
-                      Zone4EvolvingScene(
-                        purchasedUpgrades: progress.purchasedUpgrades,
-                      ),
-                      const SizedBox(height: 16),
-                      _UpgradeSection(controller: controller),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Miss\u00f5es da Zona 4',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        'Complete as cinco miss\u00f5es, alcance pelo menos '
-                        '9 estrelas e libere o desafio final.',
-                      ),
-                      const SizedBox(height: 12),
-                      for (var index = 0; index < _missions.length; index++)
-                        _MissionTile(
-                          number: index + 1,
-                          id: _missions[index].$1,
-                          title: _missions[index].$2,
-                          unlocked: progress.unlockedMissions.contains(
-                            _missions[index].$1,
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        if (progress.isZoneCompleted('ZONE_4')) ...[
+                          const _ZoneCompletedCard(),
+                          const SizedBox(height: 10),
+                          FilledButton.icon(
+                            onPressed: controller.isZoneUnlocked('ZONE_5')
+                                ? () {
+                                    Navigator.of(
+                                      context,
+                                    ).pushNamed(AppRoutes.zone5);
+                                  }
+                                : null,
+                            icon: const Icon(Icons.alt_route_rounded),
+                            label: const Text('AVAN\u00c7AR PARA GRANDES VIAS'),
                           ),
-                          stars:
-                              progress.missionStars[_missions[index].$1] ?? 0,
-                          special: _missions[index].$1 == 'Z4_SPECIAL',
+                          const SizedBox(height: 16),
+                        ],
+                        _CultureCard(
+                          purchasedUpgrades: progress.purchasedUpgrades,
                         ),
-                    ]),
+                        const SizedBox(height: 16),
+                        IgnorePointer(
+                          child: Zone4EvolvingScene(
+                            purchasedUpgrades: progress.purchasedUpgrades,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _UpgradeSection(controller: controller),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Miss\u00f5es da Zona 4',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Complete as cinco miss\u00f5es, alcance pelo menos '
+                          '9 estrelas e libere o desafio final.',
+                        ),
+                        const SizedBox(height: 12),
+                        for (var index = 0; index < _missions.length; index++)
+                          _MissionTile(
+                            number: index + 1,
+                            id: _missions[index].$1,
+                            title: _missions[index].$2,
+                            unlocked: progress.unlockedMissions.contains(
+                              _missions[index].$1,
+                            ),
+                            stars:
+                                progress.missionStars[_missions[index].$1] ?? 0,
+                            special: _missions[index].$1 == 'Z4_SPECIAL',
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -314,16 +329,21 @@ class _UpgradeCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(upgrade.description),
                 const SizedBox(height: 10),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(
-                      Icons.monetization_on_rounded,
-                      size: 18,
-                      color: Theme.of(context).colorScheme.primary,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.monetization_on_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text('${upgrade.cost} moedas'),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    Text('${upgrade.cost} moedas'),
-                    const Spacer(),
+                    const SizedBox(height: 8),
                     FilledButton(
                       key: Key('zone4-install-${upgrade.id}'),
                       onPressed: purchased || !canAfford

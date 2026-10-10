@@ -50,29 +50,37 @@ const zone4Definition = ZoneDefinition(
   prerequisiteMedalId: 'GUARDIAO_DA_ORLA',
 );
 
+const zone5Definition = ZoneDefinition(
+  id: 'ZONE_5',
+  title: 'Grandes Vias',
+  regularMissionIds: <String>{'Z5_M01', 'Z5_M02', 'Z5_M03', 'Z5_M04', 'Z5_M05'},
+  specialMissionId: 'Z5_SPECIAL',
+  specialMinimumStars: 9,
+  medalId: 'GUARDIAO_DAS_VIAS',
+  completionBonusCoins: 60,
+  initialMissionId: 'Z5_M01',
+  prerequisiteZoneId: 'ZONE_4',
+  prerequisiteMedalId: 'GUARDIAO_DA_CULTURA',
+);
+
 const zoneCatalog = <ZoneDefinition>[
   zone1Definition,
   zone2Definition,
   zone3Definition,
   zone4Definition,
+  zone5Definition,
 ];
 
 ZoneDefinition? findZoneByMission(String missionId) {
   for (final zone in zoneCatalog) {
-    if (zone.containsMission(missionId)) {
-      return zone;
-    }
+    if (zone.containsMission(missionId)) return zone;
   }
-
   return null;
 }
 
 ZoneDefinition? findZoneById(String zoneId) {
   for (final zone in zoneCatalog) {
-    if (zone.id == zoneId) {
-      return zone;
-    }
+    if (zone.id == zoneId) return zone;
   }
-
   return null;
 }

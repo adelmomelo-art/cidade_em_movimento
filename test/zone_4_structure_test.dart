@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Zona 4 cadastrada com estrutura oficial', () {
-    expect(zoneCatalog.length, 4);
+    expect(zoneCatalog.length, greaterThanOrEqualTo(4));
     expect(zone4Definition.id, 'ZONE_4');
     expect(zone4Definition.title, 'Cultura / Eventos');
     expect(zone4Definition.regularMissionIds.length, 5);

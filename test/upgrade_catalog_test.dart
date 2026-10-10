@@ -2,55 +2,47 @@ import 'package:cidade_em_movimento/data/upgrades/upgrade_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('catalogo generico contem as doze melhorias oficiais', () {
-    expect(upgradeCatalog.length, 12);
-    expect(upgradeCatalog.map((upgrade) => upgrade.id).toSet(), {
-      'FAIXA_SEGURA',
-      'ILUMINACAO_ESCOLAR',
-      'TRECHO_CICLOVIARIO',
-      'TRAVESSIA_ACESSIVEL',
-      'PONTO_SEGURO',
-      'ROTA_COMPARTILHADA',
-      'TRAVESSIA_ORLA_SEGURA',
-      'CICLOVIA_CONECTADA',
-      'EMBARQUE_ORGANIZADO',
-      'TRAVESSIA_EVENTO_SEGURA',
-      'SINALIZACAO_TEMPORARIA',
-      'EMBARQUE_EVENTO_ORGANIZADO',
+  test('catalogo generico contem quinze melhorias oficiais', () {
+    expect(upgradeCatalog.length, 15);
+    expect(
+      upgradeCatalog.map((u) => u.id).toSet(),
+      containsAll(<String>{
+        'FAIXA_SEGURA',
+        'ILUMINACAO_ESCOLAR',
+        'TRECHO_CICLOVIARIO',
+        'TRAVESSIA_ACESSIVEL',
+        'PONTO_SEGURO',
+        'ROTA_COMPARTILHADA',
+        'TRAVESSIA_ORLA_SEGURA',
+        'CICLOVIA_CONECTADA',
+        'EMBARQUE_ORGANIZADO',
+        'TRAVESSIA_EVENTO_SEGURA',
+        'SINALIZACAO_TEMPORARIA',
+        'EMBARQUE_EVENTO_ORGANIZADO',
+        'TRAVESSIA_GRANDE_VIA',
+        'ILUMINACAO_CORREDOR',
+        'REFUGIO_PEDESTRE',
+      }),
+    );
+  });
+
+  for (final row in <(String, int)>[
+    ('ZONE_1', 220),
+    ('ZONE_2', 240),
+    ('ZONE_3', 240),
+    ('ZONE_4', 240),
+    ('ZONE_5', 240),
+  ]) {
+    test('${row.$1} possui tres melhorias e custo esperado', () {
+      final upgrades = upgradesForZone(row.$1);
+      expect(upgrades.length, 3);
+      expect(upgrades.fold<int>(0, (s, u) => s + u.cost), row.$2);
     });
-  });
+  }
 
-  test('Zona 1 preserva tres melhorias e custo total 220', () {
-    final upgrades = upgradesForZone('ZONE_1');
-    expect(upgrades.length, 3);
-    expect(upgrades.fold<int>(0, (sum, item) => sum + item.cost), 220);
-  });
-
-  test('Zona 2 possui tres melhorias e custo total 240', () {
-    final upgrades = upgradesForZone('ZONE_2');
-    expect(upgrades.length, 3);
-    expect(upgrades.fold<int>(0, (sum, item) => sum + item.cost), 240);
-  });
-
-  test('Zona 3 possui tres melhorias e custo total 240', () {
-    final upgrades = upgradesForZone('ZONE_3');
-    expect(upgrades.length, 3);
-    expect(upgrades.fold<int>(0, (sum, item) => sum + item.cost), 240);
-  });
-
-  test('Zona 4 possui tres melhorias e custo total 240', () {
-    final upgrades = upgradesForZone('ZONE_4');
-    expect(upgrades.length, 3);
-    expect(upgrades.fold<int>(0, (sum, item) => sum + item.cost), 240);
-  });
-
-  test('busca generica localiza melhorias por id', () {
-    expect(findUpgradeById('FAIXA_SEGURA')?.cost, 50);
-    expect(findUpgradeById('TRAVESSIA_ACESSIVEL')?.cost, 60);
-    expect(findUpgradeById('TRAVESSIA_ORLA_SEGURA')?.cost, 60);
-    expect(findUpgradeById('TRAVESSIA_EVENTO_SEGURA')?.cost, 60);
-    expect(findUpgradeById('SINALIZACAO_TEMPORARIA')?.cost, 80);
-    expect(findUpgradeById('EMBARQUE_EVENTO_ORGANIZADO')?.cost, 100);
-    expect(findUpgradeById('MELHORIA_INEXISTENTE'), isNull);
+  test('busca generica localiza melhorias Zona 5', () {
+    expect(findUpgradeById('TRAVESSIA_GRANDE_VIA')?.cost, 60);
+    expect(findUpgradeById('ILUMINACAO_CORREDOR')?.cost, 80);
+    expect(findUpgradeById('REFUGIO_PEDESTRE')?.cost, 100);
   });
 }

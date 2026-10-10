@@ -27,6 +27,12 @@ import '../data/zone_4/mission_03_data.dart';
 import '../data/zone_4/mission_04_data.dart';
 import '../data/zone_4/mission_05_data.dart';
 import '../data/zone_4/special_mission_data.dart';
+import '../data/zone_5/mission_01_data.dart';
+import '../data/zone_5/mission_02_data.dart';
+import '../data/zone_5/mission_03_data.dart';
+import '../data/zone_5/mission_04_data.dart';
+import '../data/zone_5/mission_05_data.dart';
+import '../data/zone_5/special_mission_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
 import '../screens/avatar/avatar_screen.dart';
@@ -40,6 +46,7 @@ import '../screens/zone_1_map/zone_1_map_screen.dart';
 import '../screens/zone_2_map/zone_2_map_screen.dart';
 import '../screens/zone_3_map/zone_3_map_screen.dart';
 import '../screens/zone_4_map/zone_4_map_screen.dart';
+import '../screens/zone_5_map/zone_5_map_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -70,6 +77,13 @@ class AppRoutes {
   static const zone4Mission4 = '/zone-4/mission-4';
   static const zone4Mission5 = '/zone-4/mission-5';
   static const zone4SpecialMission = '/zone-4/special';
+  static const zone5 = '/zone-5';
+  static const zone5Mission1 = '/zone-5/mission-1';
+  static const zone5Mission2 = '/zone-5/mission-2';
+  static const zone5Mission3 = '/zone-5/mission-3';
+  static const zone5Mission4 = '/zone-5/mission-4';
+  static const zone5Mission5 = '/zone-5/mission-5';
+  static const zone5SpecialMission = '/zone-5/special';
   static const playerProgress = '/player-progress';
   static const mission1 = '/zone-1/mission-1';
   static const mission2 = '/zone-1/mission-2';
@@ -295,6 +309,91 @@ class AppRoutes {
           settings: settings,
           controller: controller,
           mission: buildZone4SpecialMission(profile.type),
+        );
+      case zone5:
+        if (!controller.isZoneUnlocked('ZONE_5')) {
+          return _invalidRoute(settings);
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => Zone5MapScreen(controller: controller),
+        );
+
+      case zone5Mission1:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.isZoneUnlocked('ZONE_5') ||
+            !controller.progress.unlockedMissions.contains('Z5_M01')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone5Mission01(profile.type),
+          nextMissionId: 'Z5_M02',
+        );
+
+      case zone5Mission2:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z5_M02')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone5Mission02(profile.type),
+          nextMissionId: 'Z5_M03',
+        );
+
+      case zone5Mission3:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z5_M03')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone5Mission03(profile.type),
+          nextMissionId: 'Z5_M04',
+        );
+
+      case zone5Mission4:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z5_M04')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone5Mission04(profile.type),
+          nextMissionId: 'Z5_M05',
+        );
+
+      case zone5Mission5:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z5_M05')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone5Mission05(profile.type),
+        );
+
+      case zone5SpecialMission:
+        final profile = controller.profile;
+        if (profile == null ||
+            !controller.progress.unlockedMissions.contains('Z5_SPECIAL')) {
+          return _invalidRoute(settings);
+        }
+        return _missionRoute(
+          settings: settings,
+          controller: controller,
+          mission: buildZone5SpecialMission(profile.type),
         );
       case playerProgress:
         if (!controller.hasProfile) {
