@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Zona 3 cadastrada com estrutura oficial', () {
-    expect(zoneCatalog.length, 3);
+    expect(zoneCatalog.length, greaterThanOrEqualTo(3));
     expect(zone3Definition.id, 'ZONE_3');
     expect(zone3Definition.title, 'Orla / Praia de Iracema');
     expect(zone3Definition.regularMissionIds.length, 5);

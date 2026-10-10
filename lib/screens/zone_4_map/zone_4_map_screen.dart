@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
-import '../../data/zone_3/upgrade_data.dart';
-import '../../models/upgrade_definition.dart';
-import '../../widgets/zone_3_evolving_scene.dart';
+import '../../data/zone_4/upgrade_data.dart';
 
-class Zone3MapScreen extends StatelessWidget {
-  const Zone3MapScreen({super.key, required this.controller});
+class Zone4MapScreen extends StatelessWidget {
+  const Zone4MapScreen({super.key, required this.controller});
 
   final PlayerController controller;
 
   static const _missions = [
-    ('Z3_M01', 'Travessia na Beira-Mar'),
-    ('Z3_M02', 'Ciclovia Compartilhada'),
-    ('Z3_M03', 'Desembarque na Orla'),
-    ('Z3_M04', 'Olhos na Orla'),
-    ('Z3_M05', 'Fluxo da Praia'),
-    ('Z3_SPECIAL', 'Orla em Equil\u00edbrio'),
+    ('Z4_M01', 'Chegada ao Evento'),
+    ('Z4_M02', 'Travessia com Multid\u00e3o'),
+    ('Z4_M03', 'Embarque Organizado'),
+    ('Z4_M04', '\u00c1rea de Bloqueio'),
+    ('Z4_M05', 'Sa\u00edda Segura'),
+    ('Z4_SPECIAL', 'Cidade em Festa'),
   ];
 
   @override
@@ -33,7 +31,7 @@ class Zone3MapScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Orla / Praia de Iracema'),
+            title: const Text('Cultura / Eventos'),
             actions: [
               IconButton(
                 tooltip: 'Meu Progresso',
@@ -59,34 +57,16 @@ class Zone3MapScreen extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      if (progress.isZoneCompleted('ZONE_3')) ...[
+                      if (progress.isZoneCompleted('ZONE_4')) ...[
                         const _ZoneCompletedCard(),
-                        const SizedBox(height: 10),
-                        FilledButton.icon(
-                          onPressed: controller.isZoneUnlocked('ZONE_4')
-                              ? () {
-                                  Navigator.of(
-                                    context,
-                                  ).pushNamed(AppRoutes.zone4);
-                                }
-                              : null,
-                          icon: const Icon(Icons.festival_rounded),
-                          label: const Text(
-                            'AVAN\u00c7AR PARA CULTURA / EVENTOS',
-                          ),
-                        ),
                         const SizedBox(height: 16),
                       ],
-                      _OrlaCard(purchasedUpgrades: progress.purchasedUpgrades),
+                      const _CultureCard(),
                       const SizedBox(height: 16),
-                      Zone3EvolvingScene(
-                        purchasedUpgrades: progress.purchasedUpgrades,
-                      ),
-                      const SizedBox(height: 16),
-                      _UpgradeSection(controller: controller),
+                      const _UpgradePreview(),
                       const SizedBox(height: 20),
                       Text(
-                        'Miss\u00f5es da Zona 3',
+                        'Miss\u00f5es da Zona 4',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -107,7 +87,7 @@ class Zone3MapScreen extends StatelessWidget {
                           ),
                           stars:
                               progress.missionStars[_missions[index].$1] ?? 0,
-                          special: _missions[index].$1 == 'Z3_SPECIAL',
+                          special: _missions[index].$1 == 'Z4_SPECIAL',
                         ),
                     ]),
                   ),
@@ -138,11 +118,11 @@ class _ZoneCompletedCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Zona 3 conclu\u00edda',
+                    'Zona 4 conclu\u00edda',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 2),
-                  Text('Medalha: Guardi\u00e3o da Orla'),
+                  Text('Medalha: Guardi\u00e3o da Cultura'),
                 ],
               ),
             ),
@@ -153,27 +133,21 @@ class _ZoneCompletedCard extends StatelessWidget {
   }
 }
 
-class _OrlaCard extends StatelessWidget {
-  const _OrlaCard({required this.purchasedUpgrades});
-
-  final Set<String> purchasedUpgrades;
+class _CultureCard extends StatelessWidget {
+  const _CultureCard();
 
   @override
   Widget build(BuildContext context) {
-    final hasCrossing = purchasedUpgrades.contains('TRAVESSIA_ORLA_SEGURA');
-    final hasCycleway = purchasedUpgrades.contains('CICLOVIA_CONECTADA');
-    final hasBoarding = purchasedUpgrades.contains('EMBARQUE_ORGANIZADO');
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(22),
         child: Column(
           children: [
-            const Icon(Icons.beach_access_rounded, size: 72),
+            const Icon(Icons.festival_rounded, size: 72),
             const SizedBox(height: 12),
-            Text('ZONA 3', style: Theme.of(context).textTheme.labelLarge),
+            Text('ZONA 4', style: Theme.of(context).textTheme.labelLarge),
             Text(
-              'Orla / Praia de Iracema',
+              'Cultura / Eventos',
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,
@@ -181,29 +155,15 @@ class _OrlaCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Mobilidade e Conviv\u00eancia na Orla',
+              'Mobilidade em Grandes Encontros',
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             const Text(
-              'Pedestres, ciclistas, passageiros e condutores aprendem a '
-              'compartilhar um dos espa\u00e7os mais movimentados de Fortaleza.',
+              'Aprenda a circular com seguran\u00e7a em eventos, shows, '
+              'festivais e grandes concentra\u00e7\u00f5es de p\u00fablico.',
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: [
-                _TransformationBadge(
-                  label: 'Travessia',
-                  installed: hasCrossing,
-                ),
-                _TransformationBadge(label: 'Ciclovia', installed: hasCycleway),
-                _TransformationBadge(label: 'Embarque', installed: hasBoarding),
-              ],
             ),
           ],
         ),
@@ -212,35 +172,11 @@ class _OrlaCard extends StatelessWidget {
   }
 }
 
-class _TransformationBadge extends StatelessWidget {
-  const _TransformationBadge({required this.label, required this.installed});
-
-  final String label;
-  final bool installed;
+class _UpgradePreview extends StatelessWidget {
+  const _UpgradePreview();
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      avatar: Icon(
-        installed
-            ? Icons.check_circle_rounded
-            : Icons.radio_button_unchecked_rounded,
-        size: 18,
-      ),
-      label: Text(label),
-    );
-  }
-}
-
-class _UpgradeSection extends StatelessWidget {
-  const _UpgradeSection({required this.controller});
-
-  final PlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = controller.progress;
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -248,116 +184,31 @@ class _UpgradeSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Transforme a Orla',
+              'Transforma\u00e7\u00f5es do evento',
               style: Theme.of(
                 context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             const Text(
-              'Use as moedas conquistadas para instalar melhorias urbanas. '
-              'As compras s\u00e3o opcionais e n\u00e3o bloqueiam a progress\u00e3o.',
+              'As melhorias j\u00e1 est\u00e3o definidas. A compra e a '
+              'transforma\u00e7\u00e3o visual entram no pr\u00f3ximo pacote.',
             ),
-            const SizedBox(height: 14),
-            for (final upgrade in zone3Upgrades) ...[
-              _UpgradeCard(
-                controller: controller,
-                upgrade: upgrade,
-                purchased: progress.purchasedUpgrades.contains(upgrade.id),
-                canAfford: progress.coins >= upgrade.cost,
-              ),
-              if (upgrade != zone3Upgrades.last) const SizedBox(height: 10),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _UpgradeCard extends StatelessWidget {
-  const _UpgradeCard({
-    required this.controller,
-    required this.upgrade,
-    required this.purchased,
-    required this.canAfford,
-  });
-
-  final PlayerController controller;
-  final UpgradeDefinition upgrade;
-  final bool purchased;
-  final bool canAfford;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      key: Key('zone3-upgrade-${upgrade.id}'),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            child: Icon(
-              purchased ? Icons.check_circle_rounded : Icons.add_road_rounded,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  upgrade.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(upgrade.description),
-                const SizedBox(height: 10),
-                Row(
+            const SizedBox(height: 12),
+            for (final upgrade in zone4Upgrades)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
                   children: [
-                    Icon(
-                      Icons.monetization_on_rounded,
-                      size: 18,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
+                    const Icon(Icons.construction_rounded, size: 22),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(upgrade.title)),
                     Text('${upgrade.cost} moedas'),
-                    const Spacer(),
-                    FilledButton(
-                      key: Key('zone3-install-${upgrade.id}'),
-                      onPressed: purchased || !canAfford
-                          ? null
-                          : () async {
-                              final ok = await controller.purchaseUpgrade(
-                                upgrade.id,
-                              );
-
-                              if (!context.mounted) {
-                                return;
-                              }
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    ok
-                                        ? '${upgrade.title} instalada.'
-                                        : 'N\u00e3o foi poss\u00edvel instalar ${upgrade.title}.',
-                                  ),
-                                ),
-                              );
-                            },
-                      child: Text(purchased ? 'INSTALADA' : 'INSTALAR'),
-                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-        ],
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -461,18 +312,18 @@ class _MissionTile extends StatelessWidget {
 
   String? get _route {
     switch (id) {
-      case 'Z3_M01':
-        return AppRoutes.zone3Mission1;
-      case 'Z3_M02':
-        return AppRoutes.zone3Mission2;
-      case 'Z3_M03':
-        return AppRoutes.zone3Mission3;
-      case 'Z3_M04':
-        return AppRoutes.zone3Mission4;
-      case 'Z3_M05':
-        return AppRoutes.zone3Mission5;
-      case 'Z3_SPECIAL':
-        return AppRoutes.zone3SpecialMission;
+      case 'Z4_M01':
+        return AppRoutes.zone4Mission1;
+      case 'Z4_M02':
+        return AppRoutes.zone4Mission2;
+      case 'Z4_M03':
+        return AppRoutes.zone4Mission3;
+      case 'Z4_M04':
+        return AppRoutes.zone4Mission4;
+      case 'Z4_M05':
+        return AppRoutes.zone4Mission5;
+      case 'Z4_SPECIAL':
+        return AppRoutes.zone4SpecialMission;
       default:
         return null;
     }

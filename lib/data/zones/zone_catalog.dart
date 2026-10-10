@@ -37,10 +37,24 @@ const zone3Definition = ZoneDefinition(
   prerequisiteMedalId: 'GUARDIAO_DO_CENTRO',
 );
 
+const zone4Definition = ZoneDefinition(
+  id: 'ZONE_4',
+  title: 'Cultura / Eventos',
+  regularMissionIds: <String>{'Z4_M01', 'Z4_M02', 'Z4_M03', 'Z4_M04', 'Z4_M05'},
+  specialMissionId: 'Z4_SPECIAL',
+  specialMinimumStars: 9,
+  medalId: 'GUARDIAO_DA_CULTURA',
+  completionBonusCoins: 60,
+  initialMissionId: 'Z4_M01',
+  prerequisiteZoneId: 'ZONE_3',
+  prerequisiteMedalId: 'GUARDIAO_DA_ORLA',
+);
+
 const zoneCatalog = <ZoneDefinition>[
   zone1Definition,
   zone2Definition,
   zone3Definition,
+  zone4Definition,
 ];
 
 ZoneDefinition? findZoneByMission(String missionId) {
