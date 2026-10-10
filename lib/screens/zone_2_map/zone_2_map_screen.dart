@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
 import '../../data/zone_2/upgrade_data.dart';
 
@@ -47,8 +48,8 @@ class Zone2MapScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       const Text(
-                        'A estrutura est\u00e1 pronta. O conte\u00fado jog\u00e1vel '
-                        'ser\u00e1 implementado no FAST-3.',
+                        'Complete as miss\u00f5es, conquiste estrelas e '
+                        'libere o desafio final.',
                       ),
                       const SizedBox(height: 12),
                       for (var index = 0; index < _missions.length; index++)
@@ -59,6 +60,8 @@ class Zone2MapScreen extends StatelessWidget {
                           unlocked: progress.unlockedMissions.contains(
                             _missions[index].$1,
                           ),
+                          stars:
+                              progress.missionStars[_missions[index].$1] ?? 0,
                           special: _missions[index].$1 == 'Z2_SPECIAL',
                         ),
                     ]),
@@ -128,7 +131,7 @@ class _EconomyCard extends StatelessWidget {
             Expanded(
               child: Text(
                 'Saldo atual: $coins moedas\n'
-                'Economia planejada da Zona 2: 180 + 60 de b\u00f4nus = 240.',
+                'Economia da Zona 2: 180 + 60 de b\u00f4nus = 240.',
               ),
             ),
           ],
@@ -170,8 +173,8 @@ class _UpgradePreview extends StatelessWidget {
               ),
             const SizedBox(height: 4),
             const Text(
-              'Compra e transforma\u00e7\u00e3o visual ser\u00e3o homologadas '
-              'nos pr\u00f3ximos pacotes.',
+              'A compra e a transforma\u00e7\u00e3o visual ser\u00e3o '
+              'homologadas no FAST-4.',
             ),
           ],
         ),
@@ -186,6 +189,7 @@ class _MissionPreview extends StatelessWidget {
     required this.id,
     required this.title,
     required this.unlocked,
+    required this.stars,
     required this.special,
   });
 
@@ -193,7 +197,27 @@ class _MissionPreview extends StatelessWidget {
   final String id;
   final String title;
   final bool unlocked;
+  final int stars;
   final bool special;
+
+  String? get _route {
+    switch (id) {
+      case 'Z2_M01':
+        return AppRoutes.zone2Mission1;
+      case 'Z2_M02':
+        return AppRoutes.zone2Mission2;
+      case 'Z2_M03':
+        return AppRoutes.zone2Mission3;
+      case 'Z2_M04':
+        return AppRoutes.zone2Mission4;
+      case 'Z2_M05':
+        return AppRoutes.zone2Mission5;
+      case 'Z2_SPECIAL':
+        return AppRoutes.zone2SpecialMission;
+      default:
+        return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -201,38 +225,55 @@ class _MissionPreview extends StatelessWidget {
         ? 'Miss\u00e3o Especial \u2014 $title'
         : '$number. $title';
 
+    final route = _route;
+    final canOpen = unlocked && route != null;
+
+    final subtitle = unlocked
+        ? (stars == 0
+              ? 'Dispon\u00edvel'
+              : '${'\u2605' * stars}${'\u2606' * (3 - stars)}')
+        : 'Bloqueada';
+
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-        child: Row(
-          children: [
-            CircleAvatar(
-              child: Icon(
-                unlocked
-                    ? (special ? Icons.flag_rounded : Icons.lock_open_rounded)
-                    : Icons.lock_rounded,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: canOpen
+            ? () {
+                Navigator.of(context).pushNamed(route);
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+          child: Row(
+            children: [
+              CircleAvatar(
+                child: Icon(
+                  unlocked
+                      ? (special ? Icons.flag_rounded : Icons.lock_open_rounded)
+                      : Icons.lock_rounded,
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    unlocked
-                        ? 'Estrutura liberada \u2014 conte\u00fado no FAST-3'
-                        : 'Aguardando progress\u00e3o da Zona 2',
-                  ),
-                ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(subtitle),
+                  ],
+                ),
               ),
-            ),
-          ],
+              if (canOpen) ...[
+                const SizedBox(width: 12),
+                const Icon(Icons.play_circle_outline_rounded),
+              ],
+            ],
+          ),
         ),
       ),
     );

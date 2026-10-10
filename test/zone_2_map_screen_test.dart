@@ -41,9 +41,7 @@ Future<void> _expectTextByScrolling(WidgetTester tester, String text) async {
 }
 
 void main() {
-  testWidgets('tela estrutural da Zona 2 exibe identidade e seis missoes', (
-    tester,
-  ) async {
+  testWidgets('tela Zona 2 mostra conteudo jogavel completo', (tester) async {
     final controller = await _unlockedController();
 
     await tester.pumpWidget(
@@ -66,9 +64,7 @@ void main() {
     );
   });
 
-  testWidgets('tela exibe as tres melhorias e custos aprovados', (
-    tester,
-  ) async {
+  testWidgets('primeira missao Zona 2 aparece disponivel', (tester) async {
     final controller = await _unlockedController();
 
     await tester.pumpWidget(
@@ -77,11 +73,8 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    await _expectTextByScrolling(tester, 'Travessia Acess\u00edvel');
-    expect(find.text('Ponto Seguro'), findsOneWidget);
-    expect(find.text('Rota Compartilhada'), findsOneWidget);
-    expect(find.text('60 moedas'), findsOneWidget);
-    expect(find.text('80 moedas'), findsOneWidget);
-    expect(find.text('100 moedas'), findsOneWidget);
+    await _expectTextByScrolling(tester, '1. Cruzamento em Movimento');
+    expect(find.text('Dispon\u00edvel'), findsOneWidget);
+    expect(find.byIcon(Icons.play_circle_outline_rounded), findsOneWidget);
   });
 }

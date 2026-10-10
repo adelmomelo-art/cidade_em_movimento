@@ -66,4 +66,34 @@ void main() {
     expect(find.text('Nenhuma medalha conquistada ainda.'), findsOneWidget);
     expect(find.text('Nenhuma melhoria instalada ainda.'), findsOneWidget);
   });
+
+  testWidgets('tela exibe nome amigavel da medalha Zona 2', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'cidade_em_movimento.game_progress.v1':
+          '{"citizenshipXp":0,"knowledge":0,"coins":0,'
+          '"completedMissions":[],"missionStars":{},'
+          '"unlockedMissions":["Z1_M01"],"purchasedUpgrades":[],'
+          '"medals":["GUARDIAO_DO_CENTRO"],'
+          '"completedZones":["ZONE_2"],'
+          '"claimedZoneCompletionBonuses":["ZONE_2"],'
+          '"zone1Completed":false}',
+    });
+
+    final preferences = await SharedPreferences.getInstance();
+    final controller = PlayerController(StorageService(preferences));
+    await controller.initialize();
+    await controller.createProfile(
+      type: PlayerType.adult,
+      avatarId: 'adult_default',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(home: PlayerProgressScreen(controller: controller)),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Guardi\u00e3o do Centro'), findsOneWidget);
+    expect(find.text('GUARDIAO_DO_CENTRO'), findsNothing);
+  });
 }
