@@ -42,6 +42,7 @@ import '../data/zone_6/special_mission_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
 import '../screens/avatar/avatar_screen.dart';
+import '../screens/fortaleza_map/fortaleza_map_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/intro/intro_screen.dart';
 import '../screens/mission/mission_screen.dart';
@@ -62,6 +63,7 @@ class AppRoutes {
   static const profile = '/profile';
   static const avatar = '/avatar';
   static const intro = '/intro';
+  static const fortalezaMap = '/fortaleza';
   static const zone1 = '/zone-1';
   static const zone2 = '/zone-2';
   static const zone2Mission1 = '/zone-2/mission-1';
@@ -140,6 +142,14 @@ class AppRoutes {
           builder: (_) => IntroScreen(controller: controller),
         );
 
+      case fortalezaMap:
+        if (!controller.hasProfile) {
+          return _invalidRoute(settings);
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => FortalezaMapScreen(controller: controller),
+        );
       case zone1:
         return MaterialPageRoute<void>(
           settings: settings,

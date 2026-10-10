@@ -67,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pushNamed(
                         controller.hasProfile
-                            ? AppRoutes.zone1
+                            ? AppRoutes.fortalezaMap
                             : AppRoutes.profile,
                       );
                     },

@@ -55,7 +55,7 @@ class IntroScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(
                             context,
-                          ).pushReplacementNamed(AppRoutes.zone1);
+                          ).pushReplacementNamed(AppRoutes.fortalezaMap);
                         },
                         icon: const Icon(Icons.map_rounded),
                         label: const Text('COMEÇAR'),
