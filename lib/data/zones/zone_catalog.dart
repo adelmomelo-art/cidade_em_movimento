@@ -63,12 +63,25 @@ const zone5Definition = ZoneDefinition(
   prerequisiteMedalId: 'GUARDIAO_DA_CULTURA',
 );
 
+const zone6Definition = ZoneDefinition(
+  id: 'ZONE_6',
+  title: 'Polo Castelao',
+  regularMissionIds: <String>{'Z6_M01', 'Z6_M02', 'Z6_M03', 'Z6_M04', 'Z6_M05'},
+  specialMissionId: 'Z6_SPECIAL',
+  specialMinimumStars: 9,
+  medalId: 'GUARDIAO_DO_CASTELAO',
+  completionBonusCoins: 60,
+  initialMissionId: 'Z6_M01',
+  prerequisiteZoneId: 'ZONE_5',
+  prerequisiteMedalId: 'GUARDIAO_DAS_VIAS',
+);
 const zoneCatalog = <ZoneDefinition>[
   zone1Definition,
   zone2Definition,
   zone3Definition,
   zone4Definition,
   zone5Definition,
+  zone6Definition,
 ];
 
 ZoneDefinition? findZoneByMission(String missionId) {

@@ -2,28 +2,22 @@ import 'package:cidade_em_movimento/data/zones/zone_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('catalogo possui cinco zonas oficiais', () {
-    expect(zoneCatalog.length, 5);
-    expect(zone1Definition.id, 'ZONE_1');
-    expect(zone2Definition.id, 'ZONE_2');
-    expect(zone3Definition.id, 'ZONE_3');
-    expect(zone4Definition.id, 'ZONE_4');
-    expect(zone5Definition.id, 'ZONE_5');
+  test('catalogo possui seis zonas oficiais', () {
+    expect(zoneCatalog.length, 6);
+    expect(zone6Definition.id, 'ZONE_6');
   });
-
-  test('Zona 5 possui estrutura oficial aprovada', () {
-    expect(zone5Definition.regularMissionIds.length, 5);
-    expect(zone5Definition.specialMissionId, 'Z5_SPECIAL');
-    expect(zone5Definition.specialMinimumStars, 9);
-    expect(zone5Definition.medalId, 'GUARDIAO_DAS_VIAS');
-    expect(zone5Definition.completionBonusCoins, 60);
-    expect(zone5Definition.prerequisiteZoneId, 'ZONE_4');
-    expect(zone5Definition.prerequisiteMedalId, 'GUARDIAO_DA_CULTURA');
+  test('Zona 6 possui estrutura oficial aprovada', () {
+    expect(zone6Definition.regularMissionIds.length, 5);
+    expect(zone6Definition.specialMissionId, 'Z6_SPECIAL');
+    expect(zone6Definition.specialMinimumStars, 9);
+    expect(zone6Definition.medalId, 'GUARDIAO_DO_CASTELAO');
+    expect(zone6Definition.completionBonusCoins, 60);
+    expect(zone6Definition.prerequisiteZoneId, 'ZONE_5');
+    expect(zone6Definition.prerequisiteMedalId, 'GUARDIAO_DAS_VIAS');
   });
-
-  test('localiza Zona 5 por missao e id', () {
-    expect(findZoneByMission('Z5_M03')?.id, 'ZONE_5');
-    expect(findZoneByMission('Z5_SPECIAL')?.id, 'ZONE_5');
-    expect(findZoneById('ZONE_5')?.title, 'Grandes Vias');
+  test('localiza Zona 6 por missao e id', () {
+    expect(findZoneByMission('Z6_M03')?.id, 'ZONE_6');
+    expect(findZoneByMission('Z6_SPECIAL')?.id, 'ZONE_6');
+    expect(findZoneById('ZONE_6')?.title, 'Polo Castelao');
   });
 }

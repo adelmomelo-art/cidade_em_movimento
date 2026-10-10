@@ -4,6 +4,7 @@ import '../zone_2/upgrade_data.dart';
 import '../zone_3/upgrade_data.dart';
 import '../zone_4/upgrade_data.dart';
 import '../zone_5/upgrade_data.dart';
+import '../zone_6/upgrade_data.dart';
 
 const upgradeCatalog = <UpgradeDefinition>[
   ...zone1Upgrades,
@@ -11,6 +12,7 @@ const upgradeCatalog = <UpgradeDefinition>[
   ...zone3Upgrades,
   ...zone4Upgrades,
   ...zone5Upgrades,
+  ...zone6Upgrades,
 ];
 
 UpgradeDefinition? findUpgradeById(String upgradeId) {

@@ -62,6 +62,16 @@ class Zone5MapScreen extends StatelessWidget {
                       children: [
                         if (progress.isZoneCompleted('ZONE_5')) ...[
                           const _ZoneCompletedCard(),
+                          const SizedBox(height: 10),
+                          FilledButton.icon(
+                            onPressed: controller.isZoneUnlocked('ZONE_6')
+                                ? () => Navigator.of(
+                                    context,
+                                  ).pushNamed(AppRoutes.zone6)
+                                : null,
+                            icon: const Icon(Icons.stadium_rounded),
+                            label: const Text('AVANCAR PARA POLO CASTELAO'),
+                          ),
                           const SizedBox(height: 16),
                         ],
                         _RoadCard(
