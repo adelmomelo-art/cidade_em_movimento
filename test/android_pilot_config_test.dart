@@ -28,8 +28,8 @@ void main() {
     );
   });
 
-  test('versao do piloto esta fixada em 1.0.0+2', () {
+  test('versao do piloto esta fixada em 1.0.0+3', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(pubspec, contains('version: 1.0.0+2'));
+    expect(pubspec, contains('version: 1.0.0+3'));
   });
 }
