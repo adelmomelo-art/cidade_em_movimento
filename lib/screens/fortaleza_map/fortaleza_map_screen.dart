@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
 import '../../services/global_progress_service.dart';
+import '../../ui/visual_system.dart';
 
 class FortalezaMapScreen extends StatelessWidget {
   const FortalezaMapScreen({super.key, required this.controller});
@@ -93,48 +94,55 @@ class FortalezaMapScreen extends StatelessWidget {
             ],
           ),
           body: SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        _CityHeader(
-                          completedZones: completed,
-                          medals: medals,
-                          totalStars: totalStars,
-                        ),
-                        const SizedBox(height: 18),
-                        _FaixitaCard(controller: controller),
-                        const SizedBox(height: 12),
-                        _GlobalProgressCard(controller: controller),
-                        const SizedBox(height: 12),
-                        _SignDuelCard(controller: controller),
-                        const SizedBox(height: 12),
-                        _BuildNeighborhoodCard(controller: controller),
-                        const SizedBox(height: 18),
-                        for (var index = 0; index < _zones.length; index++) ...[
-                          _ZoneCard(
-                            zone: _zones[index],
-                            unlocked: controller.isZoneUnlocked(
-                              _zones[index].id,
-                            ),
-                            completed: progress.completedZones.contains(
-                              _zones[index].id,
-                            ),
-                            medalEarned: progress.medals.contains(
-                              _medalIdForZone(_zones[index].id),
-                            ),
+            child: GameBackground(
+              padding: EdgeInsets.zero,
+              child: CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          _CityHeader(
+                            completedZones: completed,
+                            medals: medals,
+                            totalStars: totalStars,
                           ),
-                          if (index < _zones.length - 1)
-                            const _RouteConnector(),
+                          const SizedBox(height: 18),
+                          _FaixitaCard(controller: controller),
+                          const SizedBox(height: 12),
+                          _GlobalProgressCard(controller: controller),
+                          const SizedBox(height: 12),
+                          _SignDuelCard(controller: controller),
+                          const SizedBox(height: 12),
+                          _BuildNeighborhoodCard(controller: controller),
+                          const SizedBox(height: 18),
+                          for (
+                            var index = 0;
+                            index < _zones.length;
+                            index++
+                          ) ...[
+                            _ZoneCard(
+                              zone: _zones[index],
+                              unlocked: controller.isZoneUnlocked(
+                                _zones[index].id,
+                              ),
+                              completed: progress.completedZones.contains(
+                                _zones[index].id,
+                              ),
+                              medalEarned: progress.medals.contains(
+                                _medalIdForZone(_zones[index].id),
+                              ),
+                            ),
+                            if (index < _zones.length - 1)
+                              const _RouteConnector(),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

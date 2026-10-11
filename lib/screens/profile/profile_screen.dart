@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../core/enums/player_type.dart';
+import '../../ui/visual_system.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,25 +11,38 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Escolha seu perfil')),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _ProfileCard(
-            type: PlayerType.child,
-            icon: Icons.child_care_rounded,
-            subtitle: 'Travessia, bicicleta, escola e segurança.',
-          ),
-          _ProfileCard(
-            type: PlayerType.teen,
-            icon: Icons.directions_bike_rounded,
-            subtitle: 'Mobilidade, convivência e cidadania.',
-          ),
-          _ProfileCard(
-            type: PlayerType.adult,
-            icon: Icons.directions_car_rounded,
-            subtitle: 'Legislação, direção defensiva e responsabilidade.',
-          ),
-        ],
+      body: GameBackground(
+        child: ListView(
+          key: const Key('profile-visual-list'),
+          children: [
+            const GameHeroPanel(
+              eyebrow: 'Comece sua jornada',
+              title: 'Como voce participa da cidade?',
+              subtitle:
+                  'O conteudo se adapta ao seu perfil sem alterar as regras centrais do jogo.',
+              icon: Icons.people_alt_rounded,
+            ),
+            const SizedBox(height: 18),
+            _ProfileCard(
+              type: PlayerType.child,
+              icon: Icons.child_care_rounded,
+              subtitle: 'Travessia, bicicleta, escola e seguranca.',
+              accent: GameColors.green,
+            ),
+            _ProfileCard(
+              type: PlayerType.teen,
+              icon: Icons.directions_bike_rounded,
+              subtitle: 'Mobilidade, convivencia e cidadania.',
+              accent: GameColors.orange,
+            ),
+            _ProfileCard(
+              type: PlayerType.adult,
+              icon: Icons.directions_car_rounded,
+              subtitle: 'Legislacao, direcao defensiva e responsabilidade.',
+              accent: GameColors.blue,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -39,47 +53,51 @@ class _ProfileCard extends StatelessWidget {
     required this.type,
     required this.icon,
     required this.subtitle,
+    required this.accent,
   });
 
   final PlayerType type;
   final IconData icon;
   final String subtitle;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: GameSectionCard(
         onTap: () {
           Navigator.of(context).pushNamed(AppRoutes.avatar, arguments: type);
         },
-        child: Padding(
-          padding: const EdgeInsets.all(22),
-          child: Row(
-            children: [
-              CircleAvatar(radius: 32, child: Icon(icon, size: 34)),
-              const SizedBox(width: 18),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      type.label,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+        child: Row(
+          children: [
+            GameIllustrationBadge(icon: icon, size: 66, color: accent),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    type.label,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
                     ),
-                    const SizedBox(height: 4),
-                    Text(type.initialTitle),
-                    const SizedBox(height: 6),
-                    Text(subtitle),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    type.initialTitle,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: accent,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(subtitle),
+                ],
               ),
-              const Icon(Icons.chevron_right_rounded),
-            ],
-          ),
+            ),
+            const Icon(Icons.chevron_right_rounded),
+          ],
         ),
       ),
     );
