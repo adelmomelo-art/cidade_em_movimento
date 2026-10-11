@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../app/routes.dart';
+import '../../controllers/player_controller.dart';
 import '../../models/mission_result.dart';
 
 class MissionResultScreen extends StatelessWidget {
-  const MissionResultScreen({super.key, required this.result});
+  const MissionResultScreen({
+    super.key,
+    required this.result,
+    required this.controller,
+  });
 
   final MissionResult result;
+  final PlayerController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +73,21 @@ class MissionResultScreen extends StatelessWidget {
                         'a tornar o bairro mais seguro.',
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 26),
+                      const SizedBox(height: 18),
+                      OutlinedButton.icon(
+                        key: const Key('mission-result-faixita'),
+                        onPressed: controller.hasProfile
+                            ? () {
+                                Navigator.of(context).pushNamed(
+                                  AppRoutes.faixita,
+                                  arguments: result,
+                                );
+                              }
+                            : null,
+                        icon: const Icon(Icons.support_agent_rounded),
+                        label: const Text('PERGUNTAR A FAIXITA'),
+                      ),
+                      const SizedBox(height: 12),
                       FilledButton.icon(
                         onPressed: () {
                           Navigator.of(context).popUntil(

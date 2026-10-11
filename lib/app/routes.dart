@@ -41,9 +41,11 @@ import '../data/zone_6/mission_05_data.dart';
 import '../data/zone_6/special_mission_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
+import '../main.dart' show faixitaService;
 import '../screens/avatar/avatar_screen.dart';
 import '../screens/build_neighborhood/build_neighborhood_screen.dart';
 import '../screens/fortaleza_map/fortaleza_map_screen.dart';
+import '../screens/faixita/faixita_screen.dart';
 import '../screens/global_progress/global_progress_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/intro/intro_screen.dart';
@@ -107,6 +109,7 @@ class AppRoutes {
   static const playerProgress = '/player-progress';
   static const globalProgress = '/progresso-global';
   static const pedagogicalDashboard = '/painel-pedagogico';
+  static const faixita = '/faixita';
   static const signDuel = '/duelo-das-placas';
   static const buildNeighborhood = '/construa-o-bairro';
   static const mission1 = '/zone-1/mission-1';
@@ -538,6 +541,21 @@ class AppRoutes {
           settings: settings,
           builder: (_) => PedagogicalDashboardScreen(controller: controller),
         );
+      case faixita:
+        if (!controller.hasProfile) {
+          return _invalidRoute(settings);
+        }
+        final missionResult = settings.arguments;
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => FaixitaScreen(
+            controller: controller,
+            service: faixitaService,
+            missionResult: missionResult is MissionResult
+                ? missionResult
+                : null,
+          ),
+        );
       case playerProgress:
         if (!controller.hasProfile) {
           return _invalidRoute(settings);
@@ -714,7 +732,8 @@ class AppRoutes {
         }
         return MaterialPageRoute<void>(
           settings: settings,
-          builder: (_) => MissionResultScreen(result: result),
+          builder: (_) =>
+              MissionResultScreen(result: result, controller: controller),
         );
 
       default:

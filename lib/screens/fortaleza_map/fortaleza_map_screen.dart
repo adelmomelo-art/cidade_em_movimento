@@ -106,6 +106,8 @@ class FortalezaMapScreen extends StatelessWidget {
                           totalStars: totalStars,
                         ),
                         const SizedBox(height: 18),
+                        _FaixitaCard(controller: controller),
+                        const SizedBox(height: 12),
                         _GlobalProgressCard(controller: controller),
                         const SizedBox(height: 12),
                         _SignDuelCard(controller: controller),
@@ -261,6 +263,60 @@ class _Metric extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+}
+
+class _FaixitaCard extends StatelessWidget {
+  const _FaixitaCard({required this.controller});
+
+  final PlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      key: const Key('fortaleza-faixita'),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(AppRoutes.faixita);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                radius: 28,
+                child: Icon(Icons.support_agent_rounded, size: 30),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'MENTORA PEDAGOGICA',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Faixita',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Tire duvidas, revise seu desempenho e receba orientacoes para continuar aprendendo.',
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
