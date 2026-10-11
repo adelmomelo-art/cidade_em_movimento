@@ -106,6 +106,8 @@ class FortalezaMapScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 18),
                         _SignDuelCard(controller: controller),
+                        const SizedBox(height: 12),
+                        _BuildNeighborhoodCard(controller: controller),
                         const SizedBox(height: 18),
                         for (var index = 0; index < _zones.length; index++) ...[
                           _ZoneCard(
@@ -310,6 +312,75 @@ class _SignDuelCard extends StatelessWidget {
                           ? 'Ainda nao jogado'
                           : 'Recorde: ${progress.signDuelBestScore} pontos - ${progress.signDuelBestCorrect}/6',
                       key: const Key('fortaleza-sign-duel-status'),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BuildNeighborhoodCard extends StatelessWidget {
+  const _BuildNeighborhoodCard({required this.controller});
+
+  final PlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = controller.progress;
+    final ids = <String>{
+      'BAIRRO_CALCADA_ACESSIVEL',
+      'BAIRRO_PRACA_CONVIVENCIA',
+      'BAIRRO_BICICLETARIO',
+    };
+    final installed = progress.purchasedUpgrades
+        .where((upgradeId) => ids.contains(upgradeId))
+        .length;
+
+    return Card(
+      key: const Key('fortaleza-build-neighborhood'),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(AppRoutes.buildNeighborhood);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                radius: 28,
+                child: Icon(Icons.location_city_rounded, size: 30),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'TRANSFORMACAO URBANA',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Construa o Bairro',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Use moedas para instalar melhorias e transformar o bairro.',
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '$installed de 3 melhorias instaladas',
+                      key: const Key('fortaleza-build-status'),
                     ),
                   ],
                 ),

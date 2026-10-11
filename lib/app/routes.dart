@@ -42,6 +42,7 @@ import '../data/zone_6/special_mission_data.dart';
 import '../models/mission.dart';
 import '../models/mission_result.dart';
 import '../screens/avatar/avatar_screen.dart';
+import '../screens/build_neighborhood/build_neighborhood_screen.dart';
 import '../screens/fortaleza_map/fortaleza_map_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/intro/intro_screen.dart';
@@ -103,6 +104,7 @@ class AppRoutes {
   static const zone6SpecialMission = '/zone-6/special';
   static const playerProgress = '/player-progress';
   static const signDuel = '/duelo-das-placas';
+  static const buildNeighborhood = '/construa-o-bairro';
   static const mission1 = '/zone-1/mission-1';
   static const mission2 = '/zone-1/mission-2';
   static const mission3 = '/zone-1/mission-3';
@@ -499,6 +501,14 @@ class AppRoutes {
           settings: settings,
           controller: controller,
           mission: buildZone6SpecialMission(profile.type),
+        );
+      case buildNeighborhood:
+        if (!controller.hasProfile) {
+          return _invalidRoute(settings);
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => BuildNeighborhoodScreen(controller: controller),
         );
       case signDuel:
         if (!controller.hasProfile) {

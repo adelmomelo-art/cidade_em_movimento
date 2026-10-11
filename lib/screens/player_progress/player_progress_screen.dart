@@ -48,7 +48,7 @@ class PlayerProgressScreen extends StatelessWidget {
           (total, stars) => total + stars,
         );
 
-        final installedUpgrades = upgradeCatalog
+        final installedUpgrades = allUpgradeCatalog
             .where((upgrade) => progress.purchasedUpgrades.contains(upgrade.id))
             .toList(growable: false);
 
