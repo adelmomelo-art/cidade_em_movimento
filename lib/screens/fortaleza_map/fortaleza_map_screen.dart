@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
+import '../../services/global_progress_service.dart';
 
 class FortalezaMapScreen extends StatelessWidget {
   const FortalezaMapScreen({super.key, required this.controller});
@@ -105,6 +106,8 @@ class FortalezaMapScreen extends StatelessWidget {
                           totalStars: totalStars,
                         ),
                         const SizedBox(height: 18),
+                        _GlobalProgressCard(controller: controller),
+                        const SizedBox(height: 12),
                         _SignDuelCard(controller: controller),
                         const SizedBox(height: 12),
                         _BuildNeighborhoodCard(controller: controller),
@@ -258,6 +261,72 @@ class _Metric extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+}
+
+class _GlobalProgressCard extends StatelessWidget {
+  const _GlobalProgressCard({required this.controller});
+
+  final PlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final summary = const GlobalProgressService().summarize(
+      controller.progress,
+    );
+
+    return Card(
+      key: const Key('fortaleza-global-summary'),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(AppRoutes.globalProgress);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                child: Icon(
+                  summary.fortalezaComplete
+                      ? Icons.workspace_premium_rounded
+                      : Icons.insights_rounded,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'JORNADA FORTALEZA',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      summary.fortalezaComplete
+                          ? 'Fortaleza Concluida'
+                          : 'Progressao Global',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${summary.completionPercent}% - ${summary.completedMissions}/${summary.totalMissions} missoes',
+                      key: const Key('fortaleza-global-summary-status'),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
