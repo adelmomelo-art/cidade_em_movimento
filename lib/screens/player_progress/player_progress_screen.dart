@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../app/routes.dart';
+
 import '../../controllers/player_controller.dart';
 import '../../core/enums/player_type.dart';
 import '../../data/upgrades/upgrade_catalog.dart';
@@ -57,7 +59,21 @@ class PlayerProgressScreen extends StatelessWidget {
             .toList(growable: false);
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Meu Progresso')),
+          appBar: AppBar(
+            title: const Text('Meu Progresso'),
+            actions: [
+              IconButton(
+                key: const Key('open-pedagogical-dashboard'),
+                tooltip: 'Painel Pedagogico',
+                onPressed: () {
+                  Navigator.of(
+                    context,
+                  ).pushNamed(AppRoutes.pedagogicalDashboard);
+                },
+                icon: const Icon(Icons.school_rounded),
+              ),
+            ],
+          ),
           body: SafeArea(
             child: CustomScrollView(
               slivers: [

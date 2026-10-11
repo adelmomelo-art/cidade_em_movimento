@@ -6,20 +6,24 @@ import '../data/zones/zone_catalog.dart';
 import '../models/game_progress.dart';
 import '../models/mission_result.dart';
 import '../models/player_profile.dart';
+import '../services/pedagogical_sync_service.dart';
 import '../services/storage_service.dart';
 
 class PlayerController extends ChangeNotifier {
-  PlayerController(this._storage);
+  PlayerController(this._storage, {this._pedagogicalSync});
 
   final StorageService _storage;
+  final PedagogicalSyncService? _pedagogicalSync;
 
   PlayerProfile? _profile;
   GameProgress _progress = GameProgress.initial();
-
   PlayerProfile? get profile => _profile;
   GameProgress get progress => _progress;
 
   bool get hasProfile => _profile != null;
+  int get pendingPedagogicalSnapshots => _pedagogicalSync?.pendingCount ?? 0;
+  bool get pedagogicalBackendConfigured =>
+      _pedagogicalSync?.backendConfigured ?? false;
 
   bool isZoneUnlocked(String zoneId) {
     final zone = findZoneById(zoneId);
@@ -43,6 +47,8 @@ class PlayerController extends ChangeNotifier {
       _progress = reconciled;
       await _storage.saveProgress(_progress);
     }
+
+    await _queuePedagogicalSnapshot();
   }
 
   Future<void> createProfile({
@@ -52,6 +58,7 @@ class PlayerController extends ChangeNotifier {
     _profile = PlayerProfile(type: type, avatarId: avatarId);
     await _storage.saveProfile(_profile!);
     await _storage.saveProgress(_progress);
+    await _queuePedagogicalSnapshot();
     notifyListeners();
   }
 
@@ -129,6 +136,7 @@ class PlayerController extends ChangeNotifier {
     _progress = updated;
 
     await _storage.saveProgress(_progress);
+    await _queuePedagogicalSnapshot();
     notifyListeners();
   }
 
@@ -169,6 +177,7 @@ class PlayerController extends ChangeNotifier {
     );
 
     await _storage.saveProgress(_progress);
+    await _queuePedagogicalSnapshot();
     notifyListeners();
 
     return true;
@@ -208,9 +217,29 @@ class PlayerController extends ChangeNotifier {
     );
 
     await _storage.saveProgress(_progress);
+    await _queuePedagogicalSnapshot();
     notifyListeners();
 
     return knowledgeGain;
+  }
+
+  Future<PedagogicalSyncStatus> syncPedagogicalNow() async {
+    final service = _pedagogicalSync;
+    if (service == null) return PedagogicalSyncStatus.backendNotConfigured;
+    final result = await service.syncPending();
+    notifyListeners();
+    return result;
+  }
+
+  Future<void> _queuePedagogicalSnapshot() async {
+    final service = _pedagogicalSync;
+    final currentProfile = _profile;
+    if (service == null || currentProfile == null) return;
+    try {
+      await service.queueSnapshot(profile: currentProfile, progress: _progress);
+    } catch (_) {
+      // A camada pedagogica nunca bloqueia o jogo offline.
+    }
   }
 
   GameProgress _withPendingZoneCompletionBonuses(GameProgress source) {

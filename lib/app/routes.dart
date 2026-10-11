@@ -50,6 +50,7 @@ import '../screens/intro/intro_screen.dart';
 import '../screens/mission/mission_screen.dart';
 import '../screens/mission_result/mission_result_screen.dart';
 import '../screens/player_progress/player_progress_screen.dart';
+import '../screens/pedagogical_dashboard/pedagogical_dashboard_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/sign_duel/sign_duel_screen.dart';
 import '../screens/zone_1_map/zone_1_map_screen.dart';
@@ -105,6 +106,7 @@ class AppRoutes {
   static const zone6SpecialMission = '/zone-6/special';
   static const playerProgress = '/player-progress';
   static const globalProgress = '/progresso-global';
+  static const pedagogicalDashboard = '/painel-pedagogico';
   static const signDuel = '/duelo-das-placas';
   static const buildNeighborhood = '/construa-o-bairro';
   static const mission1 = '/zone-1/mission-1';
@@ -527,6 +529,14 @@ class AppRoutes {
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => GlobalProgressScreen(controller: controller),
+        );
+      case pedagogicalDashboard:
+        if (!controller.hasProfile) {
+          return _invalidRoute(settings);
+        }
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => PedagogicalDashboardScreen(controller: controller),
         );
       case playerProgress:
         if (!controller.hasProfile) {
