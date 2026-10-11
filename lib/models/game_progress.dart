@@ -11,6 +11,9 @@ class GameProgress {
     Set<String> completedZones = const <String>{},
     Set<String> claimedZoneCompletionBonuses = const <String>{},
     bool zone1Completed = false,
+    this.signDuelBestScore = 0,
+    this.signDuelBestCorrect = 0,
+    this.signDuelPlays = 0,
   }) : completedZones = <String>{
          ...completedZones,
          if (zone1Completed) 'ZONE_1',
@@ -30,6 +33,10 @@ class GameProgress {
   final Set<String> medals;
   final Set<String> completedZones;
   final Set<String> claimedZoneCompletionBonuses;
+
+  final int signDuelBestScore;
+  final int signDuelBestCorrect;
+  final int signDuelPlays;
 
   bool get zone1Completed => completedZones.contains('ZONE_1');
 
@@ -53,6 +60,9 @@ class GameProgress {
       medals: <String>{},
       completedZones: <String>{},
       claimedZoneCompletionBonuses: <String>{},
+      signDuelBestScore: 0,
+      signDuelBestCorrect: 0,
+      signDuelPlays: 0,
     );
   }
 
@@ -69,6 +79,9 @@ class GameProgress {
       'completedZones': completedZones.toList(),
       'claimedZoneCompletionBonuses': claimedZoneCompletionBonuses.toList(),
       'zone1Completed': zone1Completed,
+      'signDuelBestScore': signDuelBestScore,
+      'signDuelBestCorrect': signDuelBestCorrect,
+      'signDuelPlays': signDuelPlays,
     };
   }
 
@@ -101,6 +114,9 @@ class GameProgress {
       claimedZoneCompletionBonuses: _stringSet(
         json['claimedZoneCompletionBonuses'],
       ),
+      signDuelBestScore: (json['signDuelBestScore'] as num?)?.toInt() ?? 0,
+      signDuelBestCorrect: (json['signDuelBestCorrect'] as num?)?.toInt() ?? 0,
+      signDuelPlays: (json['signDuelPlays'] as num?)?.toInt() ?? 0,
     );
   }
 

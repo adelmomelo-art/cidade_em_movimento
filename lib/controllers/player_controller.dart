@@ -120,6 +120,9 @@ class PlayerController extends ChangeNotifier {
       claimedZoneCompletionBonuses: Set<String>.from(
         _progress.claimedZoneCompletionBonuses,
       ),
+      signDuelBestScore: _progress.signDuelBestScore,
+      signDuelBestCorrect: _progress.signDuelBestCorrect,
+      signDuelPlays: _progress.signDuelPlays,
     );
 
     updated = _withPendingZoneCompletionBonuses(updated);
@@ -160,12 +163,54 @@ class PlayerController extends ChangeNotifier {
       claimedZoneCompletionBonuses: Set<String>.from(
         _progress.claimedZoneCompletionBonuses,
       ),
+      signDuelBestScore: _progress.signDuelBestScore,
+      signDuelBestCorrect: _progress.signDuelBestCorrect,
+      signDuelPlays: _progress.signDuelPlays,
     );
 
     await _storage.saveProgress(_progress);
     notifyListeners();
 
     return true;
+  }
+
+  Future<int> recordSignDuelResult({
+    required int score,
+    required int correctAnswers,
+  }) async {
+    final safeScore = score < 0 ? 0 : score;
+    final safeCorrect = correctAnswers.clamp(0, 6);
+    final improvedCorrect = safeCorrect > _progress.signDuelBestCorrect;
+    final knowledgeGain = improvedCorrect
+        ? (safeCorrect - _progress.signDuelBestCorrect) * 2
+        : 0;
+
+    _progress = GameProgress(
+      citizenshipXp: _progress.citizenshipXp,
+      knowledge: _progress.knowledge + knowledgeGain,
+      coins: _progress.coins,
+      completedMissions: Set<String>.from(_progress.completedMissions),
+      missionStars: Map<String, int>.from(_progress.missionStars),
+      unlockedMissions: Set<String>.from(_progress.unlockedMissions),
+      purchasedUpgrades: Set<String>.from(_progress.purchasedUpgrades),
+      medals: Set<String>.from(_progress.medals),
+      completedZones: Set<String>.from(_progress.completedZones),
+      claimedZoneCompletionBonuses: Set<String>.from(
+        _progress.claimedZoneCompletionBonuses,
+      ),
+      signDuelBestScore: safeScore > _progress.signDuelBestScore
+          ? safeScore
+          : _progress.signDuelBestScore,
+      signDuelBestCorrect: safeCorrect > _progress.signDuelBestCorrect
+          ? safeCorrect
+          : _progress.signDuelBestCorrect,
+      signDuelPlays: _progress.signDuelPlays + 1,
+    );
+
+    await _storage.saveProgress(_progress);
+    notifyListeners();
+
+    return knowledgeGain;
   }
 
   GameProgress _withPendingZoneCompletionBonuses(GameProgress source) {
@@ -202,6 +247,9 @@ class PlayerController extends ChangeNotifier {
       medals: Set<String>.from(source.medals),
       completedZones: Set<String>.from(source.completedZones),
       claimedZoneCompletionBonuses: claimed,
+      signDuelBestScore: source.signDuelBestScore,
+      signDuelBestCorrect: source.signDuelBestCorrect,
+      signDuelPlays: source.signDuelPlays,
     );
   }
 }

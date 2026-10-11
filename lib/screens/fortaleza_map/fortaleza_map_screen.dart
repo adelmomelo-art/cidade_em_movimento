@@ -105,6 +105,8 @@ class FortalezaMapScreen extends StatelessWidget {
                           totalStars: totalStars,
                         ),
                         const SizedBox(height: 18),
+                        _SignDuelCard(controller: controller),
+                        const SizedBox(height: 18),
                         for (var index = 0; index < _zones.length; index++) ...[
                           _ZoneCard(
                             zone: _zones[index],
@@ -254,6 +256,69 @@ class _Metric extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+}
+
+class _SignDuelCard extends StatelessWidget {
+  const _SignDuelCard({required this.controller});
+
+  final PlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = controller.progress;
+
+    return Card(
+      key: const Key('fortaleza-sign-duel'),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(AppRoutes.signDuel);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                radius: 28,
+                child: Icon(Icons.signpost_rounded, size: 30),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'DESAFIO EXTRA',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Duelo das Placas',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Teste seu conhecimento em seis rodadas de dificuldade progressiva.',
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      progress.signDuelPlays == 0
+                          ? 'Ainda nao jogado'
+                          : 'Recorde: ${progress.signDuelBestScore} pontos - ${progress.signDuelBestCorrect}/6',
+                      key: const Key('fortaleza-sign-duel-status'),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
