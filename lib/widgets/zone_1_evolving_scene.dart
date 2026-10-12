@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../ui/visual_system.dart';
+import 'zone_1_art.dart';
+
 class Zone1EvolvingScene extends StatelessWidget {
   const Zone1EvolvingScene({super.key, required this.purchasedUpgrades});
 
@@ -11,339 +14,282 @@ class Zone1EvolvingScene extends StatelessWidget {
     final hasLighting = purchasedUpgrades.contains('ILUMINACAO_ESCOLAR');
     final hasCyclePath = purchasedUpgrades.contains('TRECHO_CICLOVIARIO');
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Cidade Evolutiva',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+    return GameSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Cidade Evolutiva',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: GameColors.navy,
+              fontWeight: FontWeight.w900,
             ),
-            const SizedBox(height: 4),
-            const Text(
-              'Veja como as melhorias conquistadas transformam o entorno '
-              'da escola.',
-            ),
-            const SizedBox(height: 16),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final compact = constraints.maxWidth < 720;
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Compare o entorno escolar antes e depois das melhorias conquistadas.',
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 760;
 
-                const before = _ScenePanel(
-                  title: 'ANTES',
-                  hasCrosswalk: false,
-                  hasLighting: false,
-                  hasCyclePath: false,
-                  showPendingHints: false,
+              final before = const _EvolutionPanel(
+                title: 'ANTES',
+                subtitle: 'Entorno sem melhorias',
+                crosswalk: false,
+                lighting: false,
+                cyclePath: false,
+              );
+
+              final after = _EvolutionPanel(
+                title: 'AGORA',
+                subtitle: 'Seu bairro em transformacao',
+                crosswalk: hasCrosswalk,
+                lighting: hasLighting,
+                cyclePath: hasCyclePath,
+              );
+
+              if (compact) {
+                return Column(
+                  children: [before, const SizedBox(height: 14), after],
                 );
+              }
 
-                final after = _ScenePanel(
-                  title: 'AGORA',
-                  hasCrosswalk: hasCrosswalk,
-                  hasLighting: hasLighting,
-                  hasCyclePath: hasCyclePath,
-                  showPendingHints: true,
-                );
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: before),
+                  const SizedBox(width: 14),
+                  Expanded(child: after),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final statuses = <Widget>[
+                _EvolutionStatus(
+                  label: 'Faixa Segura',
+                  active: hasCrosswalk,
+                  icon: Icons.signpost_rounded,
+                ),
+                _EvolutionStatus(
+                  label: 'Ilumina\u00e7\u00e3o Escolar',
+                  active: hasLighting,
+                  icon: Icons.lightbulb_rounded,
+                ),
+                _EvolutionStatus(
+                  label: 'Trecho Ciclovi\u00e1rio',
+                  active: hasCyclePath,
+                  icon: Icons.pedal_bike_rounded,
+                ),
+              ];
 
-                if (compact) {
-                  return Column(
-                    children: [before, const SizedBox(height: 14), after],
-                  );
-                }
-
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              if (constraints.maxWidth < 520) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(child: before),
-                    const SizedBox(width: 14),
-                    Expanded(child: after),
+                    for (var index = 0; index < statuses.length; index++) ...[
+                      statuses[index],
+                      if (index < statuses.length - 1)
+                        const SizedBox(height: 8),
+                    ],
                   ],
                 );
-              },
+              }
+
+              return Wrap(spacing: 10, runSpacing: 10, children: statuses);
+            },
+          ),
+          const SizedBox(height: 22),
+          Text(
+            'Iluminação no entorno — simulação noturna',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: GameColors.navy,
+              fontWeight: FontWeight.w900,
             ),
-            const SizedBox(height: 16),
-            _EvolutionLegend(
-              hasCrosswalk: hasCrosswalk,
-              hasLighting: hasLighting,
-              hasCyclePath: hasCyclePath,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+          const Text('Observe a luz sobre a calçada e os acessos à escola.'),
+          const SizedBox(height: 12),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const before = _EvolutionPanel(
+                title: 'SEM ILUMINAÇÃO',
+                subtitle: 'Comparação noturna',
+                crosswalk: false,
+                lighting: false,
+                cyclePath: false,
+                nightPreview: true,
+              );
+              final after = _EvolutionPanel(
+                title: hasLighting
+                    ? 'ILUMINAÇÃO INSTALADA'
+                    : 'AINDA SEM ILUMINAÇÃO',
+                subtitle: 'Melhorias conquistadas',
+                crosswalk: hasCrosswalk,
+                lighting: hasLighting,
+                cyclePath: hasCyclePath,
+                nightPreview: true,
+              );
+              if (constraints.maxWidth < 760) {
+                return Column(
+                  children: [before, const SizedBox(height: 14), after],
+                );
+              }
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: before),
+                  const SizedBox(width: 14),
+                  Expanded(child: after),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 }
 
-class _ScenePanel extends StatelessWidget {
-  const _ScenePanel({
+class _EvolutionPanel extends StatelessWidget {
+  const _EvolutionPanel({
     required this.title,
-    required this.hasCrosswalk,
-    required this.hasLighting,
-    required this.hasCyclePath,
-    required this.showPendingHints,
+    required this.subtitle,
+    required this.crosswalk,
+    required this.lighting,
+    required this.cyclePath,
+    this.nightPreview = false,
   });
 
   final String title;
-  final bool hasCrosswalk;
-  final bool hasLighting;
-  final bool hasCyclePath;
-  final bool showPendingHints;
+  final String subtitle;
+  final bool crosswalk;
+  final bool lighting;
+  final bool cyclePath;
+  final bool nightPreview;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    final crosswalkOpacity = hasCrosswalk
-        ? 1.0
-        : (showPendingHints ? 0.08 : 0.0);
-    final lightingOpacity = hasLighting ? 1.0 : (showPendingHints ? 0.18 : 0.0);
-
-    return Semantics(
-      label: 'Cena $title',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: Stack(
-                fit: StackFit.expand,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 420) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ColoredBox(color: scheme.surfaceContainerHighest),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: FractionallySizedBox(
-                      heightFactor: 0.48,
-                      widthFactor: 1,
-                      child: ColoredBox(
-                        color: scheme.primaryContainer.withValues(alpha: 0.55),
-                        child: const _SchoolArea(),
-                      ),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: GameColors.navy,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: FractionallySizedBox(
-                      heightFactor: 0.52,
-                      widthFactor: 1,
-                      child: ColoredBox(
-                        color: scheme.inverseSurface.withValues(alpha: 0.86),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: AnimatedContainer(
-                      key: const Key('scene-cycle-path'),
-                      duration: const Duration(milliseconds: 350),
-                      curve: Curves.easeOut,
-                      height: hasCyclePath ? 42 : 0,
-                      child: hasCyclePath
-                          ? ColoredBox(
-                              color: scheme.tertiaryContainer,
-                              child: Center(
-                                child: Icon(
-                                  Icons.pedal_bike_rounded,
-                                  color: scheme.onTertiaryContainer,
-                                ),
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                  ),
-                  Center(
-                    child: AnimatedOpacity(
-                      key: const Key('scene-crosswalk'),
-                      duration: const Duration(milliseconds: 350),
-                      opacity: crosswalkOpacity,
-                      child: const _Crosswalk(),
-                    ),
-                  ),
-                  Positioned(
-                    left: 12,
-                    top: 18,
-                    child: AnimatedOpacity(
-                      key: const Key('scene-light-left'),
-                      duration: const Duration(milliseconds: 350),
-                      opacity: lightingOpacity,
-                      child: _LampPost(active: hasLighting),
-                    ),
-                  ),
-                  Positioned(
-                    right: 12,
-                    top: 18,
-                    child: AnimatedOpacity(
-                      key: const Key('scene-light-right'),
-                      duration: const Duration(milliseconds: 350),
-                      opacity: lightingOpacity,
-                      child: _LampPost(active: hasLighting),
-                    ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ],
-              ),
+              );
+            }
+
+            return Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: GameColors.navy,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    subtitle,
+                    textAlign: TextAlign.end,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        AspectRatio(
+          aspectRatio: 16 / 10,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Zone1NeighborhoodArt(
+              crosswalk: crosswalk,
+              lighting: lighting,
+              cyclePath: cyclePath,
+              showPeople: true,
+              showVehicles: true,
+              nightPreview: nightPreview,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SchoolArea extends StatelessWidget {
-  const _SchoolArea();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.school_rounded,
-            size: 46,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'ESCOLA',
-            style: Theme.of(
-              context,
-            ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Crosswalk extends StatelessWidget {
-  const _Crosswalk();
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.surface;
-
-    return SizedBox(
-      width: 110,
-      height: 72,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          for (var index = 0; index < 6; index++)
-            Container(
-              width: 12,
-              height: 64,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LampPost extends StatelessWidget {
-  const _LampPost({required this.active});
-
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return Column(
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 350),
-          width: active ? 32 : 22,
-          height: active ? 32 : 22,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: active
-                ? scheme.secondaryContainer
-                : scheme.surfaceContainerHighest,
-          ),
-          child: Icon(
-            Icons.lightbulb_rounded,
-            size: active ? 20 : 14,
-            color: active
-                ? scheme.onSecondaryContainer
-                : scheme.onSurfaceVariant,
           ),
         ),
-        Container(width: 4, height: 52, color: scheme.outline),
       ],
     );
   }
 }
 
-class _EvolutionLegend extends StatelessWidget {
-  const _EvolutionLegend({
-    required this.hasCrosswalk,
-    required this.hasLighting,
-    required this.hasCyclePath,
+class _EvolutionStatus extends StatelessWidget {
+  const _EvolutionStatus({
+    required this.label,
+    required this.active,
+    required this.icon,
   });
-
-  final bool hasCrosswalk;
-  final bool hasLighting;
-  final bool hasCyclePath;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: [
-        _LegendChip(
-          key: const Key('legend-crosswalk'),
-          label: 'Faixa Segura',
-          active: hasCrosswalk,
-        ),
-        _LegendChip(
-          key: const Key('legend-lighting'),
-          label: 'Ilumina\u00e7\u00e3o Escolar',
-          active: hasLighting,
-        ),
-        _LegendChip(
-          key: const Key('legend-cycle-path'),
-          label: 'Trecho Ciclovi\u00e1rio',
-          active: hasCyclePath,
-        ),
-      ],
-    );
-  }
-}
-
-class _LegendChip extends StatelessWidget {
-  const _LegendChip({super.key, required this.label, required this.active});
 
   final String label;
   final bool active;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      avatar: Icon(
-        active ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
-        size: 18,
+    final text = active ? '$label \u2014 instalado' : '$label \u2014 pendente';
+
+    final foreground = active ? const Color(0xFF14532D) : GameColors.navy;
+
+    final background = active
+        ? const Color(0xFFDDF7E5)
+        : const Color(0xFFE9EEF5);
+
+    return Container(
+      constraints: const BoxConstraints(minHeight: 42),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(14),
       ),
-      label: Text(
-        active ? '$label \u2014 instalado' : '$label \u2014 pendente',
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            active ? Icons.check_circle_rounded : icon,
+            size: 18,
+            color: foreground,
+          ),
+          const SizedBox(width: 7),
+          Flexible(
+            child: Text(
+              text,
+              softWrap: true,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: foreground,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
