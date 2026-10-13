@@ -85,8 +85,16 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
 
-          final scrollable = find.byType(Scrollable).first;
-          final position = tester.state<ScrollableState>(scrollable).position;
+          final scrollables = find.byType(Scrollable);
+          final position = zone == 1
+              ? null
+              : tester.state<ScrollableState>(scrollables.first).position;
+          final mapFrame = zone == 1
+              ? tester.getRect(find.byKey(const Key('zone1-map-canvas')))
+              : null;
+          if (zone == 1) {
+            expect(scrollables, findsNothing);
+          }
           final mouse = await tester.createGesture(
             kind: PointerDeviceKind.mouse,
           );
@@ -102,13 +110,19 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
-          expect(position.pixels, greaterThan(0));
-
-          for (var step = 0; step <= 4; step++) {
-            position.jumpTo(position.maxScrollExtent * step / 4);
-            await mouse.moveTo(Offset(width / 2, 430 + step * 10));
-            await tester.pumpAndSettle();
-            expect(tester.takeException(), isNull);
+          if (zone == 1) {
+            expect(
+              tester.getRect(find.byKey(const Key('zone1-map-canvas'))),
+              mapFrame,
+            );
+          } else {
+            expect(position!.pixels, greaterThan(0));
+            for (var step = 0; step <= 4; step++) {
+              position.jumpTo(position.maxScrollExtent * step / 4);
+              await mouse.moveTo(Offset(width / 2, 430 + step * 10));
+              await tester.pumpAndSettle();
+              expect(tester.takeException(), isNull);
+            }
           }
           if (zone == 3 || zone == 4) {
             final prefix = 'zone$zone-install-';
@@ -125,7 +139,7 @@ void main() {
             expect(box.size.width.isFinite, isTrue);
             expect(box.size.height.isFinite, isTrue);
           }
-          position.jumpTo(0);
+          position?.jumpTo(0);
           await tester.pumpAndSettle();
           await mouse.removePointer();
           expect(tester.takeException(), isNull);

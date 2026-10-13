@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cidade_em_movimento/app/theme.dart';
-import 'package:cidade_em_movimento/app/routes.dart';
+import 'package:cidade_em_movimento/widgets/zone_1_mission_dialog.dart';
 import 'package:cidade_em_movimento/controllers/player_controller.dart';
 import 'package:cidade_em_movimento/screens/zone_1_map/zone_1_map_screen.dart';
 import 'package:cidade_em_movimento/services/storage_service.dart';
@@ -43,67 +43,71 @@ Future<PlayerController> _controller({required bool completed}) async {
 
 void main() {
   for (final width in [390.0, 800.0, 1280.0]) {
-    testWidgets('Z1 pins do not overlap and open their own routes at $width', (
-      tester,
-    ) async {
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = Size(width, 900);
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final controller = await _controller(completed: true);
-      addTearDown(controller.dispose);
-      final opened = <String>[];
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light,
-          home: Zone1MapScreen(controller: controller),
-          onGenerateRoute: (settings) {
-            opened.add(settings.name!);
-            return MaterialPageRoute<void>(
-              builder: (_) => Scaffold(body: Text(settings.name!)),
-            );
-          },
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      final pins = [
-        for (final id in _ids) find.byKey(Key('zone1-visual-mission-$id')),
-      ];
-      final rects = [for (final pin in pins) tester.getRect(pin)];
-      for (var i = 0; i < rects.length; i++) {
-        expect(rects[i].width, greaterThanOrEqualTo(48));
-        expect(rects[i].height, greaterThanOrEqualTo(48));
-        for (var j = i + 1; j < rects.length; j++) {
-          expect(
-            rects[i].overlaps(rects[j]),
-            isFalse,
-            reason:
-                '${_ids[i]} ${rects[i]} overlaps ${_ids[j]} ${rects[j]} at $width',
-          );
-        }
-      }
-      final before = controller.progress.toJson();
-      for (final pin in pins) {
-        await tester.ensureVisible(pin);
-        await tester.pumpAndSettle();
-        await tester.tap(pin);
-        await tester.pumpAndSettle();
-        Navigator.of(tester.element(find.byType(Scaffold).last)).pop();
+    testWidgets(
+      'Z1 pins do not overlap and open their own mission dialogs at $width',
+      (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = Size(width, 900);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final controller = await _controller(completed: true);
+        addTearDown(controller.dispose);
+        final opened = <String>[];
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light,
+            home: Zone1MapScreen(controller: controller),
+            onGenerateRoute: (settings) {
+              opened.add(settings.name!);
+              return MaterialPageRoute<void>(
+                builder: (_) => Scaffold(body: Text(settings.name!)),
+              );
+            },
+          ),
+        );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-      }
-      expect(opened, [
-        AppRoutes.mission1,
-        AppRoutes.mission2,
-        AppRoutes.mission3,
-        AppRoutes.mission4,
-        AppRoutes.mission5,
-        AppRoutes.specialMission,
-      ]);
-      expect(controller.progress.toJson(), before);
-      expect(find.textContaining('â˜'), findsNothing);
-    });
+        final pins = [
+          for (final id in _ids) find.byKey(Key('zone1-visual-mission-$id')),
+        ];
+        final rects = [for (final pin in pins) tester.getRect(pin)];
+        for (var i = 0; i < rects.length; i++) {
+          expect(tester.getSize(pins[i]).width, greaterThanOrEqualTo(48));
+          expect(tester.getSize(pins[i]).height, greaterThanOrEqualTo(48));
+          expect(pins[i].hitTestable(), findsOneWidget);
+          expect(rects[i].width, greaterThan(0));
+          expect(rects[i].height, greaterThan(0));
+          for (var j = i + 1; j < rects.length; j++) {
+            expect(
+              rects[i].overlaps(rects[j]),
+              isFalse,
+              reason:
+                  '${_ids[i]} ${rects[i]} overlaps ${_ids[j]} ${rects[j]} at $width',
+            );
+          }
+        }
+        final before = controller.progress.toJson();
+        for (final pin in pins) {
+          await tester.ensureVisible(pin);
+          await tester.pumpAndSettle();
+          await tester.tap(pin);
+          await tester.pumpAndSettle();
+          expect(find.byType(Zone1MissionDialog), findsOneWidget);
+          opened.add(
+            tester
+                .widget<Zone1MissionDialog>(find.byType(Zone1MissionDialog))
+                .mission
+                .id,
+          );
+          await tester.tap(find.byKey(const Key('zone1-close-mission')));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+        }
+        expect(opened, _ids);
+        expect(controller.progress.toJson(), before);
+        expect(find.textContaining('â˜'), findsNothing);
+      },
+    );
   }
 
   testWidgets('locked pins cannot open a route', (tester) async {

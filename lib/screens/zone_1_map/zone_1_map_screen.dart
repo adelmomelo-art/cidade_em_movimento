@@ -4,14 +4,76 @@ import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
 import '../../data/zone_1/upgrade_data.dart';
 import '../../models/upgrade_definition.dart';
+import '../../models/mission.dart';
+import '../../core/enums/player_type.dart';
+import '../../data/zone_1/mission_01_data.dart';
+import '../../data/zone_1/mission_02_data.dart';
+import '../../data/zone_1/mission_03_data.dart';
+import '../../data/zone_1/mission_04_data.dart';
+import '../../data/zone_1/mission_05_data.dart';
+import '../../data/zone_1/special_mission_data.dart';
 import '../../ui/visual_system.dart';
-import '../../widgets/zone_1_evolving_scene.dart';
+import '../../widgets/zone_1_mission_dialog.dart';
 import '../../widgets/zone_1_visual_scene.dart';
 
-class Zone1MapScreen extends StatelessWidget {
+class Zone1MapScreen extends StatefulWidget {
   const Zone1MapScreen({super.key, required this.controller});
 
   final PlayerController controller;
+
+  @override
+  State<Zone1MapScreen> createState() => _Zone1MapScreenState();
+}
+
+class _Zone1MapScreenState extends State<Zone1MapScreen> {
+  PlayerController get controller => widget.controller;
+  final _sceneKey = GlobalKey();
+  bool _night = false;
+  bool _openingMission = false;
+
+  Future<void> _openMission(String id) async {
+    if (_openingMission || !controller.progress.unlockedMissions.contains(id)) {
+      return;
+    }
+    final type = controller.profile?.type;
+    if (type == null) return;
+    final mission = _missionForId(id, type);
+    if (mission == null) return;
+    _openingMission = true;
+    try {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        barrierColor: const Color(0x660A263B),
+        routeSettings: RouteSettings(name: '/zone-1/dialog/$id'),
+        builder: (_) => Zone1MissionDialog(
+          mission: mission,
+          player: controller,
+          nightPreview: _night,
+          nextMissionId: switch (id) {
+            'Z1_M01' => 'Z1_M02',
+            'Z1_M02' => 'Z1_M03',
+            'Z1_M03' => 'Z1_M04',
+            'Z1_M04' => 'Z1_M05',
+            _ => null,
+          },
+        ),
+      );
+    } finally {
+      _openingMission = false;
+    }
+  }
+
+  static Mission? _missionForId(String id, PlayerType type) => switch (id) {
+    'Z1_M01' => buildZone1Mission01(type),
+    'Z1_M02' => buildZone1Mission02(type),
+    'Z1_M03' => buildZone1Mission03(type),
+    'Z1_M04' => buildZone1Mission04(type),
+    'Z1_M05' => buildZone1Mission05(type),
+    'Z1_SPECIAL' => buildZone1SpecialMission(type),
+    _ => null,
+  };
 
   static const _missions = [
     ('Z1_M01', 1, 'Travessia Segura', Icons.directions_walk_rounded),
@@ -52,117 +114,125 @@ class Zone1MapScreen extends StatelessWidget {
         );
 
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Zona 1 - Bairro / Escola'),
-            actions: [
-              IconButton(
-                tooltip: 'Meu Progresso',
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.playerProgress);
-                },
-                icon: const Icon(Icons.insights_rounded),
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: GameBackground(
-              padding: EdgeInsets.zero,
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(18, 16, 18, 26),
-                          child: Center(
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                maxWidth: GameVisual.pageMaxWidth,
-                              ),
-                              child: Column(
-                                children: [
-                                  GameHeroPanel(
-                                    eyebrow: 'Zona 1',
-                                    title: 'Bairro / Escola',
-                                    subtitle:
-                                        'Seu ponto de partida para uma cidade mais segura e acolhedora. Explore o entorno escolar e avance pelas missoes.',
-                                    icon: Icons.location_on_rounded,
-                                    trailing: _ZoneStatusLine(
-                                      completed: progress.zone1Completed,
-                                      missionCount: progress.completedMissions
-                                          .where((id) => id.startsWith('Z1_'))
-                                          .length,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Zone1VisualScene(
-                                    upgradePanel: _UpgradeSection(
-                                      controller: controller,
-                                    ),
-                                    scoreHud: _ScoreHud(
-                                      citizenship: progress.citizenshipXp,
-                                      knowledge: progress.knowledge,
-                                      coins: progress.coins,
-                                      stars: totalStars,
-                                      medalEarned: progress.medals.contains(
-                                        'PROTETOR_DA_ESCOLA',
-                                      ),
-                                    ),
-                                    missions: _buildVisualMissions(
-                                      progress.unlockedMissions,
-                                      progress.missionStars,
-                                    ),
-                                    purchasedUpgrades:
-                                        progress.purchasedUpgrades,
-                                    onMissionTap: (missionId) {
-                                      final route = _routeForMission(missionId);
-                                      if (route != null) {
-                                        Navigator.of(context).pushNamed(route);
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(height: 18),
-                                  if (progress.zone1Completed) ...[
-                                    const _ZoneCompletedCard(),
-                                    const SizedBox(height: 12),
-                                    FilledButton.icon(
-                                      onPressed:
-                                          controller.isZoneUnlocked('ZONE_2')
-                                          ? () {
-                                              Navigator.of(
-                                                context,
-                                              ).pushNamed(AppRoutes.zone2);
-                                            }
-                                          : null,
-                                      icon: const Icon(
-                                        Icons.location_city_rounded,
-                                      ),
-                                      label: const Text(
-                                        'AVANCAR PARA O CENTRO HISTORICO',
-                                      ),
-                                    ),
-                                    const SizedBox(height: 18),
-                                  ],
-                                  Zone1EvolvingScene(
-                                    purchasedUpgrades:
-                                        progress.purchasedUpgrades,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+          body: LayoutBuilder(
+            builder: (context, viewport) {
+              if (viewport.maxWidth <= 0 || viewport.maxHeight <= 0) {
+                return const SizedBox.shrink();
+              }
+              const designWidth = 1360.0;
+              final horizontal = viewport.maxWidth > viewport.maxHeight;
+              final scale = viewport.maxWidth / designWidth;
+              final designHeight = horizontal
+                  ? viewport.maxHeight / scale
+                  : designWidth / 1.5;
+              final safe = MediaQuery.paddingOf(context);
+              final contentInsets = horizontal
+                  ? EdgeInsets.fromLTRB(
+                      safe.left / scale,
+                      safe.top / scale,
+                      safe.right / scale,
+                      safe.bottom / scale,
+                    )
+                  : EdgeInsets.zero;
+              return SizedBox.expand(
+                child: FittedBox(
+                  key: const Key('zone1-fitted-map'),
+                  fit: BoxFit.contain,
+                  child: SizedBox(
+                    width: designWidth,
+                    height: designHeight,
+                    child: Zone1VisualScene(
+                      key: _sceneKey,
+                      viewportHeight: horizontal ? designHeight : null,
+                      contentInsets: contentInsets,
+                      nightPreview: _night,
+                      navigationPanel: _navigation(context),
+                      upgradePanel: _UpgradeSection(controller: controller),
+                      scoreHud: _ScoreHud(
+                        citizenship: progress.citizenshipXp,
+                        knowledge: progress.knowledge,
+                        coins: progress.coins,
+                        stars: totalStars,
+                        medalEarned: progress.medals.contains(
+                          'PROTETOR_DA_ESCOLA',
                         ),
-                      ],
+                      ),
+                      missions: _buildVisualMissions(
+                        progress.unlockedMissions,
+                        progress.missionStars,
+                      ),
+                      purchasedUpgrades: progress.purchasedUpgrades,
+                      onMissionTap: _openMission,
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         );
       },
     );
   }
+
+  Widget _navigation(BuildContext context) => Container(
+    key: const Key('zone1-navigation-window'),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: .96),
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: const Color(0xFF277797)),
+      boxShadow: const [BoxShadow(color: Color(0x330A263B), blurRadius: 8)],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          key: const Key('zone1-back-to-fortaleza'),
+          tooltip: 'Mapa de Fortaleza',
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          icon: const Icon(Icons.map_rounded, color: GameColors.navy),
+          onPressed: () {
+            final nav = Navigator.of(context);
+            var found = false;
+            nav.popUntil((route) {
+              found = route.settings.name == AppRoutes.fortalezaMap;
+              return found || route.isFirst;
+            });
+            if (!found) nav.pushReplacementNamed(AppRoutes.fortalezaMap);
+          },
+        ),
+        IconButton(
+          key: const Key('zone1-toggle-night'),
+          tooltip: _night ? 'Ver bairro de dia' : 'Ver iluminação à noite',
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          icon: Icon(
+            _night ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+            color: GameColors.navy,
+          ),
+          onPressed: () => setState(() => _night = !_night),
+        ),
+        IconButton(
+          key: const Key('zone1-open-progress'),
+          tooltip: 'Meu Progresso',
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          icon: const Icon(Icons.insights_rounded, color: GameColors.navy),
+          onPressed: () =>
+              Navigator.of(context).pushNamed(AppRoutes.playerProgress),
+        ),
+        if (controller.isZoneUnlocked('ZONE_2'))
+          IconButton(
+            key: const Key('zone1-advance-zone2'),
+            tooltip: 'Avançar para o Centro Histórico',
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+            icon: const Icon(
+              Icons.location_city_rounded,
+              color: GameColors.navy,
+            ),
+            onPressed: () => Navigator.of(context).pushNamed(AppRoutes.zone2),
+          ),
+      ],
+    ),
+  );
 
   static List<Zone1VisualMission> _buildVisualMissions(
     Set<String> unlockedMissions,
@@ -182,25 +252,6 @@ class Zone1MapScreen extends StatelessWidget {
           special: _missions[index].$1 == 'Z1_SPECIAL',
         ),
     ];
-  }
-
-  static String? _routeForMission(String id) {
-    switch (id) {
-      case 'Z1_M01':
-        return AppRoutes.mission1;
-      case 'Z1_M02':
-        return AppRoutes.mission2;
-      case 'Z1_M03':
-        return AppRoutes.mission3;
-      case 'Z1_M04':
-        return AppRoutes.mission4;
-      case 'Z1_M05':
-        return AppRoutes.mission5;
-      case 'Z1_SPECIAL':
-        return AppRoutes.specialMission;
-      default:
-        return null;
-    }
   }
 }
 
@@ -381,67 +432,6 @@ class _EarnedZoneMedal extends StatelessWidget {
       color: GameColors.yellow,
     ),
   );
-}
-
-class _ZoneStatusLine extends StatelessWidget {
-  const _ZoneStatusLine({required this.completed, required this.missionCount});
-
-  final bool completed;
-  final int missionCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        GameStatusPill(
-          label: completed ? 'ZONA CONCLUIDA' : '$missionCount/6 MISSOES',
-          icon: completed ? Icons.emoji_events_rounded : Icons.route_rounded,
-          foreground: GameColors.navy,
-          background: Colors.white.withValues(alpha: 0.88),
-        ),
-      ],
-    );
-  }
-}
-
-class _ZoneCompletedCard extends StatelessWidget {
-  const _ZoneCompletedCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return const GameSectionCard(
-      backgroundColor: Color(0xFFFFF3CD),
-      child: Row(
-        children: [
-          GameIllustrationBadge(
-            icon: Icons.emoji_events_rounded,
-            size: 62,
-            color: GameColors.yellow,
-          ),
-          SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Zona 1 concluida',
-                  style: TextStyle(
-                    color: GameColors.navy,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 18,
-                  ),
-                ),
-                SizedBox(height: 3),
-                Text('Medalha conquistada: Protetor da Escola'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _UpgradeSection extends StatelessWidget {

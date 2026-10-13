@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../controllers/player_controller.dart';
+import '../widgets/game_orientation_gate.dart';
 import 'routes.dart';
 import 'theme.dart';
 
@@ -16,6 +17,8 @@ class CidadeEmMovimentoApp extends StatelessWidget {
       title: 'Cidade em Movimento',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      builder: (context, child) =>
+          GameOrientationGate(child: child ?? const SizedBox.shrink()),
       initialRoute: AppRoutes.home,
       onGenerateRoute: (settings) {
         return AppRoutes.onGenerateRoute(settings, controller);
