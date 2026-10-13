@@ -30,7 +30,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Zona 1 - Bairro / Escola'), findsOneWidget);
+    expect(find.text('Zona 1 - Bairro / Escola'), findsNothing);
+    expect(find.byKey(const Key('zone1-back-to-fortaleza')), findsOneWidget);
     expect(find.byKey(const Key('zone1-score-hud')), findsOneWidget);
     expect(
       find.byKey(const Key('zone1-visual-mission-Z1_M01')),

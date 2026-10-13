@@ -35,6 +35,11 @@ class Zone1VisualScene extends StatelessWidget {
     required this.onMissionTap,
     this.scoreHud,
     this.upgradePanel,
+    this.nightPreview = false,
+    this.navigationPanel,
+    this.orientationHint,
+    this.viewportHeight,
+    this.contentInsets = EdgeInsets.zero,
   });
 
   final List<Zone1VisualMission> missions;
@@ -42,6 +47,11 @@ class Zone1VisualScene extends StatelessWidget {
   final ValueChanged<String> onMissionTap;
   final Widget? scoreHud;
   final Widget? upgradePanel;
+  final bool nightPreview;
+  final Widget? navigationPanel;
+  final Widget? orientationHint;
+  final double? viewportHeight;
+  final EdgeInsets contentInsets;
 
   @override
   Widget build(BuildContext context) {
@@ -53,25 +63,18 @@ class Zone1VisualScene extends StatelessWidget {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         final compact = width < 720;
-        final worldHeight = width / 1.5;
-        final mentorWidth = width * .16;
+        final worldHeight = viewportHeight ?? width / 1.5;
+        final contentWidth = width - contentInsets.horizontal;
+        final mentorWidth = contentWidth * .16;
         final world = Stack(
           fit: StackFit.expand,
           children: [
             Zone1NeighborhoodArt(
+              nightPreview: nightPreview,
               crosswalk: hasCrosswalk,
               lighting: hasLighting,
               cyclePath: hasCyclePath,
             ),
-            if (scoreHud != null)
-              Positioned(
-                key: const Key('zone1-score-overlay'),
-                left: 8,
-                right: 8,
-                top: compact ? null : 10,
-                bottom: compact ? 6 : null,
-                child: scoreHud!,
-              ),
           ],
         );
         Widget frame;
@@ -94,10 +97,24 @@ class Zone1VisualScene extends StatelessWidget {
               ),
               Column(
                 children: [
-                  SizedBox(
-                    height: worldHeight + (scoreHud != null ? 52 : 0),
-                    child: world,
-                  ),
+                  SizedBox(height: worldHeight, child: world),
+                  if (scoreHud != null || navigationPanel != null)
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          ?scoreHud,
+                          if (navigationPanel != null) ...[
+                            const SizedBox(height: 6),
+                            navigationPanel!,
+                          ],
+                          if (orientationHint != null) ...[
+                            const SizedBox(height: 6),
+                            orientationHint!,
+                          ],
+                        ],
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -150,17 +167,34 @@ class Zone1VisualScene extends StatelessWidget {
             ],
           );
         } else {
-          final upgradeWidth = width * (width >= 1000 ? .18 : .20);
+          final upgradeWidth = contentWidth * (width >= 1000 ? .18 : .20);
           frame = SizedBox(
             height: worldHeight,
             child: Stack(
               fit: StackFit.expand,
               children: [
                 world,
+                if (scoreHud != null)
+                  Positioned(
+                    key: const Key('zone1-score-overlay'),
+                    left: contentInsets.left + 8,
+                    right:
+                        contentInsets.right +
+                        (navigationPanel != null ? 232 : 8),
+                    top: contentInsets.top + 10,
+                    child: scoreHud!,
+                  ),
+                if (navigationPanel != null)
+                  Positioned(
+                    right: contentInsets.right + 8,
+                    top: contentInsets.top + 10,
+                    width: 216,
+                    child: navigationPanel!,
+                  ),
                 Positioned(
-                  left: 8,
-                  bottom: 10,
-                  width: width * .62,
+                  left: contentInsets.left + 8,
+                  bottom: contentInsets.bottom + 10,
+                  width: contentWidth * .62,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -175,17 +209,18 @@ class Zone1VisualScene extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  left: width * .62 + 12,
-                  bottom: 10,
+                  left: contentInsets.left + contentWidth * .62 + 12,
+                  bottom: contentInsets.bottom + 10,
                   width: mentorWidth,
                   height: mentorWidth * .78,
                   child: const IgnorePointer(child: _MentorPanel()),
                 ),
                 if (upgradePanel != null)
                   Positioned(
-                    right: 8,
-                    top: 74,
-                    bottom: 8,
+                    right: contentInsets.right + 8,
+                    top:
+                        contentInsets.top + (navigationPanel != null ? 88 : 74),
+                    bottom: contentInsets.bottom + 8,
                     width: upgradeWidth,
                     child: LayoutBuilder(
                       builder: (context, space) => Align(
@@ -207,7 +242,9 @@ class Zone1VisualScene extends StatelessWidget {
         }
         return ClipRRect(
           key: const Key('zone1-map-canvas'),
-          borderRadius: BorderRadius.circular(GameVisual.radiusLarge),
+          borderRadius: viewportHeight == null
+              ? BorderRadius.circular(GameVisual.radiusLarge)
+              : BorderRadius.zero,
           child: frame,
         );
       },
