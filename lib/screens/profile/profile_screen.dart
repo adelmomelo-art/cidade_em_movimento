@@ -1,105 +1,165 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../core/enums/player_type.dart';
-import '../../ui/visual_system.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Escolha seu perfil')),
-      body: GameBackground(
-        child: ListView(
-          key: const Key('profile-visual-list'),
-          children: [
-            const GameHeroPanel(
-              eyebrow: 'Comece sua jornada',
-              title: 'Como voce participa da cidade?',
-              subtitle:
-                  'O conteudo se adapta ao seu perfil sem alterar as regras centrais do jogo.',
-              icon: Icons.people_alt_rounded,
-            ),
-            const SizedBox(height: 18),
-            _ProfileCard(
-              type: PlayerType.child,
-              icon: Icons.child_care_rounded,
-              subtitle: 'Travessia, bicicleta, escola e seguranca.',
-              accent: GameColors.green,
-            ),
-            _ProfileCard(
-              type: PlayerType.teen,
-              icon: Icons.directions_bike_rounded,
-              subtitle: 'Mobilidade, convivencia e cidadania.',
-              accent: GameColors.orange,
-            ),
-            _ProfileCard(
-              type: PlayerType.adult,
-              icon: Icons.directions_car_rounded,
-              subtitle: 'Legislacao, direcao defensiva e responsabilidade.',
-              accent: GameColors.blue,
-            ),
-          ],
-        ),
-      ),
-    );
+  static const artworkAsset = 'assets/profile/escolha_perfil_r25.png';
+  static const artworkSize = Size(1672, 940);
+  static const _profiles = [
+    (
+      type: PlayerType.child,
+      label: 'CRIANÇA',
+      hint:
+          'Explorador da Cidade. Aprenda brincando com missões do dia a dia. Escolher avatar de criança.',
+      bounds: Rect.fromLTWH(114, 198, 479, 699),
+    ),
+    (
+      type: PlayerType.teen,
+      label: 'ADOLESCENTE',
+      hint:
+          'Cidadão em Formação. Enfrente novos desafios e se prepare para o futuro. Escolher avatar de adolescente.',
+      bounds: Rect.fromLTWH(606, 198, 460, 699),
+    ),
+    (
+      type: PlayerType.adult,
+      label: 'ADULTO',
+      hint:
+          'Condutor Consciente. Aprofunde seus conhecimentos e seja referência no trânsito. Escolher avatar de adulto.',
+      bounds: Rect.fromLTWH(1079, 198, 477, 699),
+    ),
+  ];
+
+  void _back(BuildContext context) {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    } else {
+      navigator.pushReplacementNamed(AppRoutes.home);
+    }
   }
-}
-
-class _ProfileCard extends StatelessWidget {
-  const _ProfileCard({
-    required this.type,
-    required this.icon,
-    required this.subtitle,
-    required this.accent,
-  });
-
-  final PlayerType type;
-  final IconData icon;
-  final String subtitle;
-  final Color accent;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: GameSectionCard(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.avatar, arguments: type);
-        },
-        child: Row(
-          children: [
-            GameIllustrationBadge(icon: icon, size: 66, color: accent),
-            const SizedBox(width: 18),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    type.label,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    type.initialTitle,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: accent,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(subtitle),
-                ],
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: const Color(0xFF102A43),
+    body: Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned.fill(
+          child: IgnorePointer(
+            child: ClipRect(
+              child: ImageFiltered(
+                key: const Key('profile-ambient-background'),
+                imageFilter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: Image.asset(
+                  artworkAsset,
+                  fit: BoxFit.cover,
+                  excludeFromSemantics: true,
+                ),
               ),
             ),
-            const Icon(Icons.chevron_right_rounded),
-          ],
+          ),
+        ),
+        const Positioned.fill(
+          child: IgnorePointer(child: ColoredBox(color: Color(0x22102A43))),
+        ),
+        SafeArea(
+          child: SizedBox.expand(
+            child: FittedBox(
+              key: const Key('profile-fitted-artwork'),
+              fit: BoxFit.contain,
+              child: RepaintBoundary(
+                key: const Key('profile-artwork'),
+                child: SizedBox(
+                  width: artworkSize.width,
+                  height: artworkSize.height,
+                  child: Stack(
+                    key: const Key('profile-visual-list'),
+                    fit: StackFit.expand,
+                    children: [
+                      Semantics(
+                        label:
+                            'Escolha seu perfil. A mesma cidade, diferentes desafios.',
+                        image: true,
+                        child: Image.asset(
+                          artworkAsset,
+                          key: const Key('profile-approved-image'),
+                          fit: BoxFit.fill,
+                          filterQuality: FilterQuality.medium,
+                          excludeFromSemantics: true,
+                        ),
+                      ),
+                      Positioned.fromRect(
+                        rect: const Rect.fromLTWH(26, 40, 244, 88),
+                        child: _ProfileAction(
+                          key: const Key('profile-back-button'),
+                          label: 'VOLTAR',
+                          hint: 'Voltar à tela anterior',
+                          onPressed: () => _back(context),
+                        ),
+                      ),
+                      for (final profile in _profiles)
+                        Positioned.fromRect(
+                          rect: profile.bounds,
+                          child: _ProfileAction(
+                            key: Key('profile-card-${profile.type.name}'),
+                            label: profile.label,
+                            hint: profile.hint,
+                            onPressed: () => Navigator.of(context).pushNamed(
+                              AppRoutes.avatar,
+                              arguments: profile.type,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _ProfileAction extends StatelessWidget {
+  const _ProfileAction({
+    super.key,
+    required this.label,
+    required this.hint,
+    required this.onPressed,
+  });
+
+  final String label;
+  final String hint;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: label,
+    hint: hint,
+    onTap: onPressed,
+    child: Tooltip(
+      message: hint,
+      excludeFromSemantics: true,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          excludeFromSemantics: true,
+          borderRadius: BorderRadius.circular(32),
+          hoverColor: const Color(0x22FFFFFF),
+          focusColor: const Color(0x55FFFFFF),
+          splashColor: const Color(0x44FFFFFF),
+          child: const SizedBox.expand(),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
