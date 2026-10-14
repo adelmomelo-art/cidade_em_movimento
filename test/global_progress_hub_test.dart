@@ -20,6 +20,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('fortaleza-global-summary')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('fortaleza-menu-button')));
+    await tester.pumpAndSettle();
     expect(find.text('Progressao Global'), findsOneWidget);
     expect(find.text('0% - 0/36 missoes'), findsOneWidget);
   });

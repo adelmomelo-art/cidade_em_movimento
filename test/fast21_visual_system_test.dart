@@ -21,7 +21,7 @@ void main() {
     expect(home, contains("Key('home-brand-mark')"));
     expect(home, contains('Aprenda. Decida. Transforme a cidade.'));
     expect(profile, contains("Key('profile-visual-list')"));
-    expect(map, contains('GameBackground'));
+    expect(map, contains('ApprovedArtworkPage'));
     expect(map, contains('ZONE_6'));
     expect(map, isNot(contains('ZONE_7')));
   });
