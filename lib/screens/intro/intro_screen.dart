@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
-import '../../core/enums/player_type.dart';
+import '../../widgets/approved_artwork_page.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key, required this.controller});
@@ -10,64 +10,26 @@ class IntroScreen extends StatelessWidget {
   final PlayerController controller;
 
   @override
-  Widget build(BuildContext context) {
-    final profile = controller.profile;
-
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 620),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(28),
-                  child: Column(
-                    children: [
-                      const CircleAvatar(
-                        radius: 54,
-                        child: Icon(Icons.person_pin_circle_rounded, size: 66),
-                      ),
-                      const SizedBox(height: 18),
-                      Text(
-                        'Olá! Eu sou o Melo.',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 18),
-                      const Text(
-                        'Nossa cidade precisa de pessoas que saibam fazer '
-                        'boas escolhas. Aqui você não ganha apenas acertando '
-                        'perguntas: suas decisões ajudam a tornar o trânsito '
-                        'mais seguro e a transformar o bairro.',
-                        textAlign: TextAlign.center,
-                      ),
-                      if (profile != null) ...[
-                        const SizedBox(height: 20),
-                        Text(
-                          profile.type.initialTitle,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
-                      const SizedBox(height: 30),
-                      FilledButton.icon(
-                        onPressed: () {
-                          Navigator.of(
-                            context,
-                          ).pushReplacementNamed(AppRoutes.fortalezaMap);
-                        },
-                        icon: const Icon(Icons.map_rounded),
-                        label: const Text('COMEÇAR'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+  Widget build(BuildContext context) => ApprovedArtworkPage(
+    asset: 'assets/intro/apresentacao_melo_r26.png',
+    size: const Size(1672, 941),
+    prefix: 'intro',
+    description:
+        'Bem-vindo à Cidade em Movimento. Olá! Eu sou o Melo. '
+        'Aqui, suas decisões ajudam a tornar o trânsito mais seguro e a '
+        'transformar a cidade. Vamos começar?',
+    actions: [
+      Positioned.fromRect(
+        rect: const Rect.fromLTWH(194, 716, 598, 173),
+        child: ArtworkAction(
+          key: const Key('intro-start-button'),
+          label: 'COMEÇAR',
+          hint: 'Abrir o mapa da cidade',
+          onPressed: () => Navigator.of(context).pushReplacementNamed(
+            controller.hasProfile ? AppRoutes.fortalezaMap : AppRoutes.profile,
           ),
         ),
       ),
-    );
-  }
+    ],
+  );
 }

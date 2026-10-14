@@ -30,3 +30,8 @@ flutter:
     - assets/zone_1/melo_apresentador_r13.png
     - assets/zone_1/melo_perguntas_r19.png
     - assets/home/tela_inicial_r24.png
+    - assets/profile/escolha_perfil_r25.png
+    - assets/avatar/escolha_crianca_r26.png
+    - assets/avatar/escolha_adolescente_r26.png
+    - assets/avatar/escolha_adulto_r26.png
+    - assets/intro/apresentacao_melo_r26.png
