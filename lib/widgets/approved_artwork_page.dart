@@ -11,8 +11,10 @@ class ApprovedArtworkPage extends StatelessWidget {
     required this.prefix,
     required this.description,
     required this.actions,
+    this.backgroundKey,
   });
 
+  final Key? backgroundKey;
   final String asset;
   final Size size;
   final String prefix;
@@ -55,14 +57,17 @@ class ApprovedArtworkPage extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Semantics(
-                        image: true,
-                        label: description,
-                        child: Image.asset(
-                          asset,
-                          fit: BoxFit.fill,
-                          filterQuality: FilterQuality.medium,
-                          excludeFromSemantics: true,
+                      RepaintBoundary(
+                        key: backgroundKey,
+                        child: Semantics(
+                          image: true,
+                          label: description,
+                          child: Image.asset(
+                            asset,
+                            fit: BoxFit.fill,
+                            filterQuality: FilterQuality.medium,
+                            excludeFromSemantics: true,
+                          ),
                         ),
                       ),
                       ...actions,

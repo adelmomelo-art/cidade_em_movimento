@@ -10,6 +10,7 @@ import 'package:cidade_em_movimento/models/player_profile.dart';
 import 'package:cidade_em_movimento/screens/fortaleza_map/fortaleza_map_screen.dart';
 import 'package:cidade_em_movimento/services/storage_service.dart';
 import 'package:cidade_em_movimento/widgets/fortaleza_map_avatar.dart';
+import 'package:cidade_em_movimento/widgets/fortaleza_boats.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -176,12 +177,13 @@ void main() {
     }
 
     final actual = await renderPixels(
-      const Key('fortaleza-artwork'),
-      'r27c_actual_map',
+      const Key('fortaleza-background-r28'),
+      'r28_actual_background',
     );
     expect(actual, isNotNull);
     expect(actual!.length, 1672 * 941 * 4);
 
+    // Capture the background independently of moving boats and native controls.
     // Render the independent approved reference with the same Flutter image
     // paint path. Direct codec bytes bypass this path and aren't screenshots.
     await tester.pumpWidget(
@@ -195,7 +197,7 @@ void main() {
                 width: 1672,
                 height: 941,
                 child: Image.asset(
-                  'assets/fortaleza/mapa_aprovado_r27.png',
+                  FortalezaMapScreen.artworkAsset,
                   fit: BoxFit.fill,
                   filterQuality: FilterQuality.medium,
                   excludeFromSemantics: true,
@@ -447,6 +449,7 @@ void main() {
     final opened = <String>[];
     await tester.pumpWidget(app(c, opened: opened));
     await tester.pumpAndSettle();
+    expect(find.byType(FortalezaBoats), findsOneWidget);
     for (final action in [
       ('fortaleza-missions-button', AppRoutes.zone1),
       ('fortaleza-build-neighborhood', AppRoutes.buildNeighborhood),
@@ -465,6 +468,15 @@ void main() {
     ]) {
       await tester.tap(find.byKey(const Key('fortaleza-menu-button')));
       await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.byType(FortalezaBoats), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.byType(FortalezaBoats),
+        ),
+        findsNothing,
+      );
       await tester.ensureVisible(find.byKey(Key(action.$1)));
       await tester.tap(find.byKey(Key(action.$1)));
       await tester.pumpAndSettle();

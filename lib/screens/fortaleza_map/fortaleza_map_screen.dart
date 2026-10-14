@@ -7,12 +7,13 @@ import '../../data/zones/zone_catalog.dart';
 import '../../services/global_progress_service.dart';
 import '../../widgets/approved_artwork_page.dart';
 import '../../widgets/fortaleza_map_avatar.dart';
+import '../../widgets/fortaleza_boats.dart';
 
 class FortalezaMapScreen extends StatelessWidget {
   const FortalezaMapScreen({super.key, required this.controller});
 
   final PlayerController controller;
-  static const artworkAsset = 'assets/fortaleza/mapa_aprovado_r27.png';
+  static const artworkAsset = 'assets/fortaleza/mapa_sem_barcos_r28.png';
   static const artworkSize = Size(1672, 941);
   static const _zones = [
     (
@@ -172,11 +173,16 @@ class FortalezaMapScreen extends StatelessWidget {
       );
       return ApprovedArtworkPage(
         asset: artworkAsset,
+        backgroundKey: const Key('fortaleza-background-r28'),
         size: artworkSize,
         prefix: 'fortaleza',
         description:
             'Mapa de Fortaleza. Ponte dos Ingleses na Praia de Iracema, Farol do Mucuripe. Melo, seu guia. Seis zonas da cidade.',
         actions: [
+          Positioned.fromRect(
+            rect: FortalezaBoats.bounds,
+            child: const FortalezaBoats(),
+          ),
           // Only this small patch uses the edited image. All other scenery and
           // lettering come directly from the exact user-approved artwork.
           Positioned.fromRect(
