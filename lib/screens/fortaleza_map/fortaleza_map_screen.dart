@@ -2,326 +2,489 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
+import '../../core/enums/player_type.dart';
+import '../../data/zones/zone_catalog.dart';
 import '../../services/global_progress_service.dart';
-import '../../ui/visual_system.dart';
+import '../../widgets/approved_artwork_page.dart';
+import '../../widgets/fortaleza_map_avatar.dart';
 
 class FortalezaMapScreen extends StatelessWidget {
   const FortalezaMapScreen({super.key, required this.controller});
 
   final PlayerController controller;
-
-  static const _zones = <_FortalezaZone>[
-    _FortalezaZone(
+  static const artworkAsset = 'assets/fortaleza/mapa_aprovado_r27.png';
+  static const artworkSize = Size(1672, 941);
+  static const _zones = [
+    (
       id: 'ZONE_1',
-      number: 1,
       title: 'Bairro / Escola',
-      subtitle: 'Seguranca no caminho e convivencia no bairro',
-      medal: 'Protetor da Escola',
       route: AppRoutes.zone1,
-      icon: Icons.school_rounded,
+      bounds: Rect.fromLTWH(28, 516, 316, 126),
+      status: Rect.fromLTWH(275, 572, 70, 68),
     ),
-    _FortalezaZone(
+    (
       id: 'ZONE_2',
-      number: 2,
-      title: 'Centro Historico',
-      subtitle: 'Fluxos, calcadas, pontos e convivencia',
-      medal: 'Guardiao do Centro',
+      title: 'Centro Histórico',
       route: AppRoutes.zone2,
-      icon: Icons.account_balance_rounded,
+      bounds: Rect.fromLTWH(396, 439, 299, 116),
+      status: Rect.fromLTWH(632, 479, 64, 64),
     ),
-    _FortalezaZone(
+    (
       id: 'ZONE_3',
-      number: 3,
       title: 'Orla / Praia de Iracema',
-      subtitle: 'Mobilidade e convivencia na orla',
-      medal: 'Guardiao da Orla',
       route: AppRoutes.zone3,
-      icon: Icons.waves_rounded,
+      bounds: Rect.fromLTWH(1314, 230, 288, 115),
+      status: Rect.fromLTWH(1543, 279, 62, 64),
     ),
-    _FortalezaZone(
+    (
       id: 'ZONE_4',
-      number: 4,
-      title: 'Cultura / Eventos',
-      subtitle: 'Mobilidade em grandes encontros',
-      medal: 'Guardiao da Cultura',
+      title: 'Zona Cultural',
       route: AppRoutes.zone4,
-      icon: Icons.celebration_rounded,
+      bounds: Rect.fromLTWH(847, 291, 298, 125),
+      status: Rect.fromLTWH(1084, 340, 62, 61),
     ),
-    _FortalezaZone(
+    (
       id: 'ZONE_5',
-      number: 5,
       title: 'Grandes Vias',
-      subtitle: 'Velocidade, distancia e previsibilidade',
-      medal: 'Guardiao das Vias',
       route: AppRoutes.zone5,
-      icon: Icons.alt_route_rounded,
+      bounds: Rect.fromLTWH(784, 625, 295, 122),
+      status: Rect.fromLTWH(1017, 673, 64, 62),
     ),
-    _FortalezaZone(
+    (
       id: 'ZONE_6',
-      number: 6,
-      title: 'Polo Castelao',
-      subtitle: 'Mobilidade em dias de jogo',
-      medal: 'Guardiao do Castelao',
+      title: 'Polo Castelão',
       route: AppRoutes.zone6,
-      icon: Icons.stadium_rounded,
+      bounds: Rect.fromLTWH(1313, 657, 297, 125),
+      status: Rect.fromLTWH(1550, 711, 63, 63),
     ),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        final progress = controller.progress;
-        final completed = progress.completedZones.length.clamp(0, 6);
-        final medals = progress.medals.length.clamp(0, 6);
-        final totalStars = progress.missionStars.values.fold<int>(
-          0,
-          (sum, stars) => sum + stars,
-        );
+  String _status(String id) => controller.progress.completedZones.contains(id)
+      ? 'CONCLUIDA'
+      : controller.isZoneUnlocked(id)
+      ? 'DISPONIVEL'
+      : 'BLOQUEADA';
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Mapa de Fortaleza'),
-            actions: [
-              IconButton(
-                tooltip: 'Meu Progresso',
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.playerProgress);
-                },
-                icon: const Icon(Icons.insights_rounded),
-              ),
-            ],
+  void _open(BuildContext context, String route) =>
+      Navigator.of(context).pushNamed(route);
+
+  void _menu(BuildContext context) {
+    final progress = controller.progress;
+    final summary = const GlobalProgressService().summarize(progress);
+    final navigator = Navigator.of(context);
+    void open(String route) {
+      navigator.pop();
+      navigator.pushNamed(route);
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Mais opções'),
+        content: SizedBox(
+          width: 360,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  key: const Key('fortaleza-faixita'),
+                  leading: const Icon(Icons.support_agent_rounded),
+                  title: const Text('Faixita'),
+                  onTap: () => open(AppRoutes.faixita),
+                ),
+                ListTile(
+                  key: const Key('fortaleza-sign-duel'),
+                  leading: const Icon(Icons.signpost_rounded),
+                  title: const Text('Duelo das Placas'),
+                  subtitle: Text(
+                    progress.signDuelPlays == 0
+                        ? 'Ainda nao jogado'
+                        : 'Recorde: ${progress.signDuelBestScore} pontos - ${progress.signDuelBestCorrect}/6',
+                    key: const Key('fortaleza-sign-duel-status'),
+                  ),
+                  onTap: () => open(AppRoutes.signDuel),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.insights_rounded),
+                  title: const Text('Progressao Global'),
+                  subtitle: Text(
+                    '${summary.completionPercent}% - ${summary.completedMissions}/${summary.totalMissions} missoes',
+                    key: const Key('fortaleza-global-summary-status'),
+                  ),
+                  onTap: () => open(AppRoutes.globalProgress),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.home_rounded),
+                  title: const Text('Tela inicial'),
+                  onTap: () {
+                    navigator.pop();
+                    if (navigator.canPop()) {
+                      navigator.popUntil((route) => route.isFirst);
+                    } else {
+                      navigator.pushReplacementNamed(AppRoutes.home);
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
-          body: SafeArea(
-            child: GameBackground(
-              padding: EdgeInsets.zero,
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          _CityHeader(
-                            completedZones: completed,
-                            medals: medals,
-                            totalStars: totalStars,
-                          ),
-                          const SizedBox(height: 18),
-                          _FaixitaCard(controller: controller),
-                          const SizedBox(height: 12),
-                          _GlobalProgressCard(controller: controller),
-                          const SizedBox(height: 12),
-                          _SignDuelCard(controller: controller),
-                          const SizedBox(height: 12),
-                          _BuildNeighborhoodCard(controller: controller),
-                          const SizedBox(height: 18),
-                          for (
-                            var index = 0;
-                            index < _zones.length;
-                            index++
-                          ) ...[
-                            _ZoneCard(
-                              zone: _zones[index],
-                              unlocked: controller.isZoneUnlocked(
-                                _zones[index].id,
-                              ),
-                              completed: progress.completedZones.contains(
-                                _zones[index].id,
-                              ),
-                              medalEarned: progress.medals.contains(
-                                _medalIdForZone(_zones[index].id),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => navigator.pop(),
+            child: const Text('FECHAR'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _action(
+    BuildContext context,
+    Rect rect,
+    String key,
+    String label,
+    String route,
+  ) => Positioned.fromRect(
+    rect: rect,
+    child: ArtworkAction(
+      key: Key(key),
+      label: label,
+      hint: 'Abrir $label',
+      onPressed: () => _open(context, route),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: controller,
+    builder: (context, _) {
+      final progress = controller.progress;
+      final completed = zoneCatalog
+          .where((zone) => progress.completedZones.contains(zone.id))
+          .length;
+      final currentZone = _zones.firstWhere(
+        (zone) =>
+            controller.isZoneUnlocked(zone.id) &&
+            !progress.completedZones.contains(zone.id),
+        orElse: () => _zones.first,
+      );
+      return ApprovedArtworkPage(
+        asset: artworkAsset,
+        size: artworkSize,
+        prefix: 'fortaleza',
+        description:
+            'Mapa de Fortaleza. Ponte dos Ingleses na Praia de Iracema, Farol do Mucuripe. Melo, seu guia. Seis zonas da cidade.',
+        actions: [
+          // Only this small patch uses the edited image. All other scenery and
+          // lettering come directly from the exact user-approved artwork.
+          Positioned.fromRect(
+            rect: const Rect.fromLTWH(327, 630, 112, 161),
+            child: IgnorePointer(
+              child: ClipRect(
+                child: OverflowBox(
+                  alignment: Alignment.topLeft,
+                  minWidth: 1672,
+                  maxWidth: 1672,
+                  minHeight: 941,
+                  maxHeight: 941,
+                  child: Transform.translate(
+                    offset: const Offset(-327, -630),
+                    child: Image.asset(
+                      'assets/fortaleza/mapa_sem_avatar_r27.png',
+                      fit: BoxFit.fill,
+                      excludeFromSemantics: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned.fromRect(
+            rect: const Rect.fromLTWH(327, 629, 112, 161),
+            child: Semantics(
+              key: const Key('fortaleza-start-avatar'),
+              image: true,
+              label:
+                  'INÍCIO. Personagem escolhido: ${controller.profile?.type.label ?? 'Criança'}.',
+              child: IgnorePointer(
+                child: FortalezaMapAvatar(profile: controller.profile),
+              ),
+            ),
+          ),
+          Positioned.fromRect(
+            rect: const Rect.fromLTWH(1067, 29, 70, 66),
+            child: Semantics(
+              image: true,
+              label: 'Seu personagem',
+              child: FortalezaMapAvatar(
+                profile: controller.profile,
+                portrait: true,
+              ),
+            ),
+          ),
+          for (final metric in [
+            (
+              key: 'knowledge',
+              label: 'Conhecimento',
+              value: progress.knowledge,
+              rect: const Rect.fromLTWH(1208, 31, 63, 62),
+            ),
+            (
+              key: 'citizenship',
+              label: 'Cidadania',
+              value: progress.citizenshipXp,
+              rect: const Rect.fromLTWH(1340, 31, 62, 62),
+            ),
+            (
+              key: 'coins',
+              label: 'Moedas',
+              value: progress.coins,
+              rect: const Rect.fromLTWH(1481, 31, 76, 62),
+            ),
+          ])
+            Positioned.fromRect(
+              rect: metric.rect,
+              child: Tooltip(
+                message: metric.label,
+                child: _Metric(
+                  key: Key('fortaleza-${metric.key}'),
+                  label: metric.label,
+                  value: metric.value,
+                ),
+              ),
+            ),
+          Positioned.fromRect(
+            rect: const Rect.fromLTWH(1568, 29, 76, 69),
+            child: ArtworkAction(
+              key: const Key('fortaleza-menu-button'),
+              label: 'Mais opções',
+              hint: 'Faixita, Duelo das Placas, progresso e tela inicial',
+              onPressed: () => _menu(context),
+            ),
+          ),
+          for (final zone in _zones) ...[
+            Positioned.fromRect(
+              rect: zone.status,
+              child: IgnorePointer(
+                child: _ZoneIndicator(
+                  key: Key('fortaleza-status-${zone.id}'),
+                  status: _status(zone.id),
+                  square: zone.id == 'ZONE_1',
+                ),
+              ),
+            ),
+            if (progress.medals.contains(findZoneById(zone.id)!.medalId))
+              Positioned(
+                left: zone.bounds.left + 28,
+                top: zone.bounds.top + 69,
+                width: 28,
+                height: 28,
+                child: Tooltip(
+                  key: Key('fortaleza-medal-${zone.id}'),
+                  message: 'Medalha conquistada',
+                  child: const Icon(
+                    Icons.workspace_premium_rounded,
+                    color: Color(0xFFFFC107),
+                    size: 28,
+                    shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
+                  ),
+                ),
+              ),
+            Positioned.fromRect(
+              rect: zone.bounds,
+              child: ArtworkAction(
+                key: Key('fortaleza-zone-${zone.id}'),
+                label: zone.title,
+                hint: _status(zone.id),
+                onPressed: controller.isZoneUnlocked(zone.id)
+                    ? () => _open(context, zone.route)
+                    : null,
+              ),
+            ),
+          ],
+          // The decorative secondary lock over Zone 4 must reflect its state.
+          Positioned.fromRect(
+            rect: const Rect.fromLTWH(1044, 262, 44, 44),
+            child: IgnorePointer(
+              child: _ZoneIndicator(status: _status('ZONE_4')),
+            ),
+          ),
+          _action(
+            context,
+            const Rect.fromLTWH(28, 829, 268, 91),
+            'fortaleza-missions-button',
+            'MINHAS MISSÕES',
+            currentZone.route,
+          ),
+          _action(
+            context,
+            const Rect.fromLTWH(304, 829, 284, 91),
+            'fortaleza-build-neighborhood',
+            'MINHA CIDADE',
+            AppRoutes.buildNeighborhood,
+          ),
+          _action(
+            context,
+            const Rect.fromLTWH(598, 829, 278, 91),
+            'fortaleza-medals-button',
+            'MEDALHAS',
+            AppRoutes.playerProgress,
+          ),
+          Positioned.fromRect(
+            rect: const Rect.fromLTWH(889, 823, 755, 98),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFF24C7EF), width: 1.5),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF003B5A), Color(0xFF061C36)],
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+              child: Column(
+                children: [
+                  Text(
+                    'PROGRESSÃO DA CIDADE • $completed/6',
+                    key: const Key('fortaleza-zone-count'),
+                    textScaler: TextScaler.noScaling,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        for (var i = 0; i < _zones.length; i++)
+                          Expanded(
+                            child: Semantics(
+                              label:
+                                  '${_zones[i].title}: ${_status(_zones[i].id)}',
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    width: 38,
+                                    height: 38,
+                                    child: _ProgressNode(
+                                      number: i + 1,
+                                      status: _status(_zones[i].id),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 1),
+                                  Text(
+                                    [
+                                      'Bairro / Escola',
+                                      'Centro Histórico',
+                                      'Orla / Iracema',
+                                      'Zona Cultural',
+                                      'Grandes Vias',
+                                      'Castelão',
+                                    ][i],
+                                    textScaler: TextScaler.noScaling,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            if (index < _zones.length - 1)
-                              const _RouteConnector(),
-                          ],
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        );
-      },
-    );
-  }
-
-  static String _medalIdForZone(String zoneId) {
-    switch (zoneId) {
-      case 'ZONE_1':
-        return 'PROTETOR_DA_ESCOLA';
-      case 'ZONE_2':
-        return 'GUARDIAO_DO_CENTRO';
-      case 'ZONE_3':
-        return 'GUARDIAO_DA_ORLA';
-      case 'ZONE_4':
-        return 'GUARDIAO_DA_CULTURA';
-      case 'ZONE_5':
-        return 'GUARDIAO_DAS_VIAS';
-      case 'ZONE_6':
-        return 'GUARDIAO_DO_CASTELAO';
-      default:
-        return '';
-    }
-  }
-}
-
-class _CityHeader extends StatelessWidget {
-  const _CityHeader({
-    required this.completedZones,
-    required this.medals,
-    required this.totalStars,
-  });
-
-  final int completedZones;
-  final int medals;
-  final int totalStars;
-
-  @override
-  Widget build(BuildContext context) {
-    final ratio = completedZones / 6;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(22),
-        child: Column(
-          children: [
-            const Icon(Icons.location_city_rounded, size: 64),
-            const SizedBox(height: 12),
-            Text(
-              'Fortaleza em Movimento',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Percorra as seis zonas, tome boas decisoes e transforme a '
-              'cidade ao longo da sua jornada.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 18),
-            LinearProgressIndicator(
-              key: const Key('fortaleza-global-progress'),
-              value: ratio,
-              minHeight: 10,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '$completedZones de 6 zonas concluidas',
-              key: const Key('fortaleza-zone-count'),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: _Metric(
-                    icon: Icons.emoji_events_rounded,
-                    value: '$medals/6',
-                    label: 'Medalhas',
-                  ),
-                ),
-                Expanded(
-                  child: _Metric(
-                    icon: Icons.star_rounded,
-                    value: '$totalStars',
-                    label: 'Estrelas',
-                  ),
-                ),
-                Expanded(
-                  child: _Metric(
-                    icon: Icons.map_rounded,
-                    value: '$completedZones/6',
-                    label: 'Zonas',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+          _action(
+            context,
+            const Rect.fromLTWH(889, 823, 755, 98),
+            'fortaleza-global-summary',
+            'Progressão da cidade',
+            AppRoutes.globalProgress,
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class _Metric extends StatelessWidget {
-  const _Metric({required this.icon, required this.value, required this.label});
-
-  final IconData icon;
-  final String value;
+  const _Metric({super.key, required this.label, required this.value});
   final String label;
+  final int value;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, size: 24),
-        const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall,
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-}
-
-class _FaixitaCard extends StatelessWidget {
-  const _FaixitaCard({required this.controller});
-
-  final PlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      key: const Key('fortaleza-faixita'),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.faixita);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Row(
-            children: [
-              const CircleAvatar(
-                radius: 28,
-                child: Icon(Icons.support_agent_rounded, size: 30),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'MENTORA PEDAGOGICA',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Faixita',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Tire duvidas, revise seu desempenho e receba orientacoes para continuar aprendendo.',
-                    ),
-                  ],
+  Widget build(BuildContext context) => Semantics(
+    label: '$label: $value',
+    child: ColoredBox(
+      color: const Color(0xFF052642),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '$value',
+                textScaler: TextScaler.noScaling,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 27,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded),
-            ],
+            ),
+          ),
+          Text(
+            label,
+            textScaler: TextScaler.noScaling,
+            style: const TextStyle(color: Colors.white, fontSize: 10),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _ZoneIndicator extends StatelessWidget {
+  const _ZoneIndicator({super.key, required this.status, this.square = false});
+  final String status;
+  final bool square;
+
+  @override
+  Widget build(BuildContext context) {
+    final available = status != 'BLOQUEADA';
+    return Semantics(
+      label: status,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: square ? BoxShape.rectangle : BoxShape.circle,
+          borderRadius: square ? BorderRadius.circular(18) : null,
+          border: Border.all(color: Colors.white, width: 3),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: available
+                ? const [Color(0xFF5AF02B), Color(0xFF008323)]
+                : const [Color(0xFF51677B), Color(0xFF102438)],
+          ),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) => Icon(
+            status == 'CONCLUIDA'
+                ? Icons.check_rounded
+                : available
+                ? Icons.play_arrow_rounded
+                : Icons.lock_rounded,
+            color: Colors.white,
+            size: constraints.maxHeight * .63,
           ),
         ),
       ),
@@ -329,351 +492,31 @@ class _FaixitaCard extends StatelessWidget {
   }
 }
 
-class _GlobalProgressCard extends StatelessWidget {
-  const _GlobalProgressCard({required this.controller});
-
-  final PlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final summary = const GlobalProgressService().summarize(
-      controller.progress,
-    );
-
-    return Card(
-      key: const Key('fortaleza-global-summary'),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.globalProgress);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 28,
-                child: Icon(
-                  summary.fortalezaComplete
-                      ? Icons.workspace_premium_rounded
-                      : Icons.insights_rounded,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'JORNADA FORTALEZA',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      summary.fortalezaComplete
-                          ? 'Fortaleza Concluida'
-                          : 'Progressao Global',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${summary.completionPercent}% - ${summary.completedMissions}/${summary.totalMissions} missoes',
-                      key: const Key('fortaleza-global-summary-status'),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SignDuelCard extends StatelessWidget {
-  const _SignDuelCard({required this.controller});
-
-  final PlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = controller.progress;
-
-    return Card(
-      key: const Key('fortaleza-sign-duel'),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.signDuel);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Row(
-            children: [
-              const CircleAvatar(
-                radius: 28,
-                child: Icon(Icons.signpost_rounded, size: 30),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'DESAFIO EXTRA',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Duelo das Placas',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Teste seu conhecimento em seis rodadas de dificuldade progressiva.',
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      progress.signDuelPlays == 0
-                          ? 'Ainda nao jogado'
-                          : 'Recorde: ${progress.signDuelBestScore} pontos - ${progress.signDuelBestCorrect}/6',
-                      key: const Key('fortaleza-sign-duel-status'),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BuildNeighborhoodCard extends StatelessWidget {
-  const _BuildNeighborhoodCard({required this.controller});
-
-  final PlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = controller.progress;
-    final ids = <String>{
-      'BAIRRO_CALCADA_ACESSIVEL',
-      'BAIRRO_PRACA_CONVIVENCIA',
-      'BAIRRO_BICICLETARIO',
-    };
-    final installed = progress.purchasedUpgrades
-        .where((upgradeId) => ids.contains(upgradeId))
-        .length;
-
-    return Card(
-      key: const Key('fortaleza-build-neighborhood'),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.buildNeighborhood);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Row(
-            children: [
-              const CircleAvatar(
-                radius: 28,
-                child: Icon(Icons.location_city_rounded, size: 30),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'TRANSFORMACAO URBANA',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Construa o Bairro',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Use moedas para instalar melhorias e transformar o bairro.',
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '$installed de 3 melhorias instaladas',
-                      key: const Key('fortaleza-build-status'),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RouteConnector extends StatelessWidget {
-  const _RouteConnector();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 24,
-      child: Center(
-        child: Container(
-          width: 3,
-          height: 24,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.outlineVariant,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ZoneCard extends StatelessWidget {
-  const _ZoneCard({
-    required this.zone,
-    required this.unlocked,
-    required this.completed,
-    required this.medalEarned,
-  });
-
-  final _FortalezaZone zone;
-  final bool unlocked;
-  final bool completed;
-  final bool medalEarned;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    final status = completed
-        ? 'CONCLUIDA'
-        : unlocked
-        ? 'DISPONIVEL'
-        : 'BLOQUEADA';
-
-    final statusIcon = completed
-        ? Icons.check_circle_rounded
-        : unlocked
-        ? Icons.lock_open_rounded
-        : Icons.lock_rounded;
-
-    return Card(
-      key: Key('fortaleza-zone-${zone.id}'),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: unlocked
-            ? () {
-                Navigator.of(context).pushNamed(zone.route);
-              }
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: completed
-                    ? scheme.primaryContainer
-                    : scheme.surfaceContainerHighest,
-                child: Icon(
-                  zone.icon,
-                  color: completed
-                      ? scheme.onPrimaryContainer
-                      : scheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'ZONA ${zone.number}',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      zone.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(zone.subtitle),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Chip(
-                          key: Key('fortaleza-status-${zone.id}'),
-                          avatar: Icon(statusIcon, size: 18),
-                          label: Text(status),
-                        ),
-                        if (medalEarned)
-                          Chip(
-                            key: Key('fortaleza-medal-${zone.id}'),
-                            avatar: const Icon(
-                              Icons.workspace_premium_rounded,
-                              size: 18,
-                            ),
-                            label: Text(zone.medal),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                unlocked ? Icons.chevron_right_rounded : Icons.block_rounded,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FortalezaZone {
-  const _FortalezaZone({
-    required this.id,
-    required this.number,
-    required this.title,
-    required this.subtitle,
-    required this.medal,
-    required this.route,
-    required this.icon,
-  });
-
-  final String id;
+class _ProgressNode extends StatelessWidget {
+  const _ProgressNode({required this.number, required this.status});
   final int number;
-  final String title;
-  final String subtitle;
-  final String medal;
-  final String route;
-  final IconData icon;
+  final String status;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: status == 'CONCLUIDA'
+          ? const Color(0xFFD29400)
+          : status == 'DISPONIVEL'
+          ? const Color(0xFF13872B)
+          : const Color(0xFF596878),
+      border: Border.all(color: Colors.white70, width: 2),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      '$number',
+      textScaler: TextScaler.noScaling,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 23,
+        fontWeight: FontWeight.w800,
+      ),
+    ),
+  );
 }

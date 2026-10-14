@@ -19,11 +19,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.tap(find.byKey(const Key('fortaleza-menu-button')));
+    await tester.pumpAndSettle();
     expect(find.byKey(const Key('fortaleza-sign-duel')), findsOneWidget);
     expect(find.text('Duelo das Placas'), findsOneWidget);
     expect(find.text('Ainda nao jogado'), findsOneWidget);
 
+    await tester.tap(find.text('FECHAR'));
+    await tester.pumpAndSettle();
     await controller.recordSignDuelResult(score: 500, correctAnswers: 5);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('fortaleza-menu-button')));
     await tester.pumpAndSettle();
 
     expect(find.text('Recorde: 500 pontos - 5/6'), findsOneWidget);

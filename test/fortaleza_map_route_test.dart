@@ -31,6 +31,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(FortalezaMapScreen), findsOneWidget);
-    expect(find.text('Mapa de Fortaleza'), findsOneWidget);
+    expect(find.byKey(const Key('fortaleza-artwork')), findsOneWidget);
   });
 }

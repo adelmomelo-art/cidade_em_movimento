@@ -31,21 +31,10 @@ Future<void> _completeSpecial(
   );
 }
 
-Future<void> _materialize(
-  WidgetTester tester,
-  Finder finder, {
-  int maxSteps = 30,
-}) async {
-  final scrollable = find.byType(Scrollable).first;
-
-  for (var step = 0; step < maxSteps && finder.evaluate().isEmpty; step++) {
-    await tester.drag(scrollable, const Offset(0, -260));
-    await tester.pumpAndSettle();
-  }
-
-  expect(finder, findsWidgets);
-  await tester.ensureVisible(finder.first);
-  await tester.pumpAndSettle();
+Future<void> _materialize(WidgetTester tester, Finder finder) async {
+  expect(find.byType(Scrollable), findsNothing);
+  expect(finder, findsOneWidget);
+  expect(finder.hitTestable(), findsOneWidget);
 }
 
 void main() {
@@ -59,8 +48,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Fortaleza em Movimento'), findsOneWidget);
-    expect(find.text('0 de 6 zonas concluidas'), findsOneWidget);
+    expect(find.byKey(const Key('fortaleza-artwork')), findsOneWidget);
+    expect(find.text('PROGRESSÃO DA CIDADE • 0/6'), findsOneWidget);
 
     for (var zone = 1; zone <= 6; zone++) {
       final card = find.byKey(Key('fortaleza-zone-ZONE_$zone'));
@@ -69,19 +58,33 @@ void main() {
     }
 
     expect(
-      find.descendant(
-        of: find.byKey(const Key('fortaleza-status-ZONE_1')),
-        matching: find.text('DISPONIVEL'),
-      ),
-      findsOneWidget,
+      tester
+          .widget<Semantics>(
+            find
+                .descendant(
+                  of: find.byKey(const Key('fortaleza-status-ZONE_1')),
+                  matching: find.byType(Semantics),
+                )
+                .first,
+          )
+          .properties
+          .label,
+      'DISPONIVEL',
     );
 
     expect(
-      find.descendant(
-        of: find.byKey(const Key('fortaleza-status-ZONE_6')),
-        matching: find.text('BLOQUEADA'),
-      ),
-      findsOneWidget,
+      tester
+          .widget<Semantics>(
+            find
+                .descendant(
+                  of: find.byKey(const Key('fortaleza-status-ZONE_6')),
+                  matching: find.byType(Semantics),
+                )
+                .first,
+          )
+          .properties
+          .label,
+      'BLOQUEADA',
     );
   });
 
@@ -98,17 +101,24 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('2 de 6 zonas concluidas'), findsOneWidget);
+    expect(find.text('PROGRESSÃO DA CIDADE • 2/6'), findsOneWidget);
 
     final zone1 = find.byKey(const Key('fortaleza-zone-ZONE_1'));
     await _materialize(tester, zone1);
 
     expect(
-      find.descendant(
-        of: find.byKey(const Key('fortaleza-status-ZONE_1')),
-        matching: find.text('CONCLUIDA'),
-      ),
-      findsOneWidget,
+      tester
+          .widget<Semantics>(
+            find
+                .descendant(
+                  of: find.byKey(const Key('fortaleza-status-ZONE_1')),
+                  matching: find.byType(Semantics),
+                )
+                .first,
+          )
+          .properties
+          .label,
+      'CONCLUIDA',
     );
 
     expect(find.byKey(const Key('fortaleza-medal-ZONE_1')), findsOneWidget);
@@ -117,11 +127,18 @@ void main() {
     await _materialize(tester, zone3);
 
     expect(
-      find.descendant(
-        of: find.byKey(const Key('fortaleza-status-ZONE_3')),
-        matching: find.text('DISPONIVEL'),
-      ),
-      findsOneWidget,
+      tester
+          .widget<Semantics>(
+            find
+                .descendant(
+                  of: find.byKey(const Key('fortaleza-status-ZONE_3')),
+                  matching: find.byType(Semantics),
+                )
+                .first,
+          )
+          .properties
+          .label,
+      'DISPONIVEL',
     );
   });
 
@@ -144,17 +161,24 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('6 de 6 zonas concluidas'), findsOneWidget);
+    expect(find.text('PROGRESSÃO DA CIDADE • 6/6'), findsOneWidget);
 
     final zone6 = find.byKey(const Key('fortaleza-zone-ZONE_6'));
     await _materialize(tester, zone6);
 
     expect(
-      find.descendant(
-        of: find.byKey(const Key('fortaleza-status-ZONE_6')),
-        matching: find.text('CONCLUIDA'),
-      ),
-      findsOneWidget,
+      tester
+          .widget<Semantics>(
+            find
+                .descendant(
+                  of: find.byKey(const Key('fortaleza-status-ZONE_6')),
+                  matching: find.byType(Semantics),
+                )
+                .first,
+          )
+          .properties
+          .label,
+      'CONCLUIDA',
     );
 
     expect(find.byKey(const Key('fortaleza-medal-ZONE_6')), findsOneWidget);
