@@ -63,10 +63,6 @@ void main() {
         final art = find.byKey(const Key('zone1-map-canvas'));
         final panel = find.byKey(const Key('zone1-mission-window'));
         expect(panel, findsOneWidget);
-        expect(
-          find.text('ESCOLHA A MISSÃO E AVANCE PELO BAIRRO'),
-          findsOneWidget,
-        );
         for (final id in _ids) {
           final mission = find.byKey(Key('zone1-visual-mission-$id'));
           expect(find.descendant(of: panel, matching: mission), findsOneWidget);
@@ -74,9 +70,20 @@ void main() {
         }
         final imageRect = tester.getRect(art);
         final panelRect = tester.getRect(panel);
-        expect(imageRect.contains(panelRect.topLeft), isTrue);
-        expect(imageRect.contains(panelRect.bottomRight), isTrue);
-        expect(panelRect.center.dx, lessThan(imageRect.center.dx));
+        // R29's mission layer spans the approved board. Rect.contains excludes
+        // the right and bottom edges, even when both rectangles end together.
+        const precision = .01;
+        expect(
+          panelRect.left,
+          greaterThanOrEqualTo(imageRect.left - precision),
+        );
+        expect(panelRect.top, greaterThanOrEqualTo(imageRect.top - precision));
+        expect(panelRect.right, lessThanOrEqualTo(imageRect.right + precision));
+        expect(
+          panelRect.bottom,
+          lessThanOrEqualTo(imageRect.bottom + precision),
+        );
+        expect(panelRect.center.dx, closeTo(imageRect.center.dx, .01));
         final medal = find.byKey(const Key('zone1-earned-medal'));
         expect(medal, findsOneWidget);
         expect(find.descendant(of: art, matching: medal), findsOneWidget);

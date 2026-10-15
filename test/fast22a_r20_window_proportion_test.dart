@@ -12,62 +12,50 @@ void main() {
     const Size(844, 390),
     const Size(600, 390),
   ]) {
-    testWidgets('window follows reference proportions and stays inside $size', (
-      tester,
-    ) async {
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = size;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final c = await fixture.controller(false);
-      addTearDown(c.dispose);
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light,
-          home: Zone1MapScreen(controller: c),
-        ),
-      );
-      await tester.pumpAndSettle();
-      // R22 changes the map fit, while the approved dialog dimensions stay.
-      final referenceWidth = (size.width - 24).clamp(0.0, 1600.0);
-      final referenceLeft = (size.width - referenceWidth) / 2;
-      await flow.tap(
-        tester,
-        find.byKey(const Key('zone1-visual-mission-Z1_M01')),
-      );
-      final frame = tester.getRect(
-        find.byKey(const Key('zone1-mission-frame')),
-      );
-      expect(frame.left, greaterThanOrEqualTo(0));
-      expect(frame.top, greaterThanOrEqualTo(0));
-      expect(frame.right, lessThanOrEqualTo(size.width));
-      expect(frame.bottom, lessThanOrEqualTo(size.height));
-      expect(frame.width / frame.height, closeTo(206 / 110, .001));
-      if (size.width >= 1200) {
-        expect(frame.width / referenceWidth, closeTo(206 / 656, .001));
-        expect(
-          frame.height / (referenceWidth / 1.5),
-          closeTo((206 / 656) * 1.5 / (206 / 110), .005),
+    testWidgets(
+      'R29 complete composition follows approved proportions and stays inside $size',
+      (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = size;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final c = await fixture.controller(false);
+        addTearDown(c.dispose);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light,
+            home: Zone1MapScreen(controller: c),
+          ),
         );
-        expect(
-          frame.center.dx,
-          closeTo(referenceLeft + referenceWidth * .37, 1),
+        await tester.pumpAndSettle();
+        await flow.tap(
+          tester,
+          find.byKey(const Key('zone1-visual-mission-Z1_M01')),
         );
-      } else if (size.width <= 844) {
-        expect(frame.width, closeTo(360, .001));
-      }
-      final initial = frame;
-      await flow.tap(tester, find.text('INICIAR'));
-      expect(
-        tester.getRect(find.byKey(const Key('zone1-mission-frame'))),
-        initial,
-      );
-      final close = find.byKey(const Key('zone1-close-mission'));
-      expect(tester.getSize(close).width, greaterThanOrEqualTo(48));
-      expect(tester.getSize(close).height, greaterThanOrEqualTo(48));
-      await flow.tap(tester, close);
-      expect(c.progress.completedMissions, isEmpty);
-      expect(tester.takeException(), isNull);
-    });
+        final frame = tester.getRect(
+          find.byKey(const Key('zone1-mission-frame')),
+        );
+        expect(frame.left, greaterThanOrEqualTo(0));
+        expect(frame.top, greaterThanOrEqualTo(0));
+        expect(frame.right, lessThanOrEqualTo(size.width));
+        expect(frame.bottom, lessThanOrEqualTo(size.height));
+        expect(frame.width / frame.height, closeTo(1672 / 941, .001));
+        final expectedWidth = (size.height * 1672 / 941).clamp(0.0, size.width);
+        expect(frame.width, closeTo(expectedWidth, .01));
+        expect(frame.center.dx, closeTo(size.width / 2, .01));
+        final initial = frame;
+        await flow.tap(tester, find.text('INICIAR'));
+        expect(
+          tester.getRect(find.byKey(const Key('zone1-mission-frame'))),
+          initial,
+        );
+        final close = find.byKey(const Key('zone1-close-mission'));
+        expect(tester.getSize(close).width, greaterThanOrEqualTo(48));
+        expect(tester.getSize(close).height, greaterThanOrEqualTo(48));
+        await flow.tap(tester, close);
+        expect(c.progress.completedMissions, isEmpty);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 }

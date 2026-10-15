@@ -45,7 +45,7 @@ Future<PlayerController> _controller({
 
 void main() {
   for (final width in [390.0, 800.0, 1280.0]) {
-    testWidgets('compact mission panel and right-side presenter at $width', (
+    testWidgets('approved scenic map and left-side mentor at $width', (
       tester,
     ) async {
       tester.view.physicalSize = Size(width, 1100);
@@ -62,33 +62,17 @@ void main() {
       );
       await tester.pumpAndSettle();
       final frame = tester.getRect(find.byKey(const Key('zone1-map-canvas')));
-      final panel = tester.getRect(
-        find.byKey(const Key('zone1-mission-window')),
-      );
       final mentor = tester.getRect(
         find.byKey(const Key('zone1-mentor-panel')),
       );
-      final caption = tester.getRect(
-        find.byKey(const Key('zone1-mission-invitation')),
-      );
-      expect(panel.height, lessThanOrEqualTo(width < 720 ? 250 : 100));
-      expect(mentor.left, greaterThanOrEqualTo(panel.right));
-      expect(mentor.overlaps(panel), isFalse);
-      expect(caption.bottom, lessThan(panel.top));
+      final hud = tester.getRect(find.byKey(const Key('zone1-score-hud')));
+      expect(mentor.center.dx, lessThan(frame.center.dx));
       expect(frame.contains(mentor.topLeft), isTrue);
       expect(frame.contains(mentor.bottomRight), isTrue);
-      expect(find.text('MISSOES DA ZONA 1'), findsNothing);
-      expect(find.byKey(const Key('zone1-melo-speech-bubble')), findsNothing);
-      if (width >= 800) {
-        final wheelchair = Rect.fromCenter(
-          center: Offset(
-            frame.left + frame.width * 1155 / 1536,
-            frame.top + frame.height * 735 / 1024,
-          ),
-          width: frame.width * 90 / 1536,
-          height: frame.height * 90 / 1024,
-        );
-        expect(mentor.overlaps(wheelchair), isFalse);
+      expect(mentor.overlaps(hud), isFalse);
+      for (final id in _ids) {
+        final pin = tester.getRect(find.byKey(Key('zone1-visual-mission-$id')));
+        expect(mentor.overlaps(pin), isFalse);
       }
       expect(tester.takeException(), isNull);
     });

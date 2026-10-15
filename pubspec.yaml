@@ -24,6 +24,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/zone_1/r29/
     - assets/zone_1/bairro_escola_base_r7.png
     - assets/zone_1/melo_mentor_r7.png
     - assets/zone_1/melo_guia_busto_r8.png

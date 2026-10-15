@@ -5,9 +5,7 @@ import '../controllers/mission_controller.dart';
 import '../controllers/player_controller.dart';
 import '../models/mission.dart';
 import '../models/mission_option.dart';
-import '../ui/visual_system.dart';
-import 'zone_1_art.dart';
-import 'zone_1_visual_scene.dart';
+import 'zone_1_approved_art.dart';
 
 /// Uses the existing mission and reward engines while keeping the map mounted.
 class Zone1MissionDialog extends StatefulWidget {
@@ -97,378 +95,305 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final view = MediaQuery.sizeOf(context);
-    final progress = widget.player.progress;
     final canClose = !_saving && _saveError == null;
-    final landscape = view.width > view.height;
-    // Reference: map 656 x 439; mission window 206 x 110.
-    final sceneWidth = (view.width - (view.width < 1000 ? 8 : 24)).clamp(
-      0.0,
-      1600.0,
-    );
-    final horizontalInset = view.width < 720 ? 12.0 : 24.0;
-    final availableWidth = view.width - horizontalInset * 2;
-    final minimumWidth = 360.0.clamp(0.0, availableWidth);
-    final preferredWidth = landscape
-        ? (sceneWidth * (206 / 656)).clamp(minimumWidth, availableWidth)
-        : availableWidth;
-    final freeWidth = availableWidth - preferredWidth;
-    final desiredCenter = (view.width - sceneWidth) / 2 + sceneWidth * .37;
-    final alignmentX = landscape && freeWidth > 0
-        ? ((2 * desiredCenter - view.width) / freeWidth).clamp(-1.0, 1.0)
-        : 0.0;
+    final choosing = _mission.stage == MissionStage.choosing;
+    final index = widget.mission.id == 'Z1_SPECIAL'
+        ? '★'
+        : widget.mission.id.substring(widget.mission.id.length - 1);
     return PopScope(
       canPop: canClose,
-      child: Dialog(
+      child: Dialog.fullscreen(
         key: const Key('zone1-mission-dialog'),
-        alignment: Alignment(alignmentX, 0),
-        insetPadding: EdgeInsets.symmetric(
-          horizontal: view.width < 720 ? 12 : 24,
-          vertical: 12,
-        ),
-        backgroundColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        clipBehavior: Clip.antiAlias,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: preferredWidth,
-            maxHeight: view.height * .92,
-          ),
-          child: LayoutBuilder(
-            builder: (context, bounds) {
-              final height = landscape
-                  ? (bounds.maxWidth / (206 / 110)).clamp(0.0, bounds.maxHeight)
-                  : bounds.maxHeight;
-              return RepaintBoundary(
-                key: const Key('zone1-mission-capture'),
-                child: SizedBox(
-                  key: const Key('zone1-mission-frame'),
-                  width: bounds.maxWidth,
-                  height: height,
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Zone1NeighborhoodArt(
-                            key: const Key('zone1-question-scenario'),
-                            crosswalk: progress.purchasedUpgrades.contains(
-                              'FAIXA_SEGURA',
-                            ),
-                            lighting: progress.purchasedUpgrades.contains(
-                              'ILUMINACAO_ESCOLAR',
-                            ),
-                            cyclePath: progress.purchasedUpgrades.contains(
-                              'TRECHO_CICLOVIARIO',
-                            ),
-                            nightPreview: widget.nightPreview,
-                          ),
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: DecoratedBox(
-                            key: const Key('zone1-question-backdrop'),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  GameColors.navy.withValues(alpha: .5),
-                                  const Color(0xFF0B1E45).withValues(alpha: .5),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            key: const Key('zone1-mission-header'),
-                            color: GameColors.blue,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 0,
-                            ),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  key: const Key('zone1-back-mission'),
-                                  tooltip: 'Voltar ao bairro',
-                                  constraints: const BoxConstraints(
-                                    minWidth: 48,
-                                    minHeight: 48,
-                                  ),
-                                  onPressed: canClose
-                                      ? () => Navigator.of(context).pop()
-                                      : null,
-                                  icon: const Icon(
-                                    Icons.arrow_back_rounded,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    widget.mission.title.toUpperCase(),
-                                    key: const Key('zone1-mission-title'),
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: landscape ? 16 : 20,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  key: const Key('zone1-close-mission'),
-                                  tooltip: _saved
-                                      ? 'Voltar ao bairro'
-                                      : 'Sair da missão',
-                                  constraints: const BoxConstraints(
-                                    minWidth: 48,
-                                    minHeight: 48,
-                                  ),
-                                  onPressed: canClose
-                                      ? () => Navigator.of(context).pop()
-                                      : null,
-                                  icon: const Icon(
-                                    Icons.close_rounded,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: LayoutBuilder(
-                              builder: (context, body) {
-                                final wide = landscape && body.maxWidth >= 320;
-                                final heroWidth = wide
-                                    ? body.maxWidth * .34
-                                    : 180.0;
-                                final hero = SizedBox(
-                                  key: const Key('zone1-question-melo'),
-                                  width: heroWidth,
-                                  height: wide ? body.maxHeight : 225,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: Image.asset(
-                                      'assets/zone_1/melo_perguntas_r19.png',
-                                      key: const Key('zone1-mockup-melo'),
-                                      fit: BoxFit.contain,
-                                      alignment: Alignment.bottomCenter,
-                                      cacheWidth: 700,
-                                      semanticLabel: 'Melo apresenta a missão',
-                                    ),
-                                  ),
-                                );
-                                final content = Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: _FitMissionContent(child: _stage()),
-                                );
-                                if (wide) {
-                                  return Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      hero,
-                                      Expanded(child: content),
-                                    ],
-                                  );
-                                }
-                                return Column(
-                                  children: [
-                                    hero,
-                                    Expanded(child: content),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+        backgroundColor: zone1Ink,
+        child: RepaintBoundary(
+          key: const Key('zone1-mission-capture'),
+          child: Zone1ArtworkBoard(
+            asset: zone1MissionArtwork,
+            captureKey: const Key('zone1-mission-frame'),
+            children: [
+              Positioned(
+                left: 340,
+                top: 255,
+                width: 753,
+                height: 651,
+                child: Semantics(
+                  key: const Key('zone1-question-scenario'),
+                  label: 'Cenário ilustrado de ${widget.mission.title}',
+                  image: true,
+                  child: widget.mission.id == 'Z1_M01'
+                      ? const SizedBox.expand()
+                      : Zone1MissionScene(missionId: widget.mission.id),
+                ),
+              ),
+              Positioned(
+                left: 340,
+                top: 255,
+                width: 753,
+                height: 651,
+                child: Zone1NightLayer(
+                  key: const Key('zone1-question-night'),
+                  night: widget.nightPreview,
+                  lighting: widget.player.progress.purchasedUpgrades.contains(
+                    'ILUMINACAO_ESCOLAR',
                   ),
                 ),
-              );
-            },
+              ),
+              Positioned(
+                left: 0,
+                top: 350,
+                width: 350,
+                height: 591,
+                child: IgnorePointer(
+                  child: Semantics(
+                    key: const Key('zone1-question-melo'),
+                    label: 'Melo, seu guia de trânsito',
+                    image: true,
+                    child: const SizedBox.expand(key: Key('zone1-mockup-melo')),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 448,
+                top: 35,
+                width: 94,
+                height: 100,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF52638),
+                    borderRadius: BorderRadius.circular(48),
+                    border: Border.all(color: Colors.white, width: 4),
+                  ),
+                  child: Zone1ArtText(index, fontSize: 70),
+                ),
+              ),
+              Positioned(
+                left: 562,
+                top: 40,
+                width: 580,
+                height: 98,
+                child: Column(
+                  key: const Key('zone1-mission-header'),
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Zone1ArtText(
+                        widget.mission.title.toUpperCase(),
+                        textKey: const Key('zone1-mission-title'),
+                        fontSize: 49,
+                      ),
+                    ),
+                    const Expanded(
+                      child: Zone1ArtText(
+                        'Observe. Escolha. Aprenda.',
+                        fontSize: 27,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 1166,
+                top: 54,
+                width: 413,
+                height: 81,
+                child: AnimatedBuilder(
+                  animation: widget.player,
+                  builder: (context, _) => Zone1LiveHud(player: widget.player),
+                ),
+              ),
+              Positioned(
+                left: 28,
+                top: 36,
+                width: 70,
+                height: 70,
+                child: IconButton(
+                  key: const Key('zone1-back-mission'),
+                  tooltip: 'Voltar ao bairro',
+                  iconSize: 40,
+                  color: zone1Ink,
+                  onPressed: canClose
+                      ? () => Navigator.of(context).pop()
+                      : null,
+                  icon: const Icon(Icons.arrow_back_rounded),
+                ),
+              ),
+              Positioned(
+                left: 1580,
+                top: 33,
+                width: 76,
+                height: 76,
+                child: IconButton(
+                  key: const Key('zone1-close-mission'),
+                  tooltip: 'Sair da missão',
+                  iconSize: 44,
+                  color: Colors.white,
+                  onPressed: canClose
+                      ? () => Navigator.of(context).pop()
+                      : null,
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              ),
+              Positioned(
+                left: 383,
+                top: 164,
+                width: 903,
+                height: 59,
+                child: _steps(),
+              ),
+              Positioned(
+                left: 48,
+                top: 232,
+                width: 271,
+                height: 107,
+                child: Zone1ArtText(
+                  widget.mission.sceneText,
+                  textKey: const Key('zone1-question-context'),
+                  color: zone1Ink,
+                  fontSize: 31,
+                ),
+              ),
+              Positioned(
+                left: 1110,
+                top: 257,
+                width: 548,
+                height: 650,
+                child: SizedBox.expand(
+                  key: const Key('zone1-mission-content-viewport'),
+                  child: choosing ? _question() : _stage(),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _bubble(List<Widget> children, {bool question = false}) => Stack(
-    clipBehavior: Clip.none,
-    children: [
-      Container(
-        key: Key(question ? 'zone1-question-highlight' : 'zone1-stage-balloon'),
-        width: double.infinity,
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFEDAC),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: GameColors.yellow, width: 2),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: children,
-        ),
-      ),
-      const Positioned(
-        left: -10,
-        top: 42,
-        width: 12,
-        height: 20,
-        child: IgnorePointer(child: CustomPaint(painter: _QuestionTail())),
-      ),
-    ],
-  );
-
-  Widget _copy(String text, {Key? key, bool strong = false}) => Text(
-    text,
-    key: key,
-    textAlign: TextAlign.center,
-    style: TextStyle(
-      color: GameColors.navy,
-      fontSize:
-          MediaQuery.sizeOf(context).width > MediaQuery.sizeOf(context).height
-          ? (strong ? 12 : 10)
-          : (strong ? 18 : 14),
-      height: 1.25,
-      fontWeight: strong ? FontWeight.w900 : FontWeight.w600,
-    ),
-  );
-
-  Widget _button(String label, VoidCallback? onPressed, {Key? key}) => Padding(
-    padding: const EdgeInsets.only(top: 4),
-    child: FilledButton(
-      key: key,
-      style: FilledButton.styleFrom(
-        backgroundColor: GameColors.blue,
-        foregroundColor: Colors.white,
-        disabledBackgroundColor: const Color(0xFF315E91),
-        disabledForegroundColor: Colors.white,
-        textStyle: TextStyle(
-          fontSize:
-              MediaQuery.sizeOf(context).width >
-                  MediaQuery.sizeOf(context).height
-              ? 10
-              : 14,
-          fontWeight: FontWeight.w900,
-        ),
-        minimumSize: const Size(double.infinity, 24),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        side: const BorderSide(color: GameColors.yellow, width: 2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      ),
-      onPressed: onPressed,
-      child: Text(label, textAlign: TextAlign.center),
-    ),
-  );
-
-  Widget _question() => Column(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      _bubble([
-        _copy(
-          widget.mission.sceneText,
-          key: const Key('zone1-question-context'),
-        ),
-        const SizedBox(height: 6),
-        _copy(
-          widget.mission.question,
-          key: const Key('zone1-question-text'),
-          strong: true,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Tooltip(
-              message: 'Narração do Melo: implementação futura',
-              child: IconButton(
-                key: const Key('zone1-voice-preview'),
-                onPressed: null,
-                disabledColor: GameColors.navy.withValues(alpha: .7),
-                constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-                padding: EdgeInsets.zero,
-                style: IconButton.styleFrom(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                icon: const Icon(Icons.volume_up_rounded, size: 18),
-              ),
-            ),
-            const Flexible(
-              child: Text(
-                'Voz em breve',
-                style: TextStyle(color: GameColors.navy, fontSize: 9),
-              ),
-            ),
-          ],
-        ),
-      ], question: true),
-      for (var i = 0; i < widget.mission.options.length; i++)
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: OutlinedButton(
-            key: Key('zone1-answer-${widget.mission.options[i].id}'),
-            style: OutlinedButton.styleFrom(
-              backgroundColor: GameColors.blue,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(24, 24),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              side: BorderSide(
-                color: _pendingOption?.id == widget.mission.options[i].id
-                    ? GameColors.yellow
-                    : GameColors.sky,
-                width: _pendingOption?.id == widget.mission.options[i].id
-                    ? 3
-                    : 2,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-            onPressed: () =>
-                setState(() => _pendingOption = widget.mission.options[i]),
+  Widget _steps() {
+    final active = switch (_mission.stage) {
+      MissionStage.intro => 0,
+      MissionStage.choosing => 1,
+      MissionStage.consequence => 2,
+      MissionStage.feedback || MissionStage.completed => 3,
+    };
+    const labels = ['Observe', 'Decida', 'Consequência', 'Aprenda'];
+    return Row(
+      key: const Key('zone1-mission-steps'),
+      children: [
+        for (var i = 0; i < labels.length; i++)
+          Expanded(
             child: Semantics(
-              selected: _pendingOption?.id == widget.mission.options[i].id,
+              selected: active == i,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: active == i ? zone1Gold : zone1Ink,
+                  borderRadius: BorderRadius.circular(36),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 38,
+                      child: Zone1ArtText(
+                        '${i + 1}',
+                        color: active == i ? zone1Ink : Colors.white,
+                        fontSize: 36,
+                      ),
+                    ),
+                    Expanded(
+                      child: Zone1ArtText(
+                        labels[i],
+                        fontSize: 25,
+                        color: active == i ? zone1Ink : Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _question() => Stack(
+    key: const Key('zone1-question-highlight'),
+    children: [
+      Positioned(
+        left: 28,
+        top: 14,
+        width: 411,
+        height: 91,
+        child: Zone1ArtText(
+          widget.mission.question,
+          textKey: const Key('zone1-question-text'),
+          fontSize: 45,
+        ),
+      ),
+      Positioned(
+        left: 449,
+        top: 15,
+        width: 80,
+        height: 80,
+        child: Tooltip(
+          message: 'Voz em breve',
+          child: IconButton(
+            key: const Key('zone1-voice-preview'),
+            onPressed: null,
+            disabledColor: Colors.white,
+            icon: const Icon(Icons.volume_up_rounded, size: 46),
+          ),
+        ),
+      ),
+      for (var i = 0; i < widget.mission.options.length; i++)
+        Positioned(
+          left: 17,
+          top: 116 + i * 134.0,
+          width: 514,
+          height: 116,
+          child: Semantics(
+            selected: _pendingOption?.id == widget.mission.options[i].id,
+            child: OutlinedButton(
+              key: Key('zone1-answer-${widget.mission.options[i].id}'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor:
+                    _pendingOption?.id == widget.mission.options[i].id
+                    ? const Color(0x550084E9)
+                    : Colors.transparent,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(33),
+                ),
+                side: BorderSide(
+                  color: _pendingOption?.id == widget.mission.options[i].id
+                      ? zone1Gold
+                      : Colors.transparent,
+                  width: 5,
+                ),
+              ),
+              onPressed: () =>
+                  setState(() => _pendingOption = widget.mission.options[i]),
               child: Row(
                 children: [
-                  Container(
-                    width: 20,
-                    height: 20,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: GameColors.yellow,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
+                  SizedBox(
+                    width: 80,
+                    child: Zone1ArtText(
                       String.fromCharCode(65 + i),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: GameColors.navy,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      fontSize: 50,
+                      color: zone1Ink,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 20),
                   Expanded(
-                    child: Text(
+                    child: Zone1ArtText(
                       widget.mission.options[i].text,
-                      style: TextStyle(
-                        fontSize:
-                            MediaQuery.sizeOf(context).width >
-                                MediaQuery.sizeOf(context).height
-                            ? 10
-                            : 14,
-                        fontWeight: FontWeight.w800,
-                        height: 1.2,
-                      ),
+                      fontSize: 32,
+                      align: TextAlign.left,
                     ),
                   ),
                 ],
@@ -476,89 +401,126 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
             ),
           ),
         ),
-      if (_mission.errors > 0)
-        Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Text(
-            'Tentativas anteriores: ${_mission.errors}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
+      Positioned(
+        left: 24,
+        top: 529,
+        width: 497,
+        height: 94,
+        child: FilledButton(
+          key: const Key('zone1-confirm-answer'),
+          style: FilledButton.styleFrom(
+            foregroundColor: zone1Ink,
+            backgroundColor: Colors.transparent,
+            disabledBackgroundColor: const Color(0x77062365),
+            disabledForegroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(42),
             ),
           ),
+          onPressed: _pendingOption == null
+              ? null
+              : () {
+                  final selected = _pendingOption!;
+                  _pendingOption = null;
+                  _mission.selectOption(selected);
+                },
+          child: Zone1ArtText(
+            'CONFIRMAR RESPOSTA',
+            fontSize: 38,
+            color: _pendingOption == null ? Colors.white : zone1Ink,
+          ),
         ),
-      _button(
-        'CONFIRMAR RESPOSTA',
-        _pendingOption == null
-            ? null
-            : () {
-                final selected = _pendingOption!;
-                _pendingOption = null;
-                _mission.selectOption(selected);
-              },
-        key: const Key('zone1-confirm-answer'),
       ),
     ],
+  );
+
+  Widget _action(String label, VoidCallback? action, {Key? key}) => SizedBox(
+    height: 76,
+    child: Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: FilledButton(
+        key: key,
+        onPressed: action,
+        style: FilledButton.styleFrom(
+          backgroundColor: zone1Gold,
+          foregroundColor: zone1Ink,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
+          ),
+          side: const BorderSide(color: zone1Cyan, width: 3),
+        ),
+        child: Zone1ArtText(label, color: zone1Ink, fontSize: 31),
+      ),
+    ),
+  );
+
+  Widget _stagePanel({
+    required String title,
+    required String text,
+    required List<Widget> actions,
+    IconData? icon,
+    Widget? extra,
+  }) => Container(
+    key: const Key('zone1-stage-balloon'),
+    padding: const EdgeInsets.fromLTRB(26, 20, 26, 20),
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFF0846BE), zone1Ink],
+      ),
+      border: Border.all(color: zone1Cyan, width: 5),
+      borderRadius: BorderRadius.circular(45),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (icon != null) Icon(icon, color: zone1Gold, size: 64),
+        SizedBox(height: 76, child: Zone1ArtText(title, fontSize: 42)),
+        const SizedBox(height: 16),
+        Expanded(
+          child: Zone1ArtText(
+            text,
+            fontSize: 33,
+            textKey: const Key('zone1-mission-guidance'),
+          ),
+        ),
+        ?extra,
+        const SizedBox(height: 16),
+        ...actions,
+      ],
+    ),
   );
 
   Widget _stage() {
     switch (_mission.stage) {
       case MissionStage.intro:
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _bubble([
-              _copy(widget.mission.description, strong: true),
-              const SizedBox(height: 6),
-              _copy(
-                widget.mission.sceneText,
-                key: const Key('zone1-mission-guidance'),
-              ),
-            ]),
-            _button('INICIAR', _mission.start),
-          ],
+        return _stagePanel(
+          title: 'Observe o cenário',
+          text: widget.mission.description,
+          icon: Icons.visibility_rounded,
+          actions: [_action('INICIAR', _mission.start)],
         );
       case MissionStage.choosing:
         return _question();
       case MissionStage.consequence:
         final option = _mission.selectedOption!;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _bubble([
-              Icon(
-                option.isCorrect
-                    ? Icons.check_circle_rounded
-                    : Icons.warning_amber_rounded,
-                color: option.isCorrect ? GameColors.green : GameColors.orange,
-                size: 28,
-              ),
-              const SizedBox(height: 8),
-              _copy('Veja a consequência', strong: true),
-              const SizedBox(height: 6),
-              _copy(option.consequenceText),
-            ]),
-            _button('CONTINUAR', _mission.showFeedback),
-          ],
+        return _stagePanel(
+          title: 'Veja a consequência',
+          text: option.consequenceText,
+          icon: option.isCorrect
+              ? Icons.check_circle_rounded
+              : Icons.warning_amber_rounded,
+          actions: [_action('CONTINUAR', _mission.showFeedback)],
         );
       case MissionStage.feedback:
         final option = _mission.selectedOption!;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _bubble([
-              _copy('Melo explica', strong: true),
-              const SizedBox(height: 6),
-              _copy(
-                option.meloFeedback,
-                key: const Key('zone1-mission-guidance'),
-              ),
-            ]),
-            _button(
+        return _stagePanel(
+          title: 'Melo explica',
+          text: option.meloFeedback,
+          icon: Icons.school_rounded,
+          actions: [
+            _action(
               option.isCorrect ? 'VER RESULTADO' : 'TENTAR NOVAMENTE',
               _mission.continueAfterFeedback,
             ),
@@ -566,68 +528,65 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
         );
       case MissionStage.completed:
         if (_saving) {
-          return _bubble([
-            const Center(child: CircularProgressIndicator()),
-            const SizedBox(height: 6),
-            _copy('Salvando seu progresso…'),
-          ]);
+          return _stagePanel(
+            title: 'Salvando',
+            text: 'Salvando seu progresso…',
+            extra: const Center(
+              child: CircularProgressIndicator(color: zone1Gold),
+            ),
+            actions: [],
+          );
         }
         if (_saveError != null) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _bubble([_copy(_saveError!, strong: true)]),
-              _button('TENTAR SALVAR NOVAMENTE', _save),
-            ],
+          return _stagePanel(
+            title: 'Vamos tentar de novo',
+            text: _saveError!,
+            icon: Icons.cloud_off_rounded,
+            actions: [_action('TENTAR SALVAR NOVAMENTE', _save)],
           );
         }
         final result = _mission.result!;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _bubble([
-              const Icon(
-                Icons.emoji_events_rounded,
-                size: 30,
-                color: GameColors.orange,
-              ),
-              _copy('MISSÃO CONCLUÍDA', strong: true),
-              const SizedBox(height: 10),
-              Center(child: Zone1MissionStars(stars: result.stars)),
-              const SizedBox(height: 10),
-              _copy('Pontuação: ${result.score}/100'),
-              const SizedBox(height: 10),
-              if (_alreadyCompleted)
-                _copy(
-                  'Recompensas já recebidas. Sua melhor marca fica preservada.',
-                )
-              else
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 12,
-                  runSpacing: 8,
+        return _stagePanel(
+          title: 'MISSÃO CONCLUÍDA',
+          text: _alreadyCompleted
+              ? 'Recompensas já recebidas. Sua melhor marca fica preservada.'
+              : '+${result.citizenship} Cidadania\n+${result.knowledge} Conhecimento\n+${result.coins} Moedas',
+          icon: Icons.emoji_events_rounded,
+          extra: SizedBox(
+            height: 104,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _copy('+${result.citizenship} Cidadania'),
-                    _copy('+${result.knowledge} Conhecimento'),
-                    _copy('+${result.coins} Moedas'),
+                    for (var i = 0; i < 3; i++)
+                      Icon(
+                        i < result.stars
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        color: zone1Gold,
+                        size: 57,
+                      ),
                   ],
                 ),
-              const SizedBox(height: 6),
-              _copy(
-                _mission.selectedOption!.meloFeedback,
-                key: const Key('zone1-mission-guidance'),
-              ),
-            ]),
+                Expanded(
+                  child: Zone1ArtText(
+                    'Pontuação: ${result.score}/100',
+                    fontSize: 26,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
             if (widget.player.hasProfile)
-              _button(
+              _action(
                 'PERGUNTAR À FAIXITA',
                 () => Navigator.of(
                   context,
                 ).pushNamed(AppRoutes.faixita, arguments: result),
               ),
-            _button(
+            _action(
               'VOLTAR AO BAIRRO',
               () => Navigator.of(context).pop(),
               key: const Key('zone1-finish-mission'),
@@ -636,45 +595,4 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
         );
     }
   }
-}
-
-class _QuestionTail extends CustomPainter {
-  const _QuestionTail();
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..moveTo(size.width, 0)
-      ..lineTo(0, size.height / 2)
-      ..lineTo(size.width, size.height)
-      ..close();
-    canvas.drawPath(path, Paint()..color = const Color(0xFFFFEDAC));
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = GameColors.yellow
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _QuestionTail oldDelegate) => false;
-}
-
-/// Fits only the copy and actions. The approved window and mentor are not scaled.
-class _FitMissionContent extends StatelessWidget {
-  const _FitMissionContent({required this.child});
-  final Widget child;
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, space) => SizedBox.expand(
-      key: const Key('zone1-mission-content-viewport'),
-      child: FittedBox(
-        key: const Key('zone1-mission-content-fit'),
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.topCenter,
-        child: SizedBox(width: space.maxWidth, child: child),
-      ),
-    ),
-  );
 }

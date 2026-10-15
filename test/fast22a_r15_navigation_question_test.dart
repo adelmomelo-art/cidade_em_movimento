@@ -7,7 +7,7 @@ import 'package:cidade_em_movimento/app/theme.dart';
 import 'package:cidade_em_movimento/controllers/player_controller.dart';
 import 'package:cidade_em_movimento/services/storage_service.dart';
 import 'package:cidade_em_movimento/screens/zone_1_map/zone_1_map_screen.dart';
-import 'package:cidade_em_movimento/widgets/zone_1_art.dart';
+import 'package:cidade_em_movimento/widgets/zone_1_approved_art.dart';
 import 'package:cidade_em_movimento/widgets/zone_1_mission_dialog.dart';
 import 'fast22a_r14_mission_overlay_test.dart' as fixture;
 
@@ -72,8 +72,7 @@ void main() {
         expect(frameRect.contains(navRect.bottomRight), isTrue);
         for (final key in [
           'zone1-score-hud',
-          'zone1-mission-window',
-          'zone1-upgrades-window',
+          'zone1-mentor-panel',
           'zone1-earned-medal',
         ]) {
           expect(
@@ -82,7 +81,6 @@ void main() {
           );
         }
         for (final key in [
-          'zone1-back-to-fortaleza',
           'zone1-toggle-night',
           'zone1-open-progress',
           'zone1-advance-zone2',
@@ -101,8 +99,8 @@ void main() {
         await fixture.tap(tester, find.byKey(const Key('zone1-toggle-night')));
         expect(
           tester
-              .widget<Zone1NeighborhoodArt>(find.byType(Zone1NeighborhoodArt))
-              .nightPreview,
+              .widget<Zone1NightLayer>(find.byKey(const Key('zone1-map-night')))
+              .night,
           isTrue,
         );
         expect(c.progress.toJson(), before);
@@ -162,7 +160,7 @@ void main() {
   );
   for (final width in [390.0, 1280.0]) {
     testWidgets(
-      'Melo presents the yellow question and survives rotation at $width',
+      'Melo presents the approved blue decision panel and survives rotation at $width',
       (tester) async {
         tester.view.devicePixelRatio = 1;
         tester.view.physicalSize = Size(width, 900);
@@ -182,31 +180,18 @@ void main() {
           find.byKey(const Key('zone1-visual-mission-Z1_M01')),
         );
         final mascot = find.byKey(const Key('zone1-question-melo'));
-        final frameSize = tester.getSize(
+        final frame = tester.getRect(
           find.byKey(const Key('zone1-mission-frame')),
         );
-        expect(
-          tester.getSize(mascot).width,
-          closeTo(width < 720 ? 180 : frameSize.width * .34, .01),
-        );
-        expect(tester.getSize(mascot).height, greaterThan(100));
+        final hero = tester.getRect(mascot);
+        expect(hero.width / frame.width, closeTo(350 / 1672, .01));
+        expect(frame.contains(hero.center), isTrue);
         await fixture.tap(tester, find.text('INICIAR'));
-        final question = find.byKey(const Key('zone1-question-highlight'));
-        final box =
-            tester.widget<Container>(question).decoration! as BoxDecoration;
-        expect(box.color, const Color(0xFFFFEDAC));
         expect(
-          find.descendant(
-            of: question,
-            matching: find.byKey(const Key('zone1-question-text')),
-          ),
+          find.byKey(const Key('zone1-question-highlight')),
           findsOneWidget,
         );
-        expect(
-          tester.getSize(mascot).width,
-          closeTo(width < 720 ? 180 : frameSize.width * .34, .01),
-        );
-        expect(tester.getSize(mascot).height, greaterThan(100));
+        expect(find.byKey(const Key('zone1-question-text')), findsOneWidget);
         if (width == 390) {
           tester.view.physicalSize = const Size(844, 390);
           await tester.pumpAndSettle();
@@ -215,17 +200,6 @@ void main() {
             findsOneWidget,
           );
           expect(find.text('INICIAR'), findsNothing);
-          expect(
-            tester.getSize(mascot).width,
-            closeTo(
-              tester
-                      .getSize(find.byKey(const Key('zone1-mission-frame')))
-                      .width *
-                  .34,
-              .01,
-            ),
-          );
-          expect(tester.getSize(mascot).height, greaterThan(100));
         }
         final m = tester
             .widget<Zone1MissionDialog>(find.byType(Zone1MissionDialog))
