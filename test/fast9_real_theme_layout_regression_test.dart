@@ -86,13 +86,13 @@ void main() {
           expect(tester.takeException(), isNull);
 
           final scrollables = find.byType(Scrollable);
-          final position = zone <= 4
+          final position = zone <= 5
               ? null
               : tester.state<ScrollableState>(scrollables.first).position;
-          final mapFrame = zone <= 4
+          final mapFrame = zone <= 5
               ? tester.getRect(find.byKey(Key('zone$zone-map-canvas')))
               : null;
-          if (zone <= 4) {
+          if (zone <= 5) {
             expect(scrollables, findsNothing);
           }
           final mouse = await tester.createGesture(
@@ -110,7 +110,7 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
-          if (zone <= 4) {
+          if (zone <= 5) {
             expect(
               tester.getRect(find.byKey(Key('zone$zone-map-canvas'))),
               mapFrame,
