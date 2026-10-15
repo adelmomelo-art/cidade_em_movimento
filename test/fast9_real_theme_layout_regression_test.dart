@@ -86,13 +86,13 @@ void main() {
           expect(tester.takeException(), isNull);
 
           final scrollables = find.byType(Scrollable);
-          final position = zone <= 3
+          final position = zone <= 4
               ? null
               : tester.state<ScrollableState>(scrollables.first).position;
-          final mapFrame = zone <= 3
+          final mapFrame = zone <= 4
               ? tester.getRect(find.byKey(Key('zone$zone-map-canvas')))
               : null;
-          if (zone <= 3) {
+          if (zone <= 4) {
             expect(scrollables, findsNothing);
           }
           final mouse = await tester.createGesture(
@@ -110,7 +110,7 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
-          if (zone <= 3) {
+          if (zone <= 4) {
             expect(
               tester.getRect(find.byKey(Key('zone$zone-map-canvas'))),
               mapFrame,
@@ -124,15 +124,7 @@ void main() {
               expect(tester.takeException(), isNull);
             }
           }
-          if (zone == 4) {
-            final prefix = 'zone$zone-install-';
-            final upgrades = upgradeCatalog.where(
-              (upgrade) => upgrade.zoneId == 'ZONE_$zone',
-            );
-            for (final upgrade in upgrades) {
-              expect(find.byKey(Key('$prefix${upgrade.id}')), findsOneWidget);
-            }
-          }
+
           for (final element in find.byType(FilledButton).evaluate()) {
             final box = element.findRenderObject()! as RenderBox;
             expect(box.hasSize, isTrue);
