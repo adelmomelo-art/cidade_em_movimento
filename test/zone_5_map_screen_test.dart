@@ -7,58 +7,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<PlayerController> _controllerWithCoins(int coins) async {
+Future<PlayerController> _unlockedController() async {
   SharedPreferences.setMockInitialValues({});
-  final preferences = await SharedPreferences.getInstance();
-  final controller = PlayerController(StorageService(preferences));
+  final controller = PlayerController(
+    StorageService(await SharedPreferences.getInstance()),
+  );
   await controller.initialize();
-
   await controller.completeMission(
-    result: MissionResult(
-      missionId: 'FAST10_UI_COINS_$coins',
+    result: const MissionResult(
+      missionId: 'Z3_SPECIAL',
       stars: 3,
       score: 100,
-      citizenship: 0,
-      knowledge: 0,
-      coins: coins,
+      citizenship: 50,
+      knowledge: 30,
+      coins: 50,
       errors: 0,
     ),
   );
-
   return controller;
 }
 
-Future<void> _materialize(
-  WidgetTester tester,
-  Finder finder, {
-  required AxisDirection direction,
-  int maxSteps = 24,
-}) async {
-  final scrollable = find.byType(Scrollable).first;
-
-  for (var step = 0; step < maxSteps && finder.evaluate().isEmpty; step++) {
-    final offset = switch (direction) {
-      AxisDirection.down => const Offset(0, -260),
-      AxisDirection.up => const Offset(0, 260),
-      AxisDirection.left => const Offset(260, 0),
-      AxisDirection.right => const Offset(-260, 0),
-    };
-
-    await tester.drag(scrollable, offset);
-    await tester.pumpAndSettle();
-  }
-
-  expect(finder, findsWidgets);
-  await tester.ensureVisible(finder.first);
-  await tester.pumpAndSettle();
-}
-
 void main() {
-  testWidgets('compra Travessia Protegida atualiza tela imediatamente', (
+  testWidgets('Zona 5 tem mapa aprovado e seis alvos sem rolagem', (
     tester,
   ) async {
-    final controller = await _controllerWithCoins(60);
-
+    final controller = await _unlockedController();
+    addTearDown(controller.dispose);
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
@@ -66,41 +40,72 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-
-    final button = find.byKey(const Key('zone5-install-TRAVESSIA_GRANDE_VIA'));
-
-    await _materialize(tester, button, direction: AxisDirection.down);
-
-    final beforeCoins = controller.progress.coins;
-
-    await tester.tap(button);
-    await tester.pump();
-    await tester.pumpAndSettle();
-
-    expect(
-      controller.progress.purchasedUpgrades,
-      contains('TRAVESSIA_GRANDE_VIA'),
-    );
-    expect(controller.progress.coins, beforeCoins - 60);
-
-    final card = find.byKey(const Key('zone5-upgrade-TRAVESSIA_GRANDE_VIA'));
-
-    expect(card, findsOneWidget);
-    expect(
-      find.descendant(of: card, matching: find.text('INSTALADA')),
-      findsWidgets,
-    );
-
-    final legend = find.byKey(const Key('zone5-legend-crossing'));
-
-    await _materialize(tester, legend, direction: AxisDirection.up);
-
-    expect(
-      find.descendant(
-        of: legend,
-        matching: find.text('Travessia Protegida \u2014 instalada'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byKey(const Key('zone5-map-artwork')), findsOneWidget);
+    expect(find.byKey(const Key('zone5-score-hud')), findsOneWidget);
+    expect(find.byType(Scrollable), findsNothing);
+    for (final id in [
+      'Z5_M01',
+      'Z5_M02',
+      'Z5_M03',
+      'Z5_M04',
+      'Z5_M05',
+      'Z5_SPECIAL',
+    ]) {
+      expect(find.byKey(Key('zone5-visual-mission-$id')), findsOneWidget);
+    }
+    expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'compra Travessia Protegida atualiza custo e instalada uma unica vez',
+    (tester) async {
+      final controller = await _unlockedController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light,
+          home: Zone5MapScreen(controller: controller),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('zone5-open-upgrades')));
+      await tester.pumpAndSettle();
+      final button = find.byKey(
+        const Key('zone5-install-TRAVESSIA_GRANDE_VIA'),
+      );
+      expect(button.hitTestable(), findsOneWidget);
+      final before = controller.progress.coins;
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(
+        controller.progress.purchasedUpgrades,
+        contains('TRAVESSIA_GRANDE_VIA'),
+      );
+      expect(controller.progress.coins, before - 60);
+      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('zone5-upgrade-TRAVESSIA_GRANDE_VIA')),
+          matching: find.text('INSTALADA'),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('VOLTAR ÀS GRANDES VIAS'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('zone5-open-upgrades')));
+      await tester.pumpAndSettle();
+      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      final reloaded = PlayerController(
+        StorageService(await SharedPreferences.getInstance()),
+      );
+      addTearDown(reloaded.dispose);
+      await reloaded.initialize();
+      expect(reloaded.progress.coins, before - 60);
+      expect(
+        reloaded.progress.purchasedUpgrades,
+        contains('TRAVESSIA_GRANDE_VIA'),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

@@ -26,6 +26,7 @@ flutter:
   assets:
     - assets/zone_3/r31/
     - assets/zone_4/r32/
+    - assets/zone_5/r33/
     - assets/zone_2/r30/
     - assets/zone_1/r29/
     - assets/zone_1/bairro_escola_base_r7.png
