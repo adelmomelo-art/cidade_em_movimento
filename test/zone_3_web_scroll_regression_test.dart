@@ -15,7 +15,7 @@ Future<PlayerController> _controller() async {
 
   await controller.completeMission(
     result: const MissionResult(
-      missionId: 'FAST9_R5_SCROLL',
+      missionId: 'Z2_SPECIAL',
       stars: 3,
       score: 100,
       citizenship: 0,
@@ -29,11 +29,15 @@ Future<PlayerController> _controller() async {
 }
 
 void main() {
-  testWidgets('Zona 3 rola atraves da cena visual sem capturar ponteiro', (
+  testWidgets('Zona 3 permanece inteira e fixa ao arrastar a cena', (
     tester,
   ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1366, 768);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final controller = await _controller();
-
+    addTearDown(controller.dispose);
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
@@ -41,31 +45,26 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-
-    final sceneTitle = find.text('Orla em Transforma\u00e7\u00e3o');
-    expect(sceneTitle, findsOneWidget);
-
-    final scrollable = find.byType(Scrollable).first;
-    final before = tester.state<ScrollableState>(scrollable).position.pixels;
-
-    final sceneCenter = tester.getCenter(sceneTitle);
-    final gesture = await tester.startGesture(sceneCenter);
-    await gesture.moveBy(const Offset(0, -500));
-    await gesture.up();
+    final board = find.byKey(const Key('zone3-map-artwork'));
+    final before = tester.getRect(board);
+    expect(find.byType(Scrollable), findsNothing);
+    await tester.drag(board, const Offset(0, -500));
     await tester.pumpAndSettle();
-
-    final after = tester.state<ScrollableState>(scrollable).position.pixels;
-    expect(after, greaterThan(before));
-
-    for (
-      var step = 0;
-      step < 24 && find.text('Miss\u00f5es da Zona 3').evaluate().isEmpty;
-      step++
-    ) {
-      await tester.drag(scrollable, const Offset(0, -260));
-      await tester.pumpAndSettle();
+    expect(tester.getRect(board), before);
+    expect(before.left, greaterThanOrEqualTo(0));
+    expect(before.top, greaterThanOrEqualTo(0));
+    expect(before.right, lessThanOrEqualTo(1366));
+    expect(before.bottom, lessThanOrEqualTo(768));
+    for (final id in [
+      'Z3_M01',
+      'Z3_M02',
+      'Z3_M03',
+      'Z3_M04',
+      'Z3_M05',
+      'Z3_SPECIAL',
+    ]) {
+      expect(find.byKey(Key('zone3-visual-mission-$id')), findsOneWidget);
     }
-
-    expect(find.text('Miss\u00f5es da Zona 3'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
