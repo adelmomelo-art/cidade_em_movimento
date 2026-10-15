@@ -9,6 +9,7 @@ import 'package:cidade_em_movimento/screens/zone_2_map/zone_2_map_screen.dart';
 import 'package:cidade_em_movimento/screens/zone_3_map/zone_3_map_screen.dart';
 import 'package:cidade_em_movimento/screens/zone_4_map/zone_4_map_screen.dart';
 import 'package:cidade_em_movimento/screens/zone_5_map/zone_5_map_screen.dart';
+import 'package:cidade_em_movimento/screens/zone_6_map/zone_6_map_screen.dart';
 import 'package:cidade_em_movimento/services/storage_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -62,11 +63,12 @@ Widget _map(int zone, PlayerController controller) => switch (zone) {
   3 => Zone3MapScreen(controller: controller),
   4 => Zone4MapScreen(controller: controller),
   5 => Zone5MapScreen(controller: controller),
+  6 => Zone6MapScreen(controller: controller),
   _ => throw ArgumentError.value(zone),
 };
 
 void main() {
-  for (final zone in [1, 2, 3, 4, 5]) {
+  for (final zone in [1, 2, 3, 4, 5, 6]) {
     for (final width in [390.0, 800.0, 1280.0]) {
       for (final state in ['clean', 'legacy', 'installed']) {
         testWidgets('Z$zone/theme/$width/$state layout and mouse scroll', (
@@ -85,16 +87,10 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
 
-          final scrollables = find.byType(Scrollable);
-          final position = zone <= 5
-              ? null
-              : tester.state<ScrollableState>(scrollables.first).position;
-          final mapFrame = zone <= 5
-              ? tester.getRect(find.byKey(Key('zone$zone-map-canvas')))
-              : null;
-          if (zone <= 5) {
-            expect(scrollables, findsNothing);
-          }
+          final mapFrame = tester.getRect(
+            find.byKey(Key('zone$zone-map-canvas')),
+          );
+          expect(find.byType(Scrollable), findsNothing);
           final mouse = await tester.createGesture(
             kind: PointerDeviceKind.mouse,
           );
@@ -110,20 +106,10 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
-          if (zone <= 5) {
-            expect(
-              tester.getRect(find.byKey(Key('zone$zone-map-canvas'))),
-              mapFrame,
-            );
-          } else {
-            expect(position!.pixels, greaterThan(0));
-            for (var step = 0; step <= 4; step++) {
-              position.jumpTo(position.maxScrollExtent * step / 4);
-              await mouse.moveTo(Offset(width / 2, 430 + step * 10));
-              await tester.pumpAndSettle();
-              expect(tester.takeException(), isNull);
-            }
-          }
+          expect(
+            tester.getRect(find.byKey(Key('zone$zone-map-canvas'))),
+            mapFrame,
+          );
 
           for (final element in find.byType(FilledButton).evaluate()) {
             final box = element.findRenderObject()! as RenderBox;
@@ -131,7 +117,6 @@ void main() {
             expect(box.size.width.isFinite, isTrue);
             expect(box.size.height.isFinite, isTrue);
           }
-          position?.jumpTo(0);
           await tester.pumpAndSettle();
           await mouse.removePointer();
           expect(tester.takeException(), isNull);
