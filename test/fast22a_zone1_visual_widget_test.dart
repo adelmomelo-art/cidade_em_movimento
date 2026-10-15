@@ -37,6 +37,7 @@ void main() {
       find.byKey(const Key('zone1-visual-mission-Z1_M01')),
       findsOneWidget,
     );
-    expect(find.text('ESCOLHA A MISSÃO E AVANCE PELO BAIRRO'), findsOneWidget);
+    expect(find.byKey(const Key('zone1-mentor-panel')), findsOneWidget);
+    expect(find.byKey(const Key('zone1-map-artwork')), findsOneWidget);
   });
 }

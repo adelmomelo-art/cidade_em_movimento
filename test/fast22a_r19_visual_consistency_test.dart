@@ -6,11 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cidade_em_movimento/app/theme.dart';
 import 'package:cidade_em_movimento/screens/zone_1_map/zone_1_map_screen.dart';
 import 'package:cidade_em_movimento/widgets/zone_1_mission_dialog.dart';
-import 'package:cidade_em_movimento/ui/visual_system.dart';
+import 'package:cidade_em_movimento/widgets/zone_1_approved_art.dart';
+import 'fast22a_r27_functional_map_test.dart' as images;
 import 'fast22a_r14_mission_overlay_test.dart' as flow;
 import 'fast22a_r15_navigation_question_test.dart' as fixture;
 
 Future<void> capture(WidgetTester tester, String name) async {
+  await images.waitForArtworkImages(tester);
   final boundary = tester.renderObject<RenderRepaintBoundary>(
     find.byKey(const Key('zone1-mission-capture')),
   );
@@ -18,7 +20,7 @@ Future<void> capture(WidgetTester tester, String name) async {
     final rendered = await boundary.toImage(pixelRatio: 1);
     try {
       final data = await rendered.toByteData(format: ui.ImageByteFormat.png);
-      final directory = Directory('build/fast22a_r21_evidencias');
+      final directory = Directory('build/fast22a_r29_evidencias');
       await directory.create(recursive: true);
       await File('${directory.path}/$name.png').writeAsBytes(
         data!.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
@@ -70,7 +72,10 @@ void main() {
         find.byKey(const Key('zone1-mission-frame')),
       );
       if (config.$1 == 'desktop') {
-        expect(frame.width / frame.height, closeTo(206 / 110, .001));
+        expect(
+          frame.width / frame.height,
+          closeTo(zone1ArtworkSize.aspectRatio, .001),
+        );
       }
       void visualContract(bool question) {
         final currentFrame = tester.getRect(
@@ -83,7 +88,7 @@ void main() {
         expect(find.byKey(const Key('zone1-mockup-melo')), findsOneWidget);
         expect(frame.contains(hero.center), isTrue);
         if (config.$2.width > config.$2.height) {
-          expect(hero.width / frame.width, closeTo(.34, .01));
+          expect(hero.width / frame.width, closeTo(350 / 1672, .01));
           expect(hero.height, greaterThan(frame.height * .6));
         }
         final title = tester.widget<Text>(
@@ -91,18 +96,13 @@ void main() {
         );
         expect(title.textAlign, TextAlign.center);
         expect(title.style!.color, Colors.white);
+        expect(find.byKey(const Key('zone1-mission-header')), findsOneWidget);
         expect(
-          tester
-              .widget<Container>(find.byKey(const Key('zone1-mission-header')))
-              .color,
-          GameColors.blue,
+          find.byKey(
+            Key(question ? 'zone1-question-highlight' : 'zone1-stage-balloon'),
+          ),
+          findsOneWidget,
         );
-        final balloon = find.byKey(
-          Key(question ? 'zone1-question-highlight' : 'zone1-stage-balloon'),
-        );
-        final box =
-            tester.widget<Container>(balloon).decoration! as BoxDecoration;
-        expect(box.color, const Color(0xFFFFEDAC));
         expect(
           find.byKey(const Key('zone1-question-scenario')),
           findsOneWidget,
@@ -129,7 +129,7 @@ void main() {
       expect(confirm.onPressed, isNull);
       expect(
         confirm.style!.backgroundColor!.resolve({WidgetState.disabled}),
-        const Color(0xFF315E91),
+        const Color(0x77062365),
       );
       expect(
         confirm.style!.foregroundColor!.resolve({WidgetState.disabled}),

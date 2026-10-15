@@ -85,22 +85,6 @@ void main() {
             findsOneWidget,
           );
         }
-        if (width >= 800) {
-          final wheelchair = Rect.fromCenter(
-            center: Offset(
-              map.left + map.width * 1155 / 1536,
-              map.top + map.height * 735 / 1024,
-            ),
-            width: map.width * 90 / 1536,
-            height: map.height * 90 / 1024,
-          );
-          expect(
-            tester
-                .getRect(find.byKey(const Key('zone1-visual-mission-Z1_M05')))
-                .overlaps(wheelchair),
-            isFalse,
-          );
-        }
         final cost = zone1Upgrades
             .firstWhere((u) => u.id == 'FAIXA_SEGURA')
             .cost;

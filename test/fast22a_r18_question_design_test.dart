@@ -3,8 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cidade_em_movimento/app/theme.dart';
 import 'package:cidade_em_movimento/screens/zone_1_map/zone_1_map_screen.dart';
 import 'package:cidade_em_movimento/widgets/zone_1_mission_dialog.dart';
-import 'package:cidade_em_movimento/widgets/zone_1_art.dart';
-import 'package:cidade_em_movimento/ui/visual_system.dart';
+import 'package:cidade_em_movimento/widgets/zone_1_approved_art.dart';
 import 'fast22a_r14_mission_overlay_test.dart' as flow;
 import 'fast22a_r15_navigation_question_test.dart' as fixture;
 
@@ -46,37 +45,13 @@ void main() {
           .widget<Zone1MissionDialog>(find.byType(Zone1MissionDialog))
           .mission;
       await flow.tap(tester, find.text('INICIAR'));
-      final header = tester.widget<Container>(
-        find.byKey(const Key('zone1-mission-header')),
+      expect(find.byKey(const Key('zone1-mission-header')), findsOneWidget);
+      final title = tester.widget<Text>(
+        find.byKey(const Key('zone1-mission-title')),
       );
-      expect(header.color, GameColors.blue);
-      expect(
-        tester
-            .widget<Text>(
-              find.descendant(
-                of: find.byKey(const Key('zone1-mission-header')),
-                matching: find.byKey(const Key('zone1-mission-title')),
-              ),
-            )
-            .style!
-            .color,
-        Colors.white,
-      );
-      expect(
-        tester.widget<Text>(find.byKey(const Key('zone1-mission-title'))).data,
-        m.title.toUpperCase(),
-      );
-      final overlay =
-          tester
-                  .widget<DecoratedBox>(
-                    find.byKey(const Key('zone1-question-backdrop')),
-                  )
-                  .decoration
-              as BoxDecoration;
-      final gradient = overlay.gradient! as LinearGradient;
-      for (final color in gradient.colors) {
-        expect(color.a, closeTo(.5, .005));
-      }
+      expect(title.style!.color, Colors.white);
+      expect(title.data, m.title.toUpperCase());
+      expect(find.byKey(const Key('zone1-question-night')), findsOneWidget);
       expect(find.byKey(const Key('zone1-question-melo')), findsOneWidget);
       expect(find.text(m.question), findsOneWidget);
       expect(
@@ -85,7 +60,7 @@ void main() {
             .onPressed,
         isNull,
       );
-      expect(find.text('Voz em breve'), findsOneWidget);
+      expect(find.byTooltip('Voz em breve'), findsOneWidget);
       final confirm = find.byKey(const Key('zone1-confirm-answer'));
       expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
       final before = c.progress.toJson();
@@ -94,7 +69,7 @@ void main() {
       for (final option in m.options) {
         final target = find.byKey(Key('zone1-answer-${option.id}'));
         final button = tester.widget<OutlinedButton>(target);
-        expect(button.style!.backgroundColor!.resolve({}), GameColors.blue);
+        expect(button.style!.backgroundColor!.resolve({}), Colors.transparent);
         expect(button.style!.foregroundColor!.resolve({}), Colors.white);
         final targetRect = tester.getRect(target);
         final viewport = tester.getRect(
@@ -191,10 +166,10 @@ void main() {
     );
     expect(
       tester
-          .widget<Zone1NeighborhoodArt>(
-            find.byKey(const Key('zone1-question-scenario')),
+          .widget<Zone1NightLayer>(
+            find.byKey(const Key('zone1-question-night')),
           )
-          .nightPreview,
+          .night,
       isTrue,
     );
     await flow.tap(tester, find.byKey(const Key('zone1-close-mission')));

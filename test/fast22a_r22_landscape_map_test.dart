@@ -11,9 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'fast22a_r14_mission_overlay_test.dart' as flow;
+import 'fast22a_r27_functional_map_test.dart' as images;
 import 'fast22a_r15_navigation_question_test.dart' as fixture;
 
 Future<void> captureMap(WidgetTester tester, String name) async {
+  await images.waitForArtworkImages(tester);
   final boundary = tester.renderObject<RenderRepaintBoundary>(
     find.byKey(const Key('zone1-r22-map-capture')),
   );
@@ -21,7 +23,7 @@ Future<void> captureMap(WidgetTester tester, String name) async {
     final image = await boundary.toImage(pixelRatio: 1);
     try {
       final data = await image.toByteData(format: ui.ImageByteFormat.png);
-      final directory = Directory('build/fast22a_r23_evidencias');
+      final directory = Directory('build/fast22a_r29_evidencias');
       await directory.create(recursive: true);
       await File('${directory.path}/$name.png').writeAsBytes(
         data!.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
@@ -83,8 +85,7 @@ void main() {
       for (final key in [
         'zone1-score-hud',
         'zone1-navigation-window',
-        'zone1-mission-window',
-        'zone1-upgrades-window',
+        'zone1-open-upgrades',
         'zone1-mentor-panel',
         for (final id in flow.ids) 'zone1-visual-mission-$id',
       ]) {

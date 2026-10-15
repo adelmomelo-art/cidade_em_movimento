@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('FAST-22A R2 integra visual mestre sem alterar o motor', () {
+  test('FAST-22A R29 integra arte aprovada com o mesmo motor', () {
     final screen = File(
       'lib/screens/zone_1_map/zone_1_map_screen.dart',
     ).readAsStringSync();
@@ -14,8 +14,14 @@ void main() {
     final evolving = File(
       'lib/widgets/zone_1_evolving_scene.dart',
     ).readAsStringSync();
+    final dialog = File(
+      'lib/widgets/zone_1_mission_dialog.dart',
+    ).readAsStringSync();
 
-    expect(screen, contains('Zone1VisualScene'));
+    expect(screen, contains('Zone1ArtworkBoard'));
+    expect(screen, contains('Zone1MissionDialog'));
+    expect(dialog, contains('MissionController(mission: widget.mission)'));
+    expect(dialog, contains('widget.player.completeMission('));
     expect(screen, contains("('Z1_M01'"));
     expect(screen, contains("('Z1_SPECIAL'"));
     expect(screen, contains("Key('zone1-score-hud')"));

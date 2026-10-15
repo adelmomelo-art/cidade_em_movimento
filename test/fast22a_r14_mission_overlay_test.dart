@@ -8,7 +8,7 @@ import 'package:cidade_em_movimento/core/enums/player_type.dart';
 import 'package:cidade_em_movimento/models/game_progress.dart';
 import 'package:cidade_em_movimento/services/storage_service.dart';
 import 'package:cidade_em_movimento/screens/zone_1_map/zone_1_map_screen.dart';
-import 'package:cidade_em_movimento/widgets/zone_1_art.dart';
+import 'package:cidade_em_movimento/widgets/zone_1_approved_art.dart';
 import 'package:cidade_em_movimento/widgets/zone_1_mission_dialog.dart';
 
 const ids = ['Z1_M01', 'Z1_M02', 'Z1_M03', 'Z1_M04', 'Z1_M05', 'Z1_SPECIAL'];
@@ -206,27 +206,27 @@ void main() {
     await tester.pumpAndSettle();
     final before = c.progress.toJson();
     await tap(tester, find.byKey(const Key('zone1-toggle-night')));
-    final art = tester.widget<Zone1NeighborhoodArt>(
-      find.byType(Zone1NeighborhoodArt),
+    final art = tester.widget<Zone1NightLayer>(
+      find.byKey(const Key('zone1-map-night')),
     );
-    expect(art.nightPreview, isTrue);
+    expect(art.night, isTrue);
     expect(art.lighting, isFalse);
-    expect(find.byKey(const Key('zone1-night-upgrade-layer')), findsOneWidget);
+    expect(find.byKey(const Key('zone1-map-night')), findsOneWidget);
     await tap(tester, find.byKey(const Key('zone1-toggle-night')));
     expect(
       tester
-          .widget<Zone1NeighborhoodArt>(find.byType(Zone1NeighborhoodArt))
-          .nightPreview,
+          .widget<Zone1NightLayer>(find.byKey(const Key('zone1-map-night')))
+          .night,
       isFalse,
     );
     expect(c.progress.toJson(), before);
     expect(await c.purchaseUpgrade('ILUMINACAO_ESCOLAR'), isTrue);
     await tester.pumpAndSettle();
     await tap(tester, find.byKey(const Key('zone1-toggle-night')));
-    final lit = tester.widget<Zone1NeighborhoodArt>(
-      find.byType(Zone1NeighborhoodArt),
+    final lit = tester.widget<Zone1NightLayer>(
+      find.byKey(const Key('zone1-map-night')),
     );
-    expect(lit.nightPreview, isTrue);
+    expect(lit.night, isTrue);
     expect(lit.lighting, isTrue);
   });
   testWidgets(

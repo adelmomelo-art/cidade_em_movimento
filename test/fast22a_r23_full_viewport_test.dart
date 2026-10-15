@@ -1,6 +1,6 @@
 import 'package:cidade_em_movimento/app/theme.dart';
 import 'package:cidade_em_movimento/screens/zone_1_map/zone_1_map_screen.dart';
-import 'package:cidade_em_movimento/widgets/zone_1_art.dart';
+import 'package:cidade_em_movimento/widgets/zone_1_approved_art.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'fast22a_r15_navigation_question_test.dart' as fixture;
@@ -48,7 +48,7 @@ void main() {
       expect(frame.right, closeTo(screen.right, .01));
       expect(frame.bottom, closeTo(screen.bottom, .01));
       expect(tester.widget<ClipRRect>(canvas).borderRadius, BorderRadius.zero);
-      expect(tester.getRect(find.byType(Zone1NeighborhoodArt)), frame);
+      expect(tester.getRect(find.byKey(const Key('zone1-ambient-art'))), frame);
       expect(find.byType(Scrollable), findsNothing);
       final safe = Rect.fromLTRB(
         sample.$3.left,
@@ -59,9 +59,8 @@ void main() {
       for (final key in [
         'zone1-score-hud',
         'zone1-navigation-window',
-        'zone1-mission-window',
         'zone1-mentor-panel',
-        'zone1-upgrades-window',
+        'zone1-open-upgrades',
       ]) {
         final rect = tester.getRect(find.byKey(Key(key)));
         expect(safe.inflate(.01).contains(rect.topLeft), isTrue, reason: key);
@@ -75,28 +74,16 @@ void main() {
         if (night) {
           await flow.tap(tester, find.byKey(const Key('zone1-toggle-night')));
         }
-        final background = tester.getRect(
-          find.byKey(
-            Key(
-              night ? 'zone1-night-background' : 'zone1-illustrated-background',
-            ),
-          ),
+        final board = tester.getRect(
+          find.byKey(const Key('zone1-map-artwork')),
         );
-        final painted = tester.getRect(
-          find.byKey(
-            Key(
-              night ? 'zone1-night-upgrade-layer' : 'zone1-live-upgrade-layer',
-            ),
-          ),
+        expect(board.width / board.height, closeTo(1672 / 941, .001));
+        expect(safe.inflate(.01).contains(board.topLeft), isTrue);
+        expect(safe.inflate(.01).contains(board.bottomRight), isTrue);
+        final layer = tester.widget<Zone1NightLayer>(
+          find.byKey(const Key('zone1-map-night')),
         );
-        // The raster and all infrastructure layers share the same transform.
-        expect(background, painted);
-        expect(
-          background.width / background.height,
-          closeTo(1536 / 1024, .001),
-        );
-        expect(background.inflate(.01).contains(frame.topLeft), isTrue);
-        expect(background.inflate(.01).contains(frame.bottomRight), isTrue);
+        expect(layer.night, night);
         await evidence.captureMap(
           tester,
           'r23_${sample.$1.width.toInt()}x${sample.$1.height.toInt()}_dpr${sample.$2}_${night ? 'noite' : 'dia'}',

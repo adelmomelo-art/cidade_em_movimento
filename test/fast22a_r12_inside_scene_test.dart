@@ -46,81 +46,53 @@ Future<PlayerController> _controller({
 
 void main() {
   for (final width in [390.0, 800.0, 1280.0]) {
-    testWidgets(
-      'all panels inside frame, no speech bubble and real upgrade purchase at $width',
-      (tester) async {
-        tester.view.devicePixelRatio = 1;
-        tester.view.physicalSize = Size(width, 1100);
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-        final c = await _controller(completed: true);
-        addTearDown(c.dispose);
-        final coins = c.progress.coins;
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: AppTheme.light,
-            home: Zone1MapScreen(controller: c),
-          ),
-        );
-        await tester.pumpAndSettle();
-        final frameFinder = find.byKey(const Key('zone1-map-canvas'));
-        final frame = tester.getRect(frameFinder);
-        final missions = tester.getRect(
-          find.byKey(const Key('zone1-mission-window')),
-        );
-        final upgrades = tester.getRect(
-          find.byKey(const Key('zone1-upgrades-window')),
-        );
-        expect(missions.right, lessThanOrEqualTo(upgrades.left));
-        expect(missions.center.dx, lessThan(frame.center.dx));
-        expect(upgrades.center.dx, greaterThan(frame.center.dx));
-        for (final rect in [missions, upgrades]) {
-          expect(frame.contains(rect.topLeft), isTrue);
-          expect(frame.contains(rect.bottomRight), isTrue);
-        }
-        for (final upgrade in zone1Upgrades) {
-          final balloon = find.byKey(Key('zone1-upgrade-${upgrade.id}'));
-          expect(balloon, findsOneWidget);
-          expect(
-            find.descendant(of: frameFinder, matching: balloon),
-            findsOneWidget,
-          );
-        }
-        if (width >= 800) {
-          final wheelchair = Rect.fromCenter(
-            center: Offset(
-              frame.left + frame.width * 1155 / 1536,
-              frame.top + frame.height * 735 / 1024,
-            ),
-            width: frame.width * 90 / 1536,
-            height: frame.height * 90 / 1024,
-          );
-          expect(missions.overlaps(wheelchair), isFalse);
-          expect(upgrades.overlaps(wheelchair), isFalse);
-        }
-        expect(find.byKey(const Key('zone1-melo-speech-bubble')), findsNothing);
-        final hud = tester.getRect(find.byKey(const Key('zone1-score-hud')));
-        expect(hud.overlaps(missions), isFalse);
-        expect(hud.overlaps(upgrades), isFalse);
-        final balloon = find.byKey(const Key('zone1-upgrade-FAIXA_SEGURA'));
-        final purchase = find.descendant(
-          of: balloon,
-          matching: find.byType(FilledButton),
-        );
-        await tester.ensureVisible(purchase);
-        await tester.pumpAndSettle();
-        await tester.tap(purchase);
-        await tester.pumpAndSettle();
-        expect(c.progress.purchasedUpgrades.contains('FAIXA_SEGURA'), isTrue);
-        expect(c.progress.coins, coins - zone1Upgrades.first.cost);
-        expect(
-          find.descendant(of: balloon, matching: find.text('INSTALADA')),
-          findsOneWidget,
-        );
-        expect(tester.widget<FilledButton>(purchase).onPressed, isNull);
-        expect(tester.takeException(), isNull);
-      },
-    );
+    testWidgets('approved map exposes upgrades and real purchases at $width', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = Size(width, 1100);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final c = await _controller(completed: true);
+      addTearDown(c.dispose);
+      final coins = c.progress.coins;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light,
+          home: Zone1MapScreen(controller: c),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final frame = tester.getRect(find.byKey(const Key('zone1-map-canvas')));
+      for (final id in _ids) {
+        final pin = tester.getRect(find.byKey(Key('zone1-visual-mission-$id')));
+        expect(frame.contains(pin.topLeft), isTrue);
+        expect(frame.contains(pin.bottomRight), isTrue);
+      }
+      await tester.tap(find.byKey(const Key('zone1-open-upgrades')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('zone1-upgrades-window')), findsOneWidget);
+      for (final upgrade in zone1Upgrades) {
+        expect(find.byKey(Key('zone1-upgrade-${upgrade.id}')), findsOneWidget);
+      }
+      final balloon = find.byKey(const Key('zone1-upgrade-FAIXA_SEGURA'));
+      final purchase = find.descendant(
+        of: balloon,
+        matching: find.byType(FilledButton),
+      );
+      await tester.ensureVisible(purchase);
+      await tester.pumpAndSettle();
+      await tester.tap(purchase);
+      await tester.pumpAndSettle();
+      expect(c.progress.purchasedUpgrades.contains('FAIXA_SEGURA'), isTrue);
+      expect(c.progress.coins, coins - zone1Upgrades.first.cost);
+      expect(
+        find.descendant(of: balloon, matching: find.text('INSTALADA')),
+        findsOneWidget,
+      );
+      expect(tester.widget<FilledButton>(purchase).onPressed, isNull);
+      expect(tester.takeException(), isNull);
+    });
   }
   test(
     'removed lateral crossing leaves its former paint location empty',
