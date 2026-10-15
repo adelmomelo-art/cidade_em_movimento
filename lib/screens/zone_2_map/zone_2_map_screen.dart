@@ -2,579 +2,493 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
+import '../../core/enums/player_type.dart';
+import '../../data/zone_2/mission_01_data.dart';
+import '../../data/zone_2/mission_02_data.dart';
+import '../../data/zone_2/mission_03_data.dart';
+import '../../data/zone_2/mission_04_data.dart';
+import '../../data/zone_2/mission_05_data.dart';
+import '../../data/zone_2/special_mission_data.dart';
 import '../../data/zone_2/upgrade_data.dart';
-import '../../models/upgrade_definition.dart';
-import '../../widgets/zone_2_evolving_scene.dart';
+import '../../models/mission.dart';
+import '../../widgets/approved_artwork_page.dart';
+import '../../widgets/fortaleza_map_avatar.dart';
+import '../../widgets/zone_2_approved_art.dart';
+import '../../widgets/zone_2_mission_dialog.dart';
 
-class Zone2MapScreen extends StatelessWidget {
+class Zone2MapScreen extends StatefulWidget {
   const Zone2MapScreen({super.key, required this.controller});
-
   final PlayerController controller;
 
-  static const _missions = [
-    ('Z2_M01', 'Cruzamento em Movimento'),
-    ('Z2_M02', 'Ponto Certo'),
-    ('Z2_M03', 'Cal\u00e7ada \u00e9 de Todos'),
-    ('Z2_M04', 'S\u00f3 Vou Parar Aqui'),
-    ('Z2_M05', 'Rotas que se Encontram'),
-    ('Z2_SPECIAL', 'Centro em Harmonia'),
+  @override
+  State<Zone2MapScreen> createState() => _Zone2MapScreenState();
+}
+
+class _Zone2MapScreenState extends State<Zone2MapScreen> {
+  PlayerController get controller => widget.controller;
+  bool _night = false;
+  bool _openingUpgrades = false;
+  bool _openingMission = false;
+
+  static const _pins = [
+    ('Z2_M01', 'Cruzamento em Movimento', Rect.fromLTWH(710, 624, 245, 116)),
+    ('Z2_M02', 'Ponto Certo', Rect.fromLTWH(425, 448, 208, 96)),
+    ('Z2_M03', 'Calçada é de Todos', Rect.fromLTWH(648, 323, 255, 111)),
+    ('Z2_M04', 'Só Vou Parar Aqui', Rect.fromLTWH(1356, 355, 252, 112)),
+    ('Z2_M05', 'Rotas que se Encontram', Rect.fromLTWH(1244, 549, 278, 109)),
+    ('Z2_SPECIAL', 'Centro em Harmonia', Rect.fromLTWH(1325, 727, 286, 129)),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        final progress = controller.progress;
+  static Mission? _missionForId(String id, PlayerType type) => switch (id) {
+    'Z2_M01' => buildZone2Mission01(type),
+    'Z2_M02' => buildZone2Mission02(type),
+    'Z2_M03' => buildZone2Mission03(type),
+    'Z2_M04' => buildZone2Mission04(type),
+    'Z2_M05' => buildZone2Mission05(type),
+    'Z2_SPECIAL' => buildZone2SpecialMission(type),
+    _ => null,
+  };
 
-        final totalStars = progress.missionStars.values.fold<int>(
-          0,
-          (total, value) => total + value,
-        );
-
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Centro Hist\u00f3rico'),
-            actions: [
-              IconButton(
-                tooltip: 'Meu Progresso',
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.playerProgress);
-                },
-                icon: const Icon(Icons.insights_rounded),
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: _ScoreBar(
-                    citizenship: progress.citizenshipXp,
-                    knowledge: progress.knowledge,
-                    coins: progress.coins,
-                    stars: totalStars,
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      if (progress.isZoneCompleted('ZONE_2')) ...[
-                        const _ZoneCompletedCard(),
-                        const SizedBox(height: 10),
-                        FilledButton.icon(
-                          onPressed: controller.isZoneUnlocked('ZONE_3')
-                              ? () {
-                                  Navigator.of(
-                                    context,
-                                  ).pushNamed(AppRoutes.zone3);
-                                }
-                              : null,
-                          icon: const Icon(Icons.beach_access_rounded),
-                          label: const Text(
-                            'AVAN\u00c7AR PARA A ORLA / PRAIA DE IRACEMA',
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                      _CenterCard(
-                        purchasedUpgrades: progress.purchasedUpgrades,
-                      ),
-                      const SizedBox(height: 16),
-                      Zone2EvolvingScene(
-                        purchasedUpgrades: progress.purchasedUpgrades,
-                      ),
-                      const SizedBox(height: 16),
-                      _UpgradeSection(controller: controller),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Miss\u00f5es da Zona 2',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        'Complete as miss\u00f5es, conquiste estrelas e '
-                        'libere o desafio final.',
-                      ),
-                      const SizedBox(height: 12),
-                      for (var index = 0; index < _missions.length; index++)
-                        _MissionPreview(
-                          number: index + 1,
-                          id: _missions[index].$1,
-                          title: _missions[index].$2,
-                          unlocked: progress.unlockedMissions.contains(
-                            _missions[index].$1,
-                          ),
-                          stars:
-                              progress.missionStars[_missions[index].$1] ?? 0,
-                          special: _missions[index].$1 == 'Z2_SPECIAL',
-                        ),
-                    ]),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _ZoneCompletedCard extends StatelessWidget {
-  const _ZoneCompletedCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Card(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.emoji_events_rounded, size: 30),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Zona 2 conclu\u00edda',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 2),
-                  Text('Medalha: Guardi\u00e3o do Centro'),
-                ],
-              ),
-            ),
-          ],
+  Future<void> _openMission(String id) async {
+    if (_openingMission ||
+        !controller.isZoneUnlocked('ZONE_2') ||
+        !controller.progress.unlockedMissions.contains(id)) {
+      return;
+    }
+    final type = controller.profile?.type;
+    if (type == null) return;
+    final mission = _missionForId(id, type);
+    if (mission == null) return;
+    _openingMission = true;
+    try {
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        useSafeArea: false,
+        routeSettings: RouteSettings(name: '/zone-2/dialog/$id'),
+        builder: (_) => Zone2MissionDialog(
+          mission: mission,
+          player: controller,
+          nightPreview: _night,
+          nextMissionId: switch (id) {
+            'Z2_M01' => 'Z2_M02',
+            'Z2_M02' => 'Z2_M03',
+            'Z2_M03' => 'Z2_M04',
+            'Z2_M04' => 'Z2_M05',
+            _ => null,
+          },
         ),
-      ),
-    );
-  }
-}
-
-class _CenterCard extends StatelessWidget {
-  const _CenterCard({required this.purchasedUpgrades});
-
-  final Set<String> purchasedUpgrades;
-
-  @override
-  Widget build(BuildContext context) {
-    final hasAccessibleCrossing = purchasedUpgrades.contains(
-      'TRAVESSIA_ACESSIVEL',
-    );
-    final hasSafeStop = purchasedUpgrades.contains('PONTO_SEGURO');
-    final hasSharedRoute = purchasedUpgrades.contains('ROTA_COMPARTILHADA');
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Icon(Icons.location_city_rounded, size: 72),
-            const SizedBox(height: 12),
-            Text('ZONA 2', style: Theme.of(context).textTheme.labelLarge),
-            Text(
-              'Centro Hist\u00f3rico',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Fluxos e Conviv\u00eancia',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Aprenda, conquiste moedas e transforme os espa\u00e7os '
-              'compartilhados do Centro.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 18),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              alignment: WrapAlignment.center,
-              children: [
-                _TransformationBadge(
-                  icon: Icons.accessible_rounded,
-                  label: 'Travessia Acess\u00edvel',
-                  active: hasAccessibleCrossing,
-                ),
-                _TransformationBadge(
-                  icon: Icons.directions_bus_rounded,
-                  label: 'Ponto Seguro',
-                  active: hasSafeStop,
-                ),
-                _TransformationBadge(
-                  icon: Icons.pedal_bike_rounded,
-                  label: 'Rota Compartilhada',
-                  active: hasSharedRoute,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TransformationBadge extends StatelessWidget {
-  const _TransformationBadge({
-    required this.icon,
-    required this.label,
-    required this.active,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      avatar: Icon(active ? Icons.check_circle_rounded : icon, size: 20),
-      label: Text(
-        active ? '$label \u2014 instalada' : '$label \u2014 pendente',
-      ),
-    );
-  }
-}
-
-class _UpgradeSection extends StatelessWidget {
-  const _UpgradeSection({required this.controller});
-
-  final PlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = controller.progress;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Transforme o Centro',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        const Text(
-          'Use as moedas conquistadas nas miss\u00f5es para melhorar '
-          'acessibilidade, transporte coletivo e conviv\u00eancia.',
-        ),
-        const SizedBox(height: 12),
-        for (final upgrade in zone2Upgrades)
-          _UpgradeCard(
-            key: Key('zone2-upgrade-${upgrade.id}'),
-            upgrade: upgrade,
-            purchased: progress.purchasedUpgrades.contains(upgrade.id),
-            canAfford: progress.coins >= upgrade.cost,
-            onPurchase: () async {
-              final purchased = await controller.purchaseUpgrade(upgrade.id);
-
-              if (!context.mounted) {
-                return;
-              }
-
-              final message = purchased
-                  ? '${upgrade.title} instalada com sucesso.'
-                  : 'Moedas insuficientes ou melhoria j\u00e1 instalada.';
-
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(SnackBar(content: Text(message)));
-            },
-          ),
-      ],
-    );
-  }
-}
-
-class _UpgradeCard extends StatelessWidget {
-  const _UpgradeCard({
-    super.key,
-    required this.upgrade,
-    required this.purchased,
-    required this.canAfford,
-    required this.onPurchase,
-  });
-
-  final UpgradeDefinition upgrade;
-  final bool purchased;
-  final bool canAfford;
-  final Future<void> Function() onPurchase;
-
-  IconData get _icon {
-    switch (upgrade.id) {
-      case 'TRAVESSIA_ACESSIVEL':
-        return Icons.accessible_rounded;
-      case 'PONTO_SEGURO':
-        return Icons.directions_bus_rounded;
-      case 'ROTA_COMPARTILHADA':
-        return Icons.pedal_bike_rounded;
-      default:
-        return Icons.location_city_rounded;
+      );
+    } finally {
+      _openingMission = false;
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final compact = constraints.maxWidth < 560;
+  void _back() {
+    final nav = Navigator.of(context);
+    var found = false;
+    nav.popUntil((route) {
+      found = route.settings.name == AppRoutes.fortalezaMap;
+      return found || route.isFirst;
+    });
+    if (!found) nav.pushReplacementNamed(AppRoutes.fortalezaMap);
+  }
 
-            final details = Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  child: Icon(purchased ? Icons.check_rounded : _icon),
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: controller,
+    builder: (context, _) => Scaffold(
+      body: ClipRRect(
+        key: const Key('zone2-map-canvas'),
+        child: Zone2ArtworkBoard(
+          asset: zone2MapArtwork,
+          captureKey: const Key('zone2-map-artwork'),
+          children: [
+            Positioned.fill(
+              child: Zone2NightLayer(
+                key: const Key('zone2-map-night'),
+                night: _night,
+                lighting: false,
+              ),
+            ),
+            Positioned(
+              left: 0,
+              top: 240,
+              width: 420,
+              height: 404,
+              child: IgnorePointer(
+                child: Semantics(
+                  key: const Key('zone2-mentor-panel'),
+                  label:
+                      'Melo: Vamos explorar o Centro? Observe os caminhos e escolha sua missão!',
+                  child: const SizedBox.expand(),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        upgrade.title,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(upgrade.description),
-                      const SizedBox(height: 6),
-                      Text(
-                        purchased
-                            ? 'INSTALADA'
-                            : 'Custo: ${upgrade.cost} moedas',
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ],
+              ),
+            ),
+            Positioned(
+              left: 1144,
+              top: 15,
+              width: 520,
+              height: 103,
+              child: Zone2LiveHud(
+                key: const Key('zone2-score-hud'),
+                player: controller,
+              ),
+            ),
+            Positioned(
+              left: 510,
+              top: 695,
+              width: 93,
+              height: 155,
+              child: IgnorePointer(
+                child: FortalezaMapAvatar(profile: controller.profile),
+              ),
+            ),
+            Positioned.fill(
+              child: Stack(
+                key: const Key('zone2-mission-window'),
+                children: [for (final pin in _pins) _pin(pin)],
+              ),
+            ),
+            Positioned(
+              left: 14,
+              top: 28,
+              width: 68,
+              height: 70,
+              child: ArtworkAction(
+                key: const Key('zone2-back-to-fortaleza'),
+                label: 'Voltar ao mapa de Fortaleza',
+                hint: 'Mapa de Fortaleza',
+                onPressed: _back,
+              ),
+            ),
+            if (!controller.isZoneUnlocked('ZONE_2'))
+              const Positioned(
+                left: 720,
+                top: 122,
+                width: 700,
+                height: 66,
+                child: ColoredBox(
+                  color: zone2Ink,
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Zone2ArtText(
+                      'Conclua a Zona 1 para explorar o Centro.',
+                      fontSize: 29,
+                    ),
                   ),
                 ),
-              ],
-            );
-
-            final button = SizedBox(
-              width: compact ? double.infinity : 150,
-              child: FilledButton.icon(
-                key: Key('zone2-install-${upgrade.id}'),
-                onPressed: purchased || !canAfford
-                    ? null
-                    : () {
-                        onPurchase();
-                      },
-                icon: Icon(
-                  purchased ? Icons.verified_rounded : Icons.add_road_rounded,
-                ),
-                label: Text(purchased ? 'INSTALADA' : 'INSTALAR'),
               ),
-            );
-
-            if (compact) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [details, const SizedBox(height: 14), button],
-              );
-            }
-
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(child: details),
-                const SizedBox(width: 16),
-                button,
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _ScoreBar extends StatelessWidget {
-  const _ScoreBar({
-    required this.citizenship,
-    required this.knowledge,
-    required this.coins,
-    required this.stars,
-  });
-
-  final int citizenship;
-  final int knowledge;
-  final int coins;
-  final int stars;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Row(
-          children: [
-            _ScoreItem(
-              icon: Icons.workspace_premium_rounded,
-              value: citizenship,
-              label: 'Cidadania',
-            ),
-            _ScoreItem(
-              icon: Icons.menu_book_rounded,
-              value: knowledge,
-              label: 'Conhecimento',
-            ),
-            _ScoreItem(
-              icon: Icons.monetization_on_rounded,
-              value: coins,
-              label: 'Moedas',
-            ),
-            _ScoreItem(
-              icon: Icons.star_rounded,
-              value: stars,
-              label: 'Estrelas',
+            if (controller.isZoneUnlocked('ZONE_3'))
+              Positioned(
+                left: 1072,
+                top: 858,
+                width: 76,
+                height: 70,
+                child: IconButton.filled(
+                  key: const Key('zone2-advance-zone3'),
+                  tooltip: 'Avançar para a Orla / Praia de Iracema',
+                  style: IconButton.styleFrom(
+                    backgroundColor: zone2Ink,
+                    foregroundColor: zone2Gold,
+                  ),
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(AppRoutes.zone3),
+                  icon: const Icon(Icons.arrow_forward_rounded, size: 38),
+                ),
+              ),
+            Positioned(
+              left: 613,
+              top: 852,
+              width: 444,
+              height: 77,
+              child: _navigation(),
             ),
           ],
         ),
       ),
-    );
-  }
-}
+    ),
+  );
 
-class _ScoreItem extends StatelessWidget {
-  const _ScoreItem({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
-
-  final IconData icon;
-  final int value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
+  Widget _pin((String, String, Rect) pin) {
+    final unlocked =
+        controller.isZoneUnlocked('ZONE_2') &&
+        controller.progress.unlockedMissions.contains(pin.$1);
+    final stars = controller.progress.missionStars[pin.$1] ?? 0;
+    final special = pin.$1 == 'Z2_SPECIAL';
+    return Positioned.fromRect(
+      rect: pin.$3,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          Icon(icon, size: 22),
-          const SizedBox(height: 2),
-          Text('$value', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall,
+          if (special && unlocked) ...[
+            const Positioned(
+              left: 16,
+              top: 20,
+              width: 50,
+              height: 48,
+              child: ColoredBox(
+                color: Color(0xFF112D48),
+                child: Icon(Icons.flag_rounded, color: zone2Gold, size: 45),
+              ),
+            ),
+            Positioned(
+              left: 87,
+              top: 72,
+              width: 192,
+              height: 40,
+              child: ColoredBox(
+                color: const Color(0xFFDCE7FC),
+                child: Zone2ArtText(
+                  stars > 0 ? 'Missão concluída' : 'Toque para jogar',
+                  color: zone2Ink,
+                  fontSize: 23,
+                ),
+              ),
+            ),
+          ],
+          if (!unlocked && !special)
+            Positioned(
+              right: 0,
+              top: 0,
+              width: 48,
+              height: 48,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: zone2Ink,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: const Icon(
+                  Icons.lock_rounded,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ),
+          if (stars > 0)
+            Positioned(
+              right: 4,
+              bottom: 0,
+              width: 112,
+              height: 30,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: zone2Ink,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < 3; i++)
+                      Icon(
+                        i < stars
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        size: 28,
+                        color: zone2Gold,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ArtworkAction(
+            key: Key('zone2-visual-mission-${pin.$1}'),
+            label: pin.$2,
+            hint: unlocked
+                ? '${pin.$2}. $stars de 3 estrelas. Toque para jogar.'
+                : '${pin.$2}. Conclua a missão anterior para desbloquear.',
+            onPressed: unlocked ? () => _openMission(pin.$1) : null,
           ),
         ],
       ),
     );
   }
-}
 
-class _MissionPreview extends StatelessWidget {
-  const _MissionPreview({
-    required this.number,
-    required this.id,
-    required this.title,
-    required this.unlocked,
-    required this.stars,
-    required this.special,
-  });
+  Widget _navigation() => DecoratedBox(
+    key: const Key('zone2-navigation-window'),
+    decoration: BoxDecoration(
+      color: zone2Ink,
+      borderRadius: BorderRadius.circular(28),
+      border: Border.all(color: zone2Cyan, width: 2),
+    ),
+    child: Row(
+      children: [
+        _navButton(
+          'zone2-toggle-night',
+          _night ? 'Dia' : 'Noite',
+          _night ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+          () => setState(() => _night = !_night),
+        ),
+        _navButton(
+          'zone2-open-progress',
+          'Progresso',
+          Icons.insights_rounded,
+          () => Navigator.of(context).pushNamed(AppRoutes.playerProgress),
+        ),
+        _navButton(
+          'zone2-open-upgrades',
+          'Melhorias',
+          Icons.construction_rounded,
+          _showUpgrades,
+        ),
+      ],
+    ),
+  );
 
-  final int number;
-  final String id;
-  final String title;
-  final bool unlocked;
-  final int stars;
-  final bool special;
+  Widget _navButton(
+    String key,
+    String text,
+    IconData icon,
+    VoidCallback action,
+  ) => Expanded(
+    child: TextButton(
+      key: Key(key),
+      onPressed: action,
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+        minimumSize: const Size(48, 72),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 33, color: zone2Gold),
+          Expanded(child: Zone2ArtText(text, fontSize: 24)),
+        ],
+      ),
+    ),
+  );
 
-  String? get _route {
-    switch (id) {
-      case 'Z2_M01':
-        return AppRoutes.zone2Mission1;
-      case 'Z2_M02':
-        return AppRoutes.zone2Mission2;
-      case 'Z2_M03':
-        return AppRoutes.zone2Mission3;
-      case 'Z2_M04':
-        return AppRoutes.zone2Mission4;
-      case 'Z2_M05':
-        return AppRoutes.zone2Mission5;
-      case 'Z2_SPECIAL':
-        return AppRoutes.zone2SpecialMission;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final label = special
-        ? 'Miss\u00e3o Especial \u2014 $title'
-        : '$number. $title';
-
-    final route = _route;
-    final canOpen = unlocked && route != null;
-
-    final subtitle = unlocked
-        ? (stars == 0
-              ? 'Dispon\u00edvel'
-              : '${'\u2605' * stars}${'\u2606' * (3 - stars)}')
-        : 'Bloqueada';
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: canOpen
-            ? () {
-                Navigator.of(context).pushNamed(route);
-              }
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-          child: Row(
-            children: [
-              CircleAvatar(
-                child: Icon(
-                  unlocked
-                      ? (special ? Icons.flag_rounded : Icons.lock_open_rounded)
-                      : Icons.lock_rounded,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      label,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+  Future<void> _showUpgrades() async {
+    if (_openingUpgrades) return;
+    _openingUpgrades = true;
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: zone2Ink,
+          child: SizedBox(
+            width: 760,
+            height: 480,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: SizedBox(
+                width: 760,
+                height: 480,
+                child: AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, _) => Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      key: const Key('zone2-upgrades-window'),
+                      children: [
+                        const SizedBox(
+                          height: 45,
+                          child: Zone2ArtText('MELHORIAS DA ZONA 2'),
+                        ),
+                        const SizedBox(height: 12),
+                        for (final upgrade in zone2Upgrades)
+                          Expanded(
+                            child: Card(
+                              key: Key('zone2-upgrade-${upgrade.id}'),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Expanded(
+                                            child: Zone2ArtText(
+                                              upgrade.title,
+                                              color: zone2Ink,
+                                              fontSize: 26,
+                                              align: TextAlign.left,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Zone2ArtText(
+                                              upgrade.description,
+                                              color: zone2Ink,
+                                              fontSize: 19,
+                                              align: TextAlign.left,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
+                                    SizedBox(
+                                      width: 170,
+                                      height: 60,
+                                      child: FilledButton(
+                                        key: Key('zone2-install-${upgrade.id}'),
+                                        onPressed:
+                                            controller
+                                                    .progress
+                                                    .purchasedUpgrades
+                                                    .contains(upgrade.id) ||
+                                                controller.progress.coins <
+                                                    upgrade.cost
+                                            ? null
+                                            : () async {
+                                                try {
+                                                  await controller
+                                                      .purchaseUpgrade(
+                                                        upgrade.id,
+                                                      );
+                                                } catch (_) {
+                                                  if (mounted &&
+                                                      context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                      this.context,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Não foi possível salvar a melhoria. Tente novamente.',
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                }
+                                              },
+                                        child: Zone2ArtText(
+                                          controller.progress.purchasedUpgrades
+                                                  .contains(upgrade.id)
+                                              ? 'INSTALADA'
+                                              : '${upgrade.cost} MOEDAS',
+                                          fontSize: 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        SizedBox(
+                          height: 60,
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text(
+                              'VOLTAR AO CENTRO',
+                              style: TextStyle(color: zone2Gold, fontSize: 24),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 3),
-                    Text(subtitle),
-                  ],
+                  ),
                 ),
               ),
-              if (canOpen) ...[
-                const SizedBox(width: 12),
-                const Icon(Icons.play_circle_outline_rounded),
-              ],
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } finally {
+      _openingUpgrades = false;
+    }
   }
 }
