@@ -2,548 +2,495 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import '../../controllers/player_controller.dart';
+import '../../core/enums/player_type.dart';
+import '../../data/zone_6/mission_01_data.dart';
+import '../../data/zone_6/mission_02_data.dart';
+import '../../data/zone_6/mission_03_data.dart';
+import '../../data/zone_6/mission_04_data.dart';
+import '../../data/zone_6/mission_05_data.dart';
+import '../../data/zone_6/special_mission_data.dart';
 import '../../data/zone_6/upgrade_data.dart';
-import '../../models/upgrade_definition.dart';
-import '../../widgets/zone_6_evolving_scene.dart';
+import '../../models/mission.dart';
+import '../../widgets/approved_artwork_page.dart';
+import '../../widgets/fortaleza_map_avatar.dart';
+import '../../widgets/zone_6_approved_art.dart';
+import '../../widgets/zone_6_mission_dialog.dart';
 
-class Zone6MapScreen extends StatelessWidget {
+class Zone6MapScreen extends StatefulWidget {
   const Zone6MapScreen({super.key, required this.controller});
-
   final PlayerController controller;
 
-  static const _missions = [
-    ('Z6_M01', 'Chegada ao Castelao'),
-    ('Z6_M02', 'Travessia da Torcida'),
-    ('Z6_M03', 'Embarque e Desembarque'),
-    ('Z6_M04', 'Bloqueio Temporario'),
-    ('Z6_M05', 'Saida do Estadio'),
-    ('Z6_SPECIAL', 'Operacao Dia de Jogo'),
+  @override
+  State<Zone6MapScreen> createState() => _Zone6MapScreenState();
+}
+
+class _Zone6MapScreenState extends State<Zone6MapScreen> {
+  PlayerController get controller => widget.controller;
+  bool _night = false;
+  bool _openingUpgrades = false;
+  bool _openingMission = false;
+
+  static const _pins = [
+    ('Z6_M01', 'Chegada ao Castelão', Rect.fromLTWH(444, 550, 216, 116)),
+    ('Z6_M02', 'Travessia da Torcida', Rect.fromLTWH(483, 315, 190, 112)),
+    ('Z6_M03', 'Embarque e Desembarque', Rect.fromLTWH(814, 286, 211, 111)),
+    ('Z6_M04', 'Bloqueio Temporário', Rect.fromLTWH(1199, 235, 205, 113)),
+    ('Z6_M05', 'Saída do Estádio', Rect.fromLTWH(1400, 431, 240, 114)),
+    ('Z6_SPECIAL', 'Operação Dia de Jogo', Rect.fromLTWH(1350, 644, 302, 150)),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        final progress = controller.progress;
-        final totalStars = progress.missionStars.values.fold<int>(
-          0,
-          (total, value) => total + value,
-        );
+  static Mission? _missionForId(String id, PlayerType type) => switch (id) {
+    'Z6_M01' => buildZone6Mission01(type),
+    'Z6_M02' => buildZone6Mission02(type),
+    'Z6_M03' => buildZone6Mission03(type),
+    'Z6_M04' => buildZone6Mission04(type),
+    'Z6_M05' => buildZone6Mission05(type),
+    'Z6_SPECIAL' => buildZone6SpecialMission(type),
+    _ => null,
+  };
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Polo Castelao'),
-            actions: [
-              IconButton(
-                tooltip: 'Meu Progresso',
-                onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.playerProgress);
-                },
-                icon: const Icon(Icons.insights_rounded),
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: _ScoreBar(
-                    citizenship: progress.citizenshipXp,
-                    knowledge: progress.knowledge,
-                    coins: progress.coins,
-                    stars: totalStars,
-                  ),
+  Future<void> _openMission(String id) async {
+    if (_openingMission ||
+        !controller.isZoneUnlocked('ZONE_6') ||
+        !controller.progress.unlockedMissions.contains(id)) {
+      return;
+    }
+    final type = controller.profile?.type;
+    if (type == null) return;
+    final mission = _missionForId(id, type);
+    if (mission == null) return;
+    _openingMission = true;
+    try {
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        useSafeArea: false,
+        routeSettings: RouteSettings(name: '/zone-6/dialog/$id'),
+        builder: (_) => Zone6MissionDialog(
+          mission: mission,
+          player: controller,
+          nightPreview: _night,
+          nextMissionId: switch (id) {
+            'Z6_M01' => 'Z6_M02',
+            'Z6_M02' => 'Z6_M03',
+            'Z6_M03' => 'Z6_M04',
+            'Z6_M04' => 'Z6_M05',
+            _ => null,
+          },
+        ),
+      );
+    } finally {
+      _openingMission = false;
+    }
+  }
+
+  void _back() {
+    final nav = Navigator.of(context);
+    var found = false;
+    nav.popUntil((route) {
+      found = route.settings.name == AppRoutes.fortalezaMap;
+      return found || route.isFirst;
+    });
+    if (!found) nav.pushReplacementNamed(AppRoutes.fortalezaMap);
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: controller,
+    builder: (context, _) => Scaffold(
+      body: ClipRRect(
+        key: const Key('zone6-map-canvas'),
+        child: Zone6ArtworkBoard(
+          asset: zone6MapArtwork,
+          captureKey: const Key('zone6-map-artwork'),
+          children: [
+            Positioned.fill(
+              child: Zone6NightLayer(
+                key: const Key('zone6-map-night'),
+                night: _night,
+                lighting: controller.progress.purchasedUpgrades.contains(
+                  'ILUMINACAO_ENTORNO_CASTELAO',
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        if (progress.isZoneCompleted('ZONE_6')) ...[
-                          const _ZoneCompletedCard(),
-                          const SizedBox(height: 16),
-                        ],
-                        _CastelaoCard(
-                          purchasedUpgrades: progress.purchasedUpgrades,
-                        ),
-                        const SizedBox(height: 16),
-                        IgnorePointer(
-                          child: Zone6EvolvingScene(
-                            purchasedUpgrades: progress.purchasedUpgrades,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        _UpgradeSection(controller: controller),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Missoes da Zona 6',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 6),
-                        const Text(
-                          'Complete as cinco missoes, alcance pelo menos '
-                          '9 estrelas e libere o desafio final.',
-                        ),
-                        const SizedBox(height: 12),
-                        for (var index = 0; index < _missions.length; index++)
-                          _MissionTile(
-                            number: index + 1,
-                            id: _missions[index].$1,
-                            title: _missions[index].$2,
-                            unlocked: progress.unlockedMissions.contains(
-                              _missions[index].$1,
-                            ),
-                            stars:
-                                progress.missionStars[_missions[index].$1] ?? 0,
-                            special: _missions[index].$1 == 'Z6_SPECIAL',
-                          ),
-                      ],
+              ),
+            ),
+            Positioned(
+              left: 0,
+              top: 505,
+              width: 386,
+              height: 436,
+              child: IgnorePointer(
+                child: Semantics(
+                  key: const Key('zone6-mentor-panel'),
+                  label:
+                      'Melo: Vamos ao Castelão? Observe os acessos e escolha sua missão!',
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 1061,
+              top: 28,
+              width: 590,
+              height: 89,
+              child: Zone6LiveHud(
+                key: const Key('zone6-score-hud'),
+                player: controller,
+              ),
+            ),
+            Positioned(
+              left: 345,
+              top: 711,
+              width: 88,
+              height: 150,
+              child: IgnorePointer(
+                child: FortalezaMapAvatar(profile: controller.profile),
+              ),
+            ),
+            Positioned.fill(
+              child: Stack(
+                key: const Key('zone6-mission-window'),
+                children: [for (final pin in _pins) _pin(pin)],
+              ),
+            ),
+            Positioned(
+              left: 30,
+              top: 33,
+              width: 68,
+              height: 70,
+              child: ArtworkAction(
+                key: const Key('zone6-back-to-fortaleza'),
+                label: 'Voltar ao mapa de Fortaleza',
+                hint: 'Mapa de Fortaleza',
+                onPressed: _back,
+              ),
+            ),
+            if (!controller.isZoneUnlocked('ZONE_6'))
+              const Positioned(
+                left: 720,
+                top: 122,
+                width: 700,
+                height: 66,
+                child: ColoredBox(
+                  color: zone6Ink,
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Zone6ArtText(
+                      'Conclua a Zona 5 para explorar o Polo Castelão.',
+                      fontSize: 29,
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _ZoneCompletedCard extends StatelessWidget {
-  const _ZoneCompletedCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Card(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.emoji_events_rounded, size: 30),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Zona 6 concluida',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            if (controller.progress.isZoneCompleted('ZONE_6'))
+              Positioned(
+                left: 1101,
+                top: 861,
+                width: 76,
+                height: 70,
+                child: IconButton.filled(
+                  key: const Key('zone6-completion-summary'),
+                  tooltip: 'Zona 6 concluída — Guardião do Castelão',
+                  style: IconButton.styleFrom(
+                    backgroundColor: zone6Ink,
+                    foregroundColor: zone6Gold,
                   ),
-                  SizedBox(height: 2),
-                  Text('Medalha: Guardiao do Castelao'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CastelaoCard extends StatelessWidget {
-  const _CastelaoCard({required this.purchasedUpgrades});
-
-  final Set<String> purchasedUpgrades;
-
-  @override
-  Widget build(BuildContext context) {
-    final hasPedestrianCorridor = purchasedUpgrades.contains(
-      'CORREDOR_PEDESTRE_CASTELAO',
-    );
-    final hasLighting = purchasedUpgrades.contains(
-      'ILUMINACAO_ENTORNO_CASTELAO',
-    );
-    final hasBoarding = purchasedUpgrades.contains(
-      'EMBARQUE_INTEGRADO_CASTELAO',
-    );
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(22),
-        child: Column(
-          children: [
-            const Icon(Icons.stadium_rounded, size: 72),
-            const SizedBox(height: 12),
-            Text('ZONA 6', style: Theme.of(context).textTheme.labelLarge),
-            Text(
-              'Polo Castelao',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Mobilidade em Dias de Jogo',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Aprenda a chegar, circular e sair com seguranca em grandes '
-              'eventos esportivos, respeitando pedestres, bloqueios e pontos '
-              'organizados de transporte.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: [
-                _TransformationBadge(
-                  label: 'Pedestres',
-                  installed: hasPedestrianCorridor,
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(AppRoutes.globalProgress),
+                  icon: const Icon(Icons.emoji_events_rounded, size: 38),
                 ),
-                _TransformationBadge(
-                  label: 'Iluminacao',
-                  installed: hasLighting,
-                ),
-                _TransformationBadge(label: 'Embarque', installed: hasBoarding),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TransformationBadge extends StatelessWidget {
-  const _TransformationBadge({required this.label, required this.installed});
-
-  final String label;
-  final bool installed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      avatar: Icon(
-        installed
-            ? Icons.check_circle_rounded
-            : Icons.radio_button_unchecked_rounded,
-        size: 18,
-      ),
-      label: Text(label),
-    );
-  }
-}
-
-class _UpgradeSection extends StatelessWidget {
-  const _UpgradeSection({required this.controller});
-
-  final PlayerController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = controller.progress;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Transforme o Polo Castelao',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Use as moedas conquistadas para instalar melhorias urbanas. '
-              'As compras sao opcionais e nao bloqueiam a progressao.',
-            ),
-            const SizedBox(height: 14),
-            for (final upgrade in zone6Upgrades) ...[
-              _UpgradeCard(
-                controller: controller,
-                upgrade: upgrade,
-                purchased: progress.purchasedUpgrades.contains(upgrade.id),
-                canAfford: progress.coins >= upgrade.cost,
               ),
-              if (upgrade != zone6Upgrades.last) const SizedBox(height: 10),
-            ],
+            Positioned(
+              left: 595,
+              top: 861,
+              width: 494,
+              height: 69,
+              child: _navigation(),
+            ),
           ],
         ),
       ),
-    );
-  }
-}
+    ),
+  );
 
-class _UpgradeCard extends StatelessWidget {
-  const _UpgradeCard({
-    required this.controller,
-    required this.upgrade,
-    required this.purchased,
-    required this.canAfford,
-  });
-
-  final PlayerController controller;
-  final UpgradeDefinition upgrade;
-  final bool purchased;
-  final bool canAfford;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      key: Key('zone6-upgrade-${upgrade.id}'),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _pin((String, String, Rect) pin) {
+    final unlocked =
+        controller.isZoneUnlocked('ZONE_6') &&
+        controller.progress.unlockedMissions.contains(pin.$1);
+    final stars = controller.progress.missionStars[pin.$1] ?? 0;
+    final special = pin.$1 == 'Z6_SPECIAL';
+    return Positioned.fromRect(
+      rect: pin.$3,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          CircleAvatar(
-            child: Icon(
-              purchased
-                  ? Icons.check_circle_rounded
-                  : Icons.construction_rounded,
+          if (special && unlocked) ...[
+            const Positioned(
+              left: 16,
+              top: 20,
+              width: 50,
+              height: 48,
+              child: ColoredBox(
+                color: Color(0xFF112D48),
+                child: Icon(Icons.flag_rounded, color: zone6Gold, size: 45),
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  upgrade.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+            Positioned(
+              left: 87,
+              top: 72,
+              width: 192,
+              height: 40,
+              child: ColoredBox(
+                color: const Color(0xFFDCE7FC),
+                child: Zone6ArtText(
+                  stars > 0 ? 'Missão concluída' : 'Toque para jogar',
+                  color: zone6Ink,
+                  fontSize: 23,
                 ),
-                const SizedBox(height: 4),
-                Text(upgrade.description),
-                const SizedBox(height: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+              ),
+            ),
+          ],
+          if (!unlocked && !special)
+            Positioned(
+              right: 0,
+              top: 0,
+              width: 48,
+              height: 48,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: zone6Ink,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: const Icon(
+                  Icons.lock_rounded,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ),
+          if (stars > 0)
+            Positioned(
+              right: 4,
+              bottom: 0,
+              width: 112,
+              height: 30,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: zone6Ink,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.monetization_on_rounded,
-                          size: 18,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text('${upgrade.cost} moedas'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    FilledButton(
-                      key: Key('zone6-install-${upgrade.id}'),
-                      onPressed: purchased || !canAfford
-                          ? null
-                          : () async {
-                              final ok = await controller.purchaseUpgrade(
-                                upgrade.id,
-                              );
-
-                              if (!context.mounted) {
-                                return;
-                              }
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    ok
-                                        ? '${upgrade.title} instalada.'
-                                        : 'Nao foi possivel instalar ${upgrade.title}.',
-                                  ),
-                                ),
-                              );
-                            },
-                      child: Text(purchased ? 'INSTALADA' : 'INSTALAR'),
-                    ),
+                    for (var i = 0; i < 3; i++)
+                      Icon(
+                        i < stars
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        size: 28,
+                        color: zone6Gold,
+                      ),
                   ],
                 ),
-              ],
+              ),
             ),
+          ArtworkAction(
+            key: Key('zone6-visual-mission-${pin.$1}'),
+            label: pin.$2,
+            hint: unlocked
+                ? '${pin.$2}. $stars de 3 estrelas. Toque para jogar.'
+                : '${pin.$2}. Conclua a missão anterior para desbloquear.',
+            onPressed: unlocked ? () => _openMission(pin.$1) : null,
           ),
         ],
       ),
     );
   }
-}
 
-class _ScoreBar extends StatelessWidget {
-  const _ScoreBar({
-    required this.citizenship,
-    required this.knowledge,
-    required this.coins,
-    required this.stars,
-  });
-
-  final int citizenship;
-  final int knowledge;
-  final int coins;
-  final int stars;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Row(
-          children: [
-            _ScoreItem(
-              icon: Icons.workspace_premium_rounded,
-              value: citizenship,
-              label: 'Cidadania',
-            ),
-            _ScoreItem(
-              icon: Icons.menu_book_rounded,
-              value: knowledge,
-              label: 'Conhecimento',
-            ),
-            _ScoreItem(
-              icon: Icons.monetization_on_rounded,
-              value: coins,
-              label: 'Moedas',
-            ),
-            _ScoreItem(
-              icon: Icons.star_rounded,
-              value: stars,
-              label: 'Estrelas',
-            ),
-          ],
+  Widget _navigation() => DecoratedBox(
+    key: const Key('zone6-navigation-window'),
+    decoration: BoxDecoration(
+      color: zone6Ink,
+      borderRadius: BorderRadius.circular(28),
+      border: Border.all(color: zone6Cyan, width: 2),
+    ),
+    child: Row(
+      children: [
+        _navButton(
+          'zone6-toggle-night',
+          _night ? 'Dia' : 'Noite',
+          _night ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+          () => setState(() => _night = !_night),
         ),
+        _navButton(
+          'zone6-open-progress',
+          'Progresso',
+          Icons.insights_rounded,
+          () => Navigator.of(context).pushNamed(AppRoutes.playerProgress),
+        ),
+        _navButton(
+          'zone6-open-upgrades',
+          'Melhorias',
+          Icons.construction_rounded,
+          _showUpgrades,
+        ),
+      ],
+    ),
+  );
+
+  Widget _navButton(
+    String key,
+    String text,
+    IconData icon,
+    VoidCallback action,
+  ) => Expanded(
+    child: TextButton(
+      key: Key(key),
+      onPressed: action,
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+        minimumSize: const Size(48, 72),
       ),
-    );
-  }
-}
-
-class _ScoreItem extends StatelessWidget {
-  const _ScoreItem({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
-
-  final IconData icon;
-  final int value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
       child: Column(
         children: [
-          Icon(icon, size: 22),
-          const SizedBox(height: 2),
-          Text('$value', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall,
-          ),
+          Icon(icon, size: 33, color: zone6Gold),
+          Expanded(child: Zone6ArtText(text, fontSize: 24)),
         ],
       ),
-    );
-  }
-}
+    ),
+  );
 
-class _MissionTile extends StatelessWidget {
-  const _MissionTile({
-    required this.number,
-    required this.id,
-    required this.title,
-    required this.unlocked,
-    required this.stars,
-    required this.special,
-  });
-
-  final int number;
-  final String id;
-  final String title;
-  final bool unlocked;
-  final int stars;
-  final bool special;
-
-  String? get _route {
-    switch (id) {
-      case 'Z6_M01':
-        return AppRoutes.zone6Mission1;
-      case 'Z6_M02':
-        return AppRoutes.zone6Mission2;
-      case 'Z6_M03':
-        return AppRoutes.zone6Mission3;
-      case 'Z6_M04':
-        return AppRoutes.zone6Mission4;
-      case 'Z6_M05':
-        return AppRoutes.zone6Mission5;
-      case 'Z6_SPECIAL':
-        return AppRoutes.zone6SpecialMission;
-      default:
-        return null;
-    }
-  }
-
-  String _starsLabel() {
-    if (stars <= 0) {
-      return 'Disponivel';
-    }
-
-    final filled = List<String>.filled(stars, '\u2605').join();
-    final empty = List<String>.filled(3 - stars, '\u2606').join();
-    return '$filled$empty';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final route = _route;
-    final canOpen = unlocked && route != null;
-    final subtitle = unlocked ? _starsLabel() : 'Bloqueada';
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: canOpen
-            ? () {
-                Navigator.of(context).pushNamed(route);
-              }
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-          child: Row(
-            children: [
-              CircleAvatar(
-                child: Icon(
-                  unlocked
-                      ? (special ? Icons.flag_rounded : Icons.lock_open_rounded)
-                      : Icons.lock_rounded,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      special ? 'Missao Especial - $title' : '$number. $title',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+  Future<void> _showUpgrades() async {
+    if (_openingUpgrades) return;
+    _openingUpgrades = true;
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: zone6Ink,
+          child: SizedBox(
+            width: 760,
+            height: 480,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: SizedBox(
+                width: 760,
+                height: 480,
+                child: AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, _) => Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      key: const Key('zone6-upgrades-window'),
+                      children: [
+                        const SizedBox(
+                          height: 45,
+                          child: Zone6ArtText('MELHORIAS DA ZONA 6'),
+                        ),
+                        const SizedBox(height: 12),
+                        for (final upgrade in zone6Upgrades)
+                          Expanded(
+                            child: Card(
+                              key: Key('zone6-upgrade-${upgrade.id}'),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Expanded(
+                                            child: Zone6ArtText(
+                                              upgrade.title,
+                                              color: zone6Ink,
+                                              fontSize: 26,
+                                              align: TextAlign.left,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Zone6ArtText(
+                                              upgrade.description,
+                                              color: zone6Ink,
+                                              fontSize: 19,
+                                              align: TextAlign.left,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
+                                    SizedBox(
+                                      width: 170,
+                                      height: 60,
+                                      child: FilledButton(
+                                        key: Key('zone6-install-${upgrade.id}'),
+                                        onPressed:
+                                            controller
+                                                    .progress
+                                                    .purchasedUpgrades
+                                                    .contains(upgrade.id) ||
+                                                controller.progress.coins <
+                                                    upgrade.cost
+                                            ? null
+                                            : () async {
+                                                try {
+                                                  await controller
+                                                      .purchaseUpgrade(
+                                                        upgrade.id,
+                                                      );
+                                                } catch (_) {
+                                                  if (mounted &&
+                                                      context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                      this.context,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Não foi possível salvar a melhoria. Tente novamente.',
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                }
+                                              },
+                                        child: Zone6ArtText(
+                                          controller.progress.purchasedUpgrades
+                                                  .contains(upgrade.id)
+                                              ? 'INSTALADA'
+                                              : '${upgrade.cost} MOEDAS',
+                                          fontSize: 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        SizedBox(
+                          height: 60,
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text(
+                              'VOLTAR AO CASTELÃO',
+                              style: TextStyle(color: zone6Gold, fontSize: 24),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 3),
-                    Text(subtitle),
-                  ],
+                  ),
                 ),
               ),
-              if (canOpen) ...[
-                const SizedBox(width: 12),
-                const Icon(Icons.play_circle_outline_rounded),
-              ],
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } finally {
+      _openingUpgrades = false;
+    }
   }
 }
