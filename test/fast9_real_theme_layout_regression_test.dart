@@ -86,13 +86,13 @@ void main() {
           expect(tester.takeException(), isNull);
 
           final scrollables = find.byType(Scrollable);
-          final position = zone <= 2
+          final position = zone <= 3
               ? null
               : tester.state<ScrollableState>(scrollables.first).position;
-          final mapFrame = zone <= 2
+          final mapFrame = zone <= 3
               ? tester.getRect(find.byKey(Key('zone$zone-map-canvas')))
               : null;
-          if (zone <= 2) {
+          if (zone <= 3) {
             expect(scrollables, findsNothing);
           }
           final mouse = await tester.createGesture(
@@ -110,7 +110,7 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
-          if (zone <= 2) {
+          if (zone <= 3) {
             expect(
               tester.getRect(find.byKey(Key('zone$zone-map-canvas'))),
               mapFrame,
@@ -124,7 +124,7 @@ void main() {
               expect(tester.takeException(), isNull);
             }
           }
-          if (zone == 3 || zone == 4) {
+          if (zone == 4) {
             final prefix = 'zone$zone-install-';
             final upgrades = upgradeCatalog.where(
               (upgrade) => upgrade.zoneId == 'ZONE_$zone',
