@@ -8,6 +8,7 @@ import '../../services/global_progress_service.dart';
 import '../../widgets/approved_artwork_page.dart';
 import '../../widgets/fortaleza_map_avatar.dart';
 import '../../widgets/fortaleza_boats.dart';
+import '../../widgets/zone_1_approved_art.dart';
 
 class FortalezaMapScreen extends StatelessWidget {
   const FortalezaMapScreen({super.key, required this.controller});
@@ -220,47 +221,81 @@ class FortalezaMapScreen extends StatelessWidget {
             ),
           ),
           Positioned.fromRect(
-            rect: const Rect.fromLTWH(1067, 29, 70, 66),
-            child: Semantics(
-              image: true,
-              label: 'Seu personagem',
-              child: FortalezaMapAvatar(
-                profile: controller.profile,
-                portrait: true,
+            rect: const Rect.fromLTWH(1060, 25, 503, 74),
+            child: DecoratedBox(
+              key: const Key('fortaleza-standard-hud'),
+              decoration: BoxDecoration(
+                color: zone1Ink,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFF42A9E3), width: 2),
               ),
-            ),
-          ),
-          for (final metric in [
-            (
-              key: 'knowledge',
-              label: 'Conhecimento',
-              value: progress.knowledge,
-              rect: const Rect.fromLTWH(1208, 31, 63, 62),
-            ),
-            (
-              key: 'citizenship',
-              label: 'Cidadania',
-              value: progress.citizenshipXp,
-              rect: const Rect.fromLTWH(1340, 31, 62, 62),
-            ),
-            (
-              key: 'coins',
-              label: 'Moedas',
-              value: progress.coins,
-              rect: const Rect.fromLTWH(1481, 31, 76, 62),
-            ),
-          ])
-            Positioned.fromRect(
-              rect: metric.rect,
-              child: Tooltip(
-                message: metric.label,
-                child: _Metric(
-                  key: Key('fortaleza-${metric.key}'),
-                  label: metric.label,
-                  value: metric.value,
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 58,
+                      height: 58,
+                      child: Semantics(
+                        image: true,
+                        label: 'Seu personagem',
+                        child: FortalezaMapAvatar(
+                          profile: controller.profile,
+                          portrait: true,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    for (final metric in [
+                      (
+                        key: 'citizenship',
+                        label: 'Cidadania',
+                        value: progress.citizenshipXp,
+                        icon: Icons.shield_rounded,
+                        color: Colors.lightGreenAccent,
+                      ),
+                      (
+                        key: 'knowledge',
+                        label: 'Conhecimento',
+                        value: progress.knowledge,
+                        icon: Icons.menu_book_rounded,
+                        color: Colors.purpleAccent,
+                      ),
+                      (
+                        key: 'coins',
+                        label: 'Moedas',
+                        value: progress.coins,
+                        icon: Icons.monetization_on_rounded,
+                        color: zone1Gold,
+                      ),
+                      (
+                        key: 'stars',
+                        label: 'Estrelas',
+                        value: progress.missionStars.values.fold<int>(
+                          0,
+                          (total, stars) => total + stars,
+                        ),
+                        icon: Icons.star_rounded,
+                        color: zone1Gold,
+                      ),
+                    ])
+                      Expanded(
+                        child: Tooltip(
+                          message: '${metric.label}: ${metric.value}',
+                          child: _Metric(
+                            key: Key('fortaleza-${metric.key}'),
+                            label: metric.label,
+                            value: metric.value,
+                            icon: metric.icon,
+                            color: metric.color,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
+          ),
           Positioned.fromRect(
             rect: const Rect.fromLTWH(1568, 29, 76, 69),
             child: ArtworkAction(
@@ -422,39 +457,39 @@ class FortalezaMapScreen extends StatelessWidget {
 }
 
 class _Metric extends StatelessWidget {
-  const _Metric({super.key, required this.label, required this.value});
+  const _Metric({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
   final String label;
   final int value;
+  final IconData icon;
+  final Color color;
 
   @override
   Widget build(BuildContext context) => Semantics(
     label: '$label: $value',
-    child: ColoredBox(
-      color: const Color(0xFF052642),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '$value',
-                textScaler: TextScaler.noScaling,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 27,
-                  fontWeight: FontWeight.w900,
-                ),
+    child: Column(
+      children: [
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 30, color: color),
+              Expanded(
+                child: Zone1ArtText('$value', fontSize: 26, maxLines: 1),
               ),
-            ),
+            ],
           ),
-          Text(
-            label,
-            textScaler: TextScaler.noScaling,
-            style: const TextStyle(color: Colors.white, fontSize: 10),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 24,
+          child: Zone1ArtText(label, fontSize: 17, maxLines: 1),
+        ),
+      ],
     ),
   );
 }

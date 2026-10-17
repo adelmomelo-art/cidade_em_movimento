@@ -8,12 +8,10 @@ Mission buildZone5Mission02(PlayerType type) {
       return const Mission(
         id: 'Z5_M02',
         title: 'Ponto Cego',
-        description:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_DESCO motorista pode n\u00e3o enxergar voc\u00ea.',
+        description: 'Observe a situação e escolha uma atitude segura.',
         sceneText:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_SCENEO motorista pode n\u00e3o enxergar voc\u00ea.',
-        question:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_QO motorista pode n\u00e3o enxergar voc\u00ea.',
+            'Você está na calçada com um adulto. Um caminhão parado encobre parte da rua.',
+        question: 'O que fazer antes de atravessar?',
         maxCitizenship: 20,
         maxKnowledge: 15,
         maxCoins: 20,
@@ -21,32 +19,30 @@ Mission buildZone5Mission02(PlayerType type) {
           MissionOption(
             id: 'child_correct',
             text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_CORRECTO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Fico na calçada e vou com o adulto até uma travessia com boa visão.',
             isCorrect: true,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_C_OKO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você evita atravessar junto ao veículo que impede a visão.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_M_OKO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Pontos cegos são áreas que o motorista pode não enxergar. Busque boa visibilidade para observar e ser visto.',
           ),
           MissionOption(
             id: 'child_wrong_1',
-            text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_WRONG1O motorista pode n\u00e3o enxergar voc\u00ea.',
+            text: 'Passo bem perto da frente do caminhão.',
             isCorrect: false,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_C_W1O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você fica muito próximo de um veículo que pode começar a se mover.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_M_W1O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Um veículo parado pode sair ou manobrar. Evite atravessar rente a ônibus e caminhões.',
           ),
           MissionOption(
             id: 'child_wrong_2',
-            text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_WRONG2O motorista pode n\u00e3o enxergar voc\u00ea.',
+            text: 'Atravesso atrás do caminhão sem olhar o restante da via.',
             isCorrect: false,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_C_W2O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você pode surpreender um motorista ou não perceber uma manobra.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.CHILD_M_W2O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Não suponha que foi visto. Espere em local protegido e procure uma travessia com boa visão.',
           ),
         ],
       );
@@ -54,12 +50,10 @@ Mission buildZone5Mission02(PlayerType type) {
       return const Mission(
         id: 'Z5_M02',
         title: 'Ponto Cego',
-        description:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_DESCO motorista pode n\u00e3o enxergar voc\u00ea.',
+        description: 'Avalie os movimentos da via antes de decidir.',
         sceneText:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_SCENEO motorista pode n\u00e3o enxergar voc\u00ea.',
-        question:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_QO motorista pode n\u00e3o enxergar voc\u00ea.',
+            'Você caminha perto de um ônibus parado. O veículo esconde o trânsito que vem ao lado.',
+        question: 'Como evitar o ponto cego?',
         maxCitizenship: 20,
         maxKnowledge: 15,
         maxCoins: 20,
@@ -67,32 +61,30 @@ Mission buildZone5Mission02(PlayerType type) {
           MissionOption(
             id: 'teen_correct',
             text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_CORRECTO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Permaneço na calçada e procuro uma travessia com visibilidade.',
             isCorrect: true,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_C_OKO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você evita atravessar junto ao veículo que impede a visão.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_M_OKO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Pontos cegos são áreas que o motorista pode não enxergar. Busque boa visibilidade para observar e ser visto.',
           ),
           MissionOption(
             id: 'teen_wrong_1',
-            text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_WRONG1O motorista pode n\u00e3o enxergar voc\u00ea.',
+            text: 'Passo rente ao ônibus porque ele está parado.',
             isCorrect: false,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_C_W1O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você fica muito próximo de um veículo que pode começar a se mover.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_M_W1O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Um veículo parado pode sair ou manobrar. Evite atravessar rente a ônibus e caminhões.',
           ),
           MissionOption(
             id: 'teen_wrong_2',
-            text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_WRONG2O motorista pode n\u00e3o enxergar voc\u00ea.',
+            text: 'Confio que o motorista me viu e atravesso imediatamente.',
             isCorrect: false,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_C_W2O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você pode surpreender um motorista ou não perceber uma manobra.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.TEEN_M_W2O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Não suponha que foi visto. Espere em local protegido e procure uma travessia com boa visão.',
           ),
         ],
       );
@@ -100,12 +92,10 @@ Mission buildZone5Mission02(PlayerType type) {
       return const Mission(
         id: 'Z5_M02',
         title: 'Ponto Cego',
-        description:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_DESCO motorista pode n\u00e3o enxergar voc\u00ea.',
+        description: 'Planeje sua ação considerando os demais usuários.',
         sceneText:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_SCENEO motorista pode n\u00e3o enxergar voc\u00ea.',
-        question:
-            'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_QO motorista pode n\u00e3o enxergar voc\u00ea.',
+            'A pé, você chega ao lado de um caminhão. Não consegue observar toda a via.',
+        question: 'Como seguir com segurança?',
         maxCitizenship: 20,
         maxKnowledge: 15,
         maxCoins: 20,
@@ -113,32 +103,31 @@ Mission buildZone5Mission02(PlayerType type) {
           MissionOption(
             id: 'adult_correct',
             text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_CORRECTO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Afasto-me pela calçada até uma travessia com boa visibilidade e verifico o trânsito.',
             isCorrect: true,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_C_OKO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você evita atravessar junto ao veículo que impede a visão.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_M_OKO motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Pontos cegos são áreas que o motorista pode não enxergar. Busque boa visibilidade para observar e ser visto.',
           ),
           MissionOption(
             id: 'adult_wrong_1',
-            text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_WRONG1O motorista pode n\u00e3o enxergar voc\u00ea.',
+            text: 'Atravesso junto à cabine, supondo que o motorista me veja.',
             isCorrect: false,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_C_W1O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você fica muito próximo de um veículo que pode começar a se mover.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_M_W1O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Um veículo parado pode sair ou manobrar. Evite atravessar rente a ônibus e caminhões.',
           ),
           MissionOption(
             id: 'adult_wrong_2',
             text:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_WRONG2O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Passo por trás do caminhão enquanto ele pode iniciar uma manobra.',
             isCorrect: false,
             consequenceText:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_C_W2O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Você pode surpreender um motorista ou não perceber uma manobra.',
             meloFeedback:
-                'O motorista pode n\u00e3o enxergar voc\u00ea.ADULT_M_W2O motorista pode n\u00e3o enxergar voc\u00ea.',
+                'Não suponha que foi visto. Espere em local protegido e procure uma travessia com boa visão.',
           ),
         ],
       );

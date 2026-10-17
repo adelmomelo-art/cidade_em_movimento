@@ -181,29 +181,11 @@ class _Zone6MapScreenState extends State<Zone6MapScreen> {
                   ),
                 ),
               ),
-            if (controller.progress.isZoneCompleted('ZONE_6'))
-              Positioned(
-                left: 1101,
-                top: 861,
-                width: 76,
-                height: 70,
-                child: IconButton.filled(
-                  key: const Key('zone6-completion-summary'),
-                  tooltip: 'Zona 6 concluída — Guardião do Castelão',
-                  style: IconButton.styleFrom(
-                    backgroundColor: zone6Ink,
-                    foregroundColor: zone6Gold,
-                  ),
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed(AppRoutes.globalProgress),
-                  icon: const Icon(Icons.emoji_events_rounded, size: 38),
-                ),
-              ),
             Positioned(
-              left: 595,
-              top: 861,
-              width: 494,
-              height: 69,
+              left: 430,
+              top: 870,
+              width: 755,
+              height: 65,
               child: _navigation(),
             ),
           ],
@@ -334,6 +316,13 @@ class _Zone6MapScreenState extends State<Zone6MapScreen> {
           Icons.construction_rounded,
           _showUpgrades,
         ),
+        if (controller.progress.isZoneCompleted('ZONE_6'))
+          _navButton(
+            'zone6-completion-summary',
+            'Conclusão',
+            Icons.emoji_events_rounded,
+            () => Navigator.of(context).pushNamed(AppRoutes.globalProgress),
+          ),
       ],
     ),
   );
@@ -344,19 +333,18 @@ class _Zone6MapScreenState extends State<Zone6MapScreen> {
     IconData icon,
     VoidCallback action,
   ) => Expanded(
-    child: TextButton(
+    child: TextButton.icon(
       key: Key(key),
       onPressed: action,
       style: TextButton.styleFrom(
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-        minimumSize: const Size(48, 72),
+        minimumSize: const Size(48, 60),
       ),
-      child: Column(
-        children: [
-          Icon(icon, size: 33, color: zone6Gold),
-          Expanded(child: Zone6ArtText(text, fontSize: 24)),
-        ],
+      icon: Icon(icon, size: 28),
+      label: SizedBox(
+        width: 107,
+        height: 42,
+        child: Zone6ArtText(text, fontSize: 24, maxLines: 1),
       ),
     ),
   );

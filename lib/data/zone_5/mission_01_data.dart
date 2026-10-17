@@ -8,12 +8,10 @@ Mission buildZone5Mission01(PlayerType type) {
       return const Mission(
         id: 'Z5_M01',
         title: 'Travessia de Grande Avenida',
-        description:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_DESCA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+        description: 'Observe a situação e escolha uma atitude segura.',
         sceneText:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_SCENEA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
-        question:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_QA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+            'Você e um adulto chegam a uma avenida larga. Há uma faixa com semáforo mais adiante.',
+        question: 'Como atravessar essa avenida?',
         maxCitizenship: 20,
         maxKnowledge: 15,
         maxCoins: 20,
@@ -21,32 +19,30 @@ Mission buildZone5Mission01(PlayerType type) {
           MissionOption(
             id: 'child_correct',
             text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_CORRECTA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Vou com o adulto até a faixa e espero o sinal de pedestres e a parada dos veículos.',
             isCorrect: true,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_C_OKA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Você busca uma travessia com melhores condições para observar e ser visto.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_M_OKA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Em avenidas largas, um veículo pode esconder outro. Observe todas as faixas antes de atravessar.',
           ),
           MissionOption(
             id: 'child_wrong_1',
-            text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_WRONG1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+            text: 'Corro pela avenida quando vejo um espaço entre os carros.',
             isCorrect: false,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_C_W1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Você se expõe a veículos que podem chegar antes do esperado.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_M_W1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Uma brecha pode enganar. Prefira a travessia sinalizada e não tente vencer os carros na corrida.',
           ),
           MissionOption(
             id: 'child_wrong_2',
-            text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_WRONG2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+            text: 'Sigo quem atravessa fora da faixa, sem observar o trânsito.',
             isCorrect: false,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_C_W2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Você pode entrar na via sem perceber um veículo se aproximando.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.CHILD_M_W2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'A decisão de outra pessoa não garante sua segurança. Observe o trânsito antes de avançar.',
           ),
         ],
       );
@@ -54,12 +50,10 @@ Mission buildZone5Mission01(PlayerType type) {
       return const Mission(
         id: 'Z5_M01',
         title: 'Travessia de Grande Avenida',
-        description:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_DESCA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+        description: 'Avalie os movimentos da via antes de decidir.',
         sceneText:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_SCENEA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
-        question:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_QA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+            'Você vai encontrar amigos do outro lado da avenida. A faixa com semáforo fica mais adiante.',
+        question: 'Qual caminho você escolhe?',
         maxCitizenship: 20,
         maxKnowledge: 15,
         maxCoins: 20,
@@ -67,32 +61,30 @@ Mission buildZone5Mission01(PlayerType type) {
           MissionOption(
             id: 'teen_correct',
             text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_CORRECTA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Uso a faixa, aguardo o sinal de pedestres e verifico se os veículos pararam.',
             isCorrect: true,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_C_OKA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Você busca uma travessia com melhores condições para observar e ser visto.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_M_OKA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Em avenidas largas, um veículo pode esconder outro. Observe todas as faixas antes de atravessar.',
           ),
           MissionOption(
             id: 'teen_wrong_1',
-            text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_WRONG1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+            text: 'Calculo uma brecha e corro entre os veículos.',
             isCorrect: false,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_C_W1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Você se expõe a veículos que podem chegar antes do esperado.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_M_W1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Uma brecha pode enganar. Prefira a travessia sinalizada e não tente vencer os carros na corrida.',
           ),
           MissionOption(
             id: 'teen_wrong_2',
-            text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_WRONG2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+            text: 'Atravesso olhando o celular para avisar que estou chegando.',
             isCorrect: false,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_C_W2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'O celular desvia sua atenção dos veículos durante a travessia.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.TEEN_M_W2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Pare em local seguro para usar o celular. Ao atravessar, mantenha a atenção no trânsito.',
           ),
         ],
       );
@@ -100,12 +92,10 @@ Mission buildZone5Mission01(PlayerType type) {
       return const Mission(
         id: 'Z5_M01',
         title: 'Travessia de Grande Avenida',
-        description:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_DESCA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+        description: 'Planeje sua ação considerando os demais usuários.',
         sceneText:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_SCENEA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
-        question:
-            'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_QA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+            'Você está a pé e precisa cruzar uma avenida com várias faixas e travessia sinalizada próxima.',
+        question: 'Qual é a decisão mais segura?',
         maxCitizenship: 20,
         maxKnowledge: 15,
         maxCoins: 20,
@@ -113,32 +103,32 @@ Mission buildZone5Mission01(PlayerType type) {
           MissionOption(
             id: 'adult_correct',
             text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_CORRECTA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Sigo até a travessia e observo o sinal de pedestres e a parada em todas as faixas.',
             isCorrect: true,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_C_OKA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Você busca uma travessia com melhores condições para observar e ser visto.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_M_OKA dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Em avenidas largas, um veículo pode esconder outro. Observe todas as faixas antes de atravessar.',
           ),
           MissionOption(
             id: 'adult_wrong_1',
             text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_WRONG1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Atravesso fora da faixa porque o primeiro carro parece distante.',
             isCorrect: false,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_C_W1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Você se expõe a veículos que podem chegar antes do esperado.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_M_W1A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Uma brecha pode enganar. Prefira a travessia sinalizada e não tente vencer os carros na corrida.',
           ),
           MissionOption(
             id: 'adult_wrong_2',
             text:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_WRONG2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Inicio a travessia assim que um veículo reduz, sem verificar as outras faixas.',
             isCorrect: false,
             consequenceText:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_C_W2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'Um veículo de outra faixa pode continuar avançando.',
             meloFeedback:
-                'A dist\u00e2ncia e a velocidade tornam a brecha enganosa.ADULT_M_W2A dist\u00e2ncia e a velocidade tornam a brecha enganosa.',
+                'A parada de um carro não garante a parada dos demais. Observe todas as faixas.',
           ),
         ],
       );

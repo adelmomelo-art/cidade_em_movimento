@@ -8,12 +8,10 @@ Mission buildZone5Mission03(PlayerType type) {
       return const Mission(
         id: 'Z5_M03',
         title: 'Velocidade e Dist\u00e2ncia',
-        description:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_DESCMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+        description: 'Observe a situação e escolha uma atitude segura.',
         sceneText:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_SCENEMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
-        question:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_QMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            'Você está na calçada com um adulto. Um carro se aproxima rápido da travessia.',
+        question: 'Como agir?',
         maxCitizenship: 25,
         maxKnowledge: 20,
         maxCoins: 25,
@@ -21,32 +19,30 @@ Mission buildZone5Mission03(PlayerType type) {
           MissionOption(
             id: 'child_correct',
             text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_CORRECTMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Espero com o adulto e só atravesso quando houver condições seguras.',
             isCorrect: true,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_C_OKMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você ganha tempo para perceber riscos e agir com segurança.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_M_OKMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Quanto maior a velocidade, maior tende a ser a distância necessária para parar. Antecipar a decisão ajuda a evitar conflitos.',
           ),
           MissionOption(
             id: 'child_wrong_1',
-            text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_WRONG1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            text: 'Entro na rua porque o carro ainda parece longe.',
             isCorrect: false,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_C_W1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você deixa pouco tempo para reagir se o trânsito mudar.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_M_W1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'A aparência de distância pode enganar. Não dependa de uma parada repentina do veículo.',
           ),
           MissionOption(
             id: 'child_wrong_2',
-            text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_WRONG2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            text: 'Corro para passar antes de o carro chegar.',
             isCorrect: false,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_C_W2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você reduz a margem de segurança e depende de uma reação imediata.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.CHILD_M_W2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Segurança exige tempo e espaço. Correr ou ficar muito perto de outro veículo aumenta o risco.',
           ),
         ],
       );
@@ -54,12 +50,10 @@ Mission buildZone5Mission03(PlayerType type) {
       return const Mission(
         id: 'Z5_M03',
         title: 'Velocidade e Dist\u00e2ncia',
-        description:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_DESCMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+        description: 'Avalie os movimentos da via antes de decidir.',
         sceneText:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_SCENEMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
-        question:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_QMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            'Você pretende atravessar. Um veículo ainda distante vem em velocidade alta.',
+        question: 'O que considerar nessa situação?',
         maxCitizenship: 25,
         maxKnowledge: 20,
         maxCoins: 25,
@@ -67,32 +61,30 @@ Mission buildZone5Mission03(PlayerType type) {
           MissionOption(
             id: 'teen_correct',
             text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_CORRECTMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Ele pode chegar rápido; aguardo condições seguras na travessia.',
             isCorrect: true,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_C_OKMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você ganha tempo para perceber riscos e agir com segurança.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_M_OKMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Quanto maior a velocidade, maior tende a ser a distância necessária para parar. Antecipar a decisão ajuda a evitar conflitos.',
           ),
           MissionOption(
             id: 'teen_wrong_1',
-            text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_WRONG1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            text: 'A distância que vejo garante tempo para atravessar.',
             isCorrect: false,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_C_W1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você deixa pouco tempo para reagir se o trânsito mudar.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_M_W1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'A aparência de distância pode enganar. Não dependa de uma parada repentina do veículo.',
           ),
           MissionOption(
             id: 'teen_wrong_2',
-            text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_WRONG2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            text: 'Basta o motorista frear quando eu entrar na pista.',
             isCorrect: false,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_C_W2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você reduz a margem de segurança e depende de uma reação imediata.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.TEEN_M_W2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Segurança exige tempo e espaço. Correr ou ficar muito perto de outro veículo aumenta o risco.',
           ),
         ],
       );
@@ -100,12 +92,10 @@ Mission buildZone5Mission03(PlayerType type) {
       return const Mission(
         id: 'Z5_M03',
         title: 'Velocidade e Dist\u00e2ncia',
-        description:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_DESCMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+        description: 'Planeje sua ação considerando os demais usuários.',
         sceneText:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_SCENEMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
-        question:
-            'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_QMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            'Você dirige e percebe uma fila se formando adiante. O trânsito está ficando mais lento.',
+        question: 'Qual atitude reduz o risco de colisão?',
         maxCitizenship: 25,
         maxKnowledge: 20,
         maxCoins: 25,
@@ -113,32 +103,31 @@ Mission buildZone5Mission03(PlayerType type) {
           MissionOption(
             id: 'adult_correct',
             text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_CORRECTMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Reduzo progressivamente e mantenho distância do veículo à frente.',
             isCorrect: true,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_C_OKMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você ganha tempo para perceber riscos e agir com segurança.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_M_OKMaior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Quanto maior a velocidade, maior tende a ser a distância necessária para parar. Antecipar a decisão ajuda a evitar conflitos.',
           ),
           MissionOption(
             id: 'adult_wrong_1',
-            text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_WRONG1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+            text: 'Mantenho a velocidade até ficar bem perto da fila.',
             isCorrect: false,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_C_W1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você deixa pouco tempo para reagir se o trânsito mudar.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_M_W1Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'A aparência de distância pode enganar. Não dependa de uma parada repentina do veículo.',
           ),
           MissionOption(
             id: 'adult_wrong_2',
             text:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_WRONG2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Aproximo-me do veículo da frente para impedir que alguém entre.',
             isCorrect: false,
             consequenceText:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_C_W2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Você reduz a margem de segurança e depende de uma reação imediata.',
             meloFeedback:
-                'Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.ADULT_M_W2Maior velocidade aumenta a dist\u00e2ncia necess\u00e1ria.',
+                'Segurança exige tempo e espaço. Correr ou ficar muito perto de outro veículo aumenta o risco.',
           ),
         ],
       );
