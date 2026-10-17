@@ -322,7 +322,7 @@ class _Zone1MapScreenState extends State<Zone1MapScreen> {
       label: SizedBox(
         width: 107,
         height: 42,
-        child: Zone1ArtText(text, fontSize: 24),
+        child: Zone1ArtText(text, fontSize: 24, maxLines: 1),
       ),
     ),
   );

@@ -179,29 +179,11 @@ class _Zone2MapScreenState extends State<Zone2MapScreen> {
                   ),
                 ),
               ),
-            if (controller.isZoneUnlocked('ZONE_3'))
-              Positioned(
-                left: 1072,
-                top: 858,
-                width: 76,
-                height: 70,
-                child: IconButton.filled(
-                  key: const Key('zone2-advance-zone3'),
-                  tooltip: 'Avançar para a Orla / Praia de Iracema',
-                  style: IconButton.styleFrom(
-                    backgroundColor: zone2Ink,
-                    foregroundColor: zone2Gold,
-                  ),
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed(AppRoutes.zone3),
-                  icon: const Icon(Icons.arrow_forward_rounded, size: 38),
-                ),
-              ),
             Positioned(
-              left: 613,
-              top: 852,
-              width: 444,
-              height: 77,
+              left: 430,
+              top: 870,
+              width: 755,
+              height: 65,
               child: _navigation(),
             ),
           ],
@@ -332,6 +314,13 @@ class _Zone2MapScreenState extends State<Zone2MapScreen> {
           Icons.construction_rounded,
           _showUpgrades,
         ),
+        if (controller.isZoneUnlocked('ZONE_3'))
+          _navButton(
+            'zone2-advance-zone3',
+            'Próxima zona',
+            Icons.arrow_forward_rounded,
+            () => Navigator.of(context).pushNamed(AppRoutes.zone3),
+          ),
       ],
     ),
   );
@@ -342,19 +331,18 @@ class _Zone2MapScreenState extends State<Zone2MapScreen> {
     IconData icon,
     VoidCallback action,
   ) => Expanded(
-    child: TextButton(
+    child: TextButton.icon(
       key: Key(key),
       onPressed: action,
       style: TextButton.styleFrom(
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-        minimumSize: const Size(48, 72),
+        minimumSize: const Size(48, 60),
       ),
-      child: Column(
-        children: [
-          Icon(icon, size: 33, color: zone2Gold),
-          Expanded(child: Zone2ArtText(text, fontSize: 24)),
-        ],
+      icon: Icon(icon, size: 28),
+      label: SizedBox(
+        width: 107,
+        height: 42,
+        child: Zone2ArtText(text, fontSize: 24, maxLines: 1),
       ),
     ),
   );

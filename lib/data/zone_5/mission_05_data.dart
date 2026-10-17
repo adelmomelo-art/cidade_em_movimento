@@ -8,12 +8,10 @@ Mission buildZone5Mission05(PlayerType type) {
       return const Mission(
         id: 'Z5_M05',
         title: 'Fluxo Intenso',
-        description:
-            'Isso aumenta press\u00e3o e manobras.CHILD_DESCIsso aumenta press\u00e3o e manobras.',
+        description: 'Observe a situação e escolha uma atitude segura.',
         sceneText:
-            'Isso aumenta press\u00e3o e manobras.CHILD_SCENEIsso aumenta press\u00e3o e manobras.',
-        question:
-            'Isso aumenta press\u00e3o e manobras.CHILD_QIsso aumenta press\u00e3o e manobras.',
+            'Você e um adulto caminham junto a uma avenida congestionada. Há carros e motos na via.',
+        question: 'Como chegar ao outro lado?',
         maxCitizenship: 30,
         maxKnowledge: 25,
         maxCoins: 30,
@@ -21,32 +19,30 @@ Mission buildZone5Mission05(PlayerType type) {
           MissionOption(
             id: 'child_correct',
             text:
-                'Isso aumenta press\u00e3o e manobras.CHILD_CORRECTIsso aumenta press\u00e3o e manobras.',
+                'Continuo pela calçada com o adulto até uma travessia segura.',
             isCorrect: true,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.CHILD_C_OKIsso aumenta press\u00e3o e manobras.',
+                'Você mantém espaço e visibilidade para lidar com mudanças no trânsito.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.CHILD_M_OKIsso aumenta press\u00e3o e manobras.',
+                'Congestionamento não significa ausência de movimento. Preserve as travessias e observe motos, bicicletas e pedestres.',
           ),
           MissionOption(
             id: 'child_wrong_1',
-            text:
-                'Isso aumenta press\u00e3o e manobras.CHILD_WRONG1Isso aumenta press\u00e3o e manobras.',
+            text: 'Passo entre os carros porque a fila está parada.',
             isCorrect: false,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.CHILD_C_W1Isso aumenta press\u00e3o e manobras.',
+                'Você pode entrar no caminho de alguém que ainda está em movimento.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.CHILD_M_W1Isso aumenta press\u00e3o e manobras.',
+                'Evite decisões bruscas entre filas. Veículos parados podem esconder outros usuários da via.',
           ),
           MissionOption(
             id: 'child_wrong_2',
-            text:
-                'Isso aumenta press\u00e3o e manobras.CHILD_WRONG2Isso aumenta press\u00e3o e manobras.',
+            text: 'Sigo alguém que está correndo entre os veículos.',
             isCorrect: false,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.CHILD_C_W2Isso aumenta press\u00e3o e manobras.',
+                'Você ocupa um espaço de circulação ou travessia e aumenta os conflitos.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.CHILD_M_W2Isso aumenta press\u00e3o e manobras.',
+                'Cada pessoa precisa de espaço seguro. Não use a pista como atalho nem bloqueie a passagem de pedestres.',
           ),
         ],
       );
@@ -54,12 +50,10 @@ Mission buildZone5Mission05(PlayerType type) {
       return const Mission(
         id: 'Z5_M05',
         title: 'Fluxo Intenso',
-        description:
-            'Isso aumenta press\u00e3o e manobras.TEEN_DESCIsso aumenta press\u00e3o e manobras.',
+        description: 'Avalie os movimentos da via antes de decidir.',
         sceneText:
-            'Isso aumenta press\u00e3o e manobras.TEEN_SCENEIsso aumenta press\u00e3o e manobras.',
-        question:
-            'Isso aumenta press\u00e3o e manobras.TEEN_QIsso aumenta press\u00e3o e manobras.',
+            'O trânsito está parado, mas motos e bicicletas ainda circulam entre os veículos.',
+        question: 'Qual atitude você escolhe?',
         maxCitizenship: 30,
         maxKnowledge: 25,
         maxCoins: 30,
@@ -67,32 +61,30 @@ Mission buildZone5Mission05(PlayerType type) {
           MissionOption(
             id: 'teen_correct',
             text:
-                'Isso aumenta press\u00e3o e manobras.TEEN_CORRECTIsso aumenta press\u00e3o e manobras.',
+                'Uso uma travessia com visibilidade e observo todos os movimentos.',
             isCorrect: true,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.TEEN_C_OKIsso aumenta press\u00e3o e manobras.',
+                'Você mantém espaço e visibilidade para lidar com mudanças no trânsito.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.TEEN_M_OKIsso aumenta press\u00e3o e manobras.',
+                'Congestionamento não significa ausência de movimento. Preserve as travessias e observe motos, bicicletas e pedestres.',
           ),
           MissionOption(
             id: 'teen_wrong_1',
-            text:
-                'Isso aumenta press\u00e3o e manobras.TEEN_WRONG1Isso aumenta press\u00e3o e manobras.',
+            text: 'Atravesso entre os carros sem olhar, pois estão parados.',
             isCorrect: false,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.TEEN_C_W1Isso aumenta press\u00e3o e manobras.',
+                'Você pode entrar no caminho de alguém que ainda está em movimento.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.TEEN_M_W1Isso aumenta press\u00e3o e manobras.',
+                'Evite decisões bruscas entre filas. Veículos parados podem esconder outros usuários da via.',
           ),
           MissionOption(
             id: 'teen_wrong_2',
-            text:
-                'Isso aumenta press\u00e3o e manobras.TEEN_WRONG2Isso aumenta press\u00e3o e manobras.',
+            text: 'Desço da calçada para caminhar pelo espaço entre as filas.',
             isCorrect: false,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.TEEN_C_W2Isso aumenta press\u00e3o e manobras.',
+                'Você ocupa um espaço de circulação ou travessia e aumenta os conflitos.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.TEEN_M_W2Isso aumenta press\u00e3o e manobras.',
+                'Cada pessoa precisa de espaço seguro. Não use a pista como atalho nem bloqueie a passagem de pedestres.',
           ),
         ],
       );
@@ -100,12 +92,10 @@ Mission buildZone5Mission05(PlayerType type) {
       return const Mission(
         id: 'Z5_M05',
         title: 'Fluxo Intenso',
-        description:
-            'Isso aumenta press\u00e3o e manobras.ADULT_DESCIsso aumenta press\u00e3o e manobras.',
+        description: 'Planeje sua ação considerando os demais usuários.',
         sceneText:
-            'Isso aumenta press\u00e3o e manobras.ADULT_SCENEIsso aumenta press\u00e3o e manobras.',
-        question:
-            'Isso aumenta press\u00e3o e manobras.ADULT_QIsso aumenta press\u00e3o e manobras.',
+            'Você dirige em uma avenida congestionada. Outros condutores disputam espaços.',
+        question: 'Como contribuir para um trânsito seguro?',
         maxCitizenship: 30,
         maxKnowledge: 25,
         maxCoins: 30,
@@ -113,32 +103,31 @@ Mission buildZone5Mission05(PlayerType type) {
           MissionOption(
             id: 'adult_correct',
             text:
-                'Isso aumenta press\u00e3o e manobras.ADULT_CORRECTIsso aumenta press\u00e3o e manobras.',
+                'Mantenho distância, evito mudanças bruscas e deixo as travessias livres.',
             isCorrect: true,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.ADULT_C_OKIsso aumenta press\u00e3o e manobras.',
+                'Você mantém espaço e visibilidade para lidar com mudanças no trânsito.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.ADULT_M_OKIsso aumenta press\u00e3o e manobras.',
+                'Congestionamento não significa ausência de movimento. Preserve as travessias e observe motos, bicicletas e pedestres.',
           ),
           MissionOption(
             id: 'adult_wrong_1',
-            text:
-                'Isso aumenta press\u00e3o e manobras.ADULT_WRONG1Isso aumenta press\u00e3o e manobras.',
+            text: 'Troco de faixa repetidamente para ganhar alguns metros.',
             isCorrect: false,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.ADULT_C_W1Isso aumenta press\u00e3o e manobras.',
+                'As mudanças repetidas criam conflitos com os veículos ao lado.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.ADULT_M_W1Isso aumenta press\u00e3o e manobras.',
+                'Evite disputar espaços. Planeje a mudança de faixa e só a realize com segurança.',
           ),
           MissionOption(
             id: 'adult_wrong_2',
             text:
-                'Isso aumenta press\u00e3o e manobras.ADULT_WRONG2Isso aumenta press\u00e3o e manobras.',
+                'Avanço sobre a faixa de pedestres mesmo sem espaço depois dela.',
             isCorrect: false,
             consequenceText:
-                'Isso aumenta press\u00e3o e manobras.ADULT_C_W2Isso aumenta press\u00e3o e manobras.',
+                'Você ocupa um espaço de circulação ou travessia e aumenta os conflitos.',
             meloFeedback:
-                'Isso aumenta press\u00e3o e manobras.ADULT_M_W2Isso aumenta press\u00e3o e manobras.',
+                'Cada pessoa precisa de espaço seguro. Não use a pista como atalho nem bloqueie a passagem de pedestres.',
           ),
         ],
       );

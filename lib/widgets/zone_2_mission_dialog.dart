@@ -303,6 +303,7 @@ class _Zone2MissionDialogState extends State<Zone2MissionDialog> {
                       child: Zone2ArtText(
                         labels[i],
                         fontSize: 25,
+                        maxLines: i == 2 ? 1 : null,
                         color: active == i ? zone2Ink : Colors.white,
                       ),
                     ),
@@ -326,7 +327,7 @@ class _Zone2MissionDialogState extends State<Zone2MissionDialog> {
         child: Zone2ArtText(
           widget.mission.question,
           textKey: const Key('zone2-question-text'),
-          fontSize: 45,
+          fontSize: 36,
         ),
       ),
       Positioned(
@@ -390,7 +391,7 @@ class _Zone2MissionDialogState extends State<Zone2MissionDialog> {
                   Expanded(
                     child: Zone2ArtText(
                       widget.mission.options[i].text,
-                      fontSize: 32,
+                      fontSize: 26,
                       align: TextAlign.left,
                     ),
                   ),
@@ -424,7 +425,8 @@ class _Zone2MissionDialogState extends State<Zone2MissionDialog> {
                 },
           child: Zone2ArtText(
             'CONFIRMAR RESPOSTA',
-            fontSize: 38,
+            fontSize: 30,
+            maxLines: 1,
             color: _pendingOption == null ? Colors.white : zone2Ink,
           ),
         ),

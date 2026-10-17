@@ -8,12 +8,10 @@ Mission buildZone5Mission04(PlayerType type) {
       return const Mission(
         id: 'Z5_M04',
         title: 'Acesso e Convers\u00e3o',
-        description:
-            'Alguns ve\u00edculos podem estar convertendo.CHILD_DESCAlguns ve\u00edculos podem estar convertendo.',
+        description: 'Observe a situação e escolha uma atitude segura.',
         sceneText:
-            'Alguns ve\u00edculos podem estar convertendo.CHILD_SCENEAlguns ve\u00edculos podem estar convertendo.',
-        question:
-            'Alguns ve\u00edculos podem estar convertendo.CHILD_QAlguns ve\u00edculos podem estar convertendo.',
+            'Você e um adulto chegam a uma esquina. Um carro se aproxima para virar.',
+        question: 'Antes de atravessar, o que fazer?',
         maxCitizenship: 25,
         maxKnowledge: 20,
         maxCoins: 25,
@@ -21,32 +19,30 @@ Mission buildZone5Mission04(PlayerType type) {
           MissionOption(
             id: 'child_correct',
             text:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_CORRECTAlguns ve\u00edculos podem estar convertendo.',
+                'Espero na calçada com o adulto e observo se o carro vai parar.',
             isCorrect: true,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_C_OKAlguns ve\u00edculos podem estar convertendo.',
+                'Você observa a conversão e evita disputar o mesmo espaço.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_M_OKAlguns ve\u00edculos podem estar convertendo.',
+                'Nas esquinas, observe também quem está virando. O cuidado com a travessia continua durante a conversão.',
           ),
           MissionOption(
             id: 'child_wrong_1',
-            text:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_WRONG1Alguns ve\u00edculos podem estar convertendo.',
+            text: 'Entro na rua porque o carro está dando seta.',
             isCorrect: false,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_C_W1Alguns ve\u00edculos podem estar convertendo.',
+                'Você pode entrar em conflito com quem cruza seu caminho.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_M_W1Alguns ve\u00edculos podem estar convertendo.',
+                'Seta não significa parada e pressa não elimina o risco. Verifique o movimento antes de avançar.',
           ),
           MissionOption(
             id: 'child_wrong_2',
-            text:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_WRONG2Alguns ve\u00edculos podem estar convertendo.',
+            text: 'Corro na frente do carro para ele esperar.',
             isCorrect: false,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_C_W2Alguns ve\u00edculos podem estar convertendo.',
+                'Você deixa de perceber parte dos movimentos da esquina.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.CHILD_M_W2Alguns ve\u00edculos podem estar convertendo.',
+                'Olhe todo o entorno. A faixa e a sinalização não substituem a atenção aos demais usuários.',
           ),
         ],
       );
@@ -54,12 +50,10 @@ Mission buildZone5Mission04(PlayerType type) {
       return const Mission(
         id: 'Z5_M04',
         title: 'Acesso e Convers\u00e3o',
-        description:
-            'Alguns ve\u00edculos podem estar convertendo.TEEN_DESCAlguns ve\u00edculos podem estar convertendo.',
+        description: 'Avalie os movimentos da via antes de decidir.',
         sceneText:
-            'Alguns ve\u00edculos podem estar convertendo.TEEN_SCENEAlguns ve\u00edculos podem estar convertendo.',
-        question:
-            'Alguns ve\u00edculos podem estar convertendo.TEEN_QAlguns ve\u00edculos podem estar convertendo.',
+            'Você chega a uma faixa perto de uma esquina. Há veículos fazendo conversão.',
+        question: 'Como iniciar a travessia?',
         maxCitizenship: 25,
         maxKnowledge: 20,
         maxCoins: 25,
@@ -67,32 +61,30 @@ Mission buildZone5Mission04(PlayerType type) {
           MissionOption(
             id: 'teen_correct',
             text:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_CORRECTAlguns ve\u00edculos podem estar convertendo.',
+                'Observo o sinal e os veículos que viram; só avanço com a passagem segura.',
             isCorrect: true,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_C_OKAlguns ve\u00edculos podem estar convertendo.',
+                'Você observa a conversão e evita disputar o mesmo espaço.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_M_OKAlguns ve\u00edculos podem estar convertendo.',
+                'Nas esquinas, observe também quem está virando. O cuidado com a travessia continua durante a conversão.',
           ),
           MissionOption(
             id: 'teen_wrong_1',
-            text:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_WRONG1Alguns ve\u00edculos podem estar convertendo.',
+            text: 'Olho apenas para os veículos que seguem em frente.',
             isCorrect: false,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_C_W1Alguns ve\u00edculos podem estar convertendo.',
+                'Você pode deixar de perceber um veículo que está virando.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_M_W1Alguns ve\u00edculos podem estar convertendo.',
+                'Observe os veículos de todas as direções, inclusive os que fazem conversão.',
           ),
           MissionOption(
             id: 'teen_wrong_2',
-            text:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_WRONG2Alguns ve\u00edculos podem estar convertendo.',
+            text: 'Atravesso sem observar porque estou na faixa.',
             isCorrect: false,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_C_W2Alguns ve\u00edculos podem estar convertendo.',
+                'Você deixa de perceber parte dos movimentos da esquina.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.TEEN_M_W2Alguns ve\u00edculos podem estar convertendo.',
+                'Olhe todo o entorno. A faixa e a sinalização não substituem a atenção aos demais usuários.',
           ),
         ],
       );
@@ -100,12 +92,10 @@ Mission buildZone5Mission04(PlayerType type) {
       return const Mission(
         id: 'Z5_M04',
         title: 'Acesso e Convers\u00e3o',
-        description:
-            'Alguns ve\u00edculos podem estar convertendo.ADULT_DESCAlguns ve\u00edculos podem estar convertendo.',
+        description: 'Planeje sua ação considerando os demais usuários.',
         sceneText:
-            'Alguns ve\u00edculos podem estar convertendo.ADULT_SCENEAlguns ve\u00edculos podem estar convertendo.',
-        question:
-            'Alguns ve\u00edculos podem estar convertendo.ADULT_QAlguns ve\u00edculos podem estar convertendo.',
+            'Você dirige e vai virar em uma esquina com faixa de pedestres.',
+        question: 'Como realizar a conversão?',
         maxCitizenship: 25,
         maxKnowledge: 20,
         maxCoins: 25,
@@ -113,32 +103,30 @@ Mission buildZone5Mission04(PlayerType type) {
           MissionOption(
             id: 'adult_correct',
             text:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_CORRECTAlguns ve\u00edculos podem estar convertendo.',
+                'Sinalizo, reduzo e aguardo os pedestres concluírem a travessia antes de virar.',
             isCorrect: true,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_C_OKAlguns ve\u00edculos podem estar convertendo.',
+                'Você observa a conversão e evita disputar o mesmo espaço.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_M_OKAlguns ve\u00edculos podem estar convertendo.',
+                'Nas esquinas, observe também quem está virando. O cuidado com a travessia continua durante a conversão.',
           ),
           MissionOption(
             id: 'adult_wrong_1',
-            text:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_WRONG1Alguns ve\u00edculos podem estar convertendo.',
+            text: 'Viro rapidamente para passar antes dos pedestres.',
             isCorrect: false,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_C_W1Alguns ve\u00edculos podem estar convertendo.',
+                'Você disputa o espaço da travessia com pedestres.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_M_W1Alguns ve\u00edculos podem estar convertendo.',
+                'Aguarde a travessia dos pedestres. A pressa na conversão aumenta o risco de atropelamento.',
           ),
           MissionOption(
             id: 'adult_wrong_2',
-            text:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_WRONG2Alguns ve\u00edculos podem estar convertendo.',
+            text: 'Olho apenas os carros atrás e começo a conversão.',
             isCorrect: false,
             consequenceText:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_C_W2Alguns ve\u00edculos podem estar convertendo.',
+                'Você deixa de perceber parte dos movimentos da esquina.',
             meloFeedback:
-                'Alguns ve\u00edculos podem estar convertendo.ADULT_M_W2Alguns ve\u00edculos podem estar convertendo.',
+                'Olhe todo o entorno. A faixa e a sinalização não substituem a atenção aos demais usuários.',
           ),
         ],
       );

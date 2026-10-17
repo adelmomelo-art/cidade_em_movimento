@@ -78,6 +78,7 @@ class Zone6ArtText extends StatelessWidget {
     this.align = TextAlign.center,
     this.weight = FontWeight.w800,
     this.textKey,
+    this.maxLines,
   });
   final String text;
   final double fontSize;
@@ -85,53 +86,84 @@ class Zone6ArtText extends StatelessWidget {
   final TextAlign align;
   final FontWeight weight;
   final Key? textKey;
+  final int? maxLines;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, bounds) {
-      final scaler = MediaQuery.textScalerOf(context);
-      final direction = Directionality.of(context);
-      final base = TextStyle(
-        fontSize: fontSize,
-        height: 1.12,
-        color: color,
-        fontWeight: weight,
-      );
-      var low = 1.0;
-      var high = fontSize;
-      for (var i = 0; i < 14; i++) {
-        final size = (low + high) / 2;
-        final painter = TextPainter(
-          text: TextSpan(
-            text: text,
-            style: base.copyWith(fontSize: size),
-          ),
-          textDirection: direction,
-          textAlign: align,
-          textScaler: scaler,
-        )..layout(maxWidth: bounds.maxWidth);
-        final fits =
-            painter.height <= bounds.maxHeight &&
-            painter.width <= bounds.maxWidth;
-        painter.dispose();
-        if (fits) {
-          low = size;
-        } else {
-          high = size;
+  Widget build(BuildContext context) => Padding(
+    // Keep glyph side bearings inside the allocated artwork slot.
+    padding: const EdgeInsets.symmetric(horizontal: 2),
+    child: LayoutBuilder(
+      builder: (context, bounds) {
+        final scaler = MediaQuery.textScalerOf(context);
+        final direction = Directionality.of(context);
+        final inherited = DefaultTextStyle.of(context);
+        // Only an explicit limit may restrict this artwork text.
+        final lineLimit = maxLines;
+        final locale = Localizations.maybeLocaleOf(context);
+        final base = inherited.style
+            .merge(
+              TextStyle(
+                fontSize: fontSize,
+                height: 1.12,
+                color: color,
+                fontWeight: weight,
+              ),
+            )
+            .copyWith(inherit: false);
+        var low = 1.0;
+        var high = fontSize;
+        for (var i = 0; i < 14; i++) {
+          final size = (low + high) / 2;
+          final painter =
+              TextPainter(
+                text: TextSpan(
+                  text: text,
+                  style: base.copyWith(fontSize: size),
+                ),
+                textDirection: direction,
+                textAlign: align,
+                textScaler: scaler,
+                maxLines: lineLimit,
+                locale: locale,
+                textHeightBehavior: inherited.textHeightBehavior,
+              )..layout(
+                maxWidth: lineLimit == 1 ? double.infinity : bounds.maxWidth,
+              );
+          final fits =
+              !painter.didExceedMaxLines &&
+              painter.height <= bounds.maxHeight - 0.5 &&
+              painter.width <=
+                  bounds.maxWidth + (lineLimit == 1 ? -0.5 : 0.001);
+          painter.dispose();
+          if (fits) {
+            low = size;
+          } else {
+            high = size;
+          }
         }
-      }
-      return Align(
-        alignment: align == TextAlign.left
-            ? Alignment.centerLeft
-            : Alignment.center,
-        child: Text(
-          text,
-          key: textKey,
-          textAlign: align,
-          style: base.copyWith(fontSize: low),
-        ),
-      );
-    },
+        return Align(
+          alignment: align == TextAlign.left
+              ? Alignment.centerLeft
+              : Alignment.center,
+          child: DefaultTextStyle(
+            style: base,
+            maxLines: lineLimit,
+            softWrap: lineLimit != 1,
+            child: Text(
+              text,
+              key: textKey,
+              textAlign: align,
+              maxLines: lineLimit,
+              softWrap: lineLimit != 1,
+              textScaler: scaler,
+              locale: locale,
+              textHeightBehavior: inherited.textHeightBehavior,
+              style: base.copyWith(fontSize: low),
+            ),
+          ),
+        );
+      },
+    ),
   );
 }
 
@@ -190,7 +222,11 @@ class Zone6LiveHud extends StatelessWidget {
                           children: [
                             Icon(metric.$1, size: 30, color: metric.$4),
                             Expanded(
-                              child: Zone6ArtText('${metric.$2}', fontSize: 26),
+                              child: Zone6ArtText(
+                                '${metric.$2}',
+                                fontSize: 26,
+                                maxLines: metric.$3 == 'Estrelas' ? 1 : null,
+                              ),
                             ),
                             if (metric.$3 == 'Estrelas' &&
                                 p.medals.contains('GUARDIAO_DO_CASTELAO'))
@@ -205,7 +241,11 @@ class Zone6LiveHud extends StatelessWidget {
                       ),
                       SizedBox(
                         height: 24,
-                        child: Zone6ArtText(metric.$3, fontSize: 17),
+                        child: Zone6ArtText(
+                          metric.$3,
+                          fontSize: 17,
+                          maxLines: 1,
+                        ),
                       ),
                     ],
                   ),

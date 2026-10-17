@@ -6,6 +6,8 @@ import '../controllers/player_controller.dart';
 import '../models/mission.dart';
 import '../models/mission_option.dart';
 import 'zone_1_approved_art.dart';
+import 'fortaleza_map_avatar.dart';
+import 'mission_scene_video.dart';
 
 /// Uses the existing mission and reward engines while keeping the map mounted.
 class Zone1MissionDialog extends StatefulWidget {
@@ -121,7 +123,17 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
                   label: 'Cenário ilustrado de ${widget.mission.title}',
                   image: true,
                   child: widget.mission.id == 'Z1_M01'
-                      ? const SizedBox.expand()
+                      ? (widget.player.profile != null &&
+                                FortalezaMapAvatar.variantFor(
+                                      widget.player.profile,
+                                    ) ==
+                                    'child_male'
+                            ? MissionSceneVideo(
+                                active:
+                                    _mission.stage == MissionStage.intro ||
+                                    _mission.stage == MissionStage.choosing,
+                              )
+                            : const SizedBox.expand())
                       : Zone1MissionScene(missionId: widget.mission.id),
                 ),
               ),
@@ -305,6 +317,7 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
                       child: Zone1ArtText(
                         labels[i],
                         fontSize: 25,
+                        maxLines: i == 2 ? 1 : null,
                         color: active == i ? zone1Ink : Colors.white,
                       ),
                     ),
@@ -328,7 +341,7 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
         child: Zone1ArtText(
           widget.mission.question,
           textKey: const Key('zone1-question-text'),
-          fontSize: 45,
+          fontSize: 36,
         ),
       ),
       Positioned(
@@ -392,7 +405,7 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
                   Expanded(
                     child: Zone1ArtText(
                       widget.mission.options[i].text,
-                      fontSize: 32,
+                      fontSize: 26,
                       align: TextAlign.left,
                     ),
                   ),
@@ -426,7 +439,8 @@ class _Zone1MissionDialogState extends State<Zone1MissionDialog> {
                 },
           child: Zone1ArtText(
             'CONFIRMAR RESPOSTA',
-            fontSize: 38,
+            fontSize: 30,
+            maxLines: 1,
             color: _pendingOption == null ? Colors.white : zone1Ink,
           ),
         ),

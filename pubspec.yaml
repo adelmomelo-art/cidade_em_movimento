@@ -14,16 +14,19 @@ dependencies:
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.5.6
   http: ^1.5.0
+  video_player: 2.11.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
+  video_player_platform_interface: 6.6.0
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/zone_1/r35/travessia_segura.mp4
     - assets/zone_3/r31/
     - assets/zone_4/r32/
     - assets/zone_5/r33/

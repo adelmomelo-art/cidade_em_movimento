@@ -8,12 +8,10 @@ Mission buildZone5SpecialMission(PlayerType type) {
       return const Mission(
         id: 'Z5_SPECIAL',
         title: 'Corredor em Equil\u00edbrio',
-        description:
-            'O fluxo pode mudar rapidamente.CHILD_DESCO fluxo pode mudar rapidamente.',
+        description: 'Observe a situação e escolha uma atitude segura.',
         sceneText:
-            'O fluxo pode mudar rapidamente.CHILD_SCENEO fluxo pode mudar rapidamente.',
-        question:
-            'O fluxo pode mudar rapidamente.CHILD_QO fluxo pode mudar rapidamente.',
+            'No caminho com um adulto, você encontra uma avenida movimentada e um ônibus perto da esquina.',
+        question: 'Qual plano reúne os cuidados aprendidos?',
         maxCitizenship: 50,
         maxKnowledge: 35,
         maxCoins: 60,
@@ -21,32 +19,30 @@ Mission buildZone5SpecialMission(PlayerType type) {
           MissionOption(
             id: 'child_correct',
             text:
-                'O fluxo pode mudar rapidamente.CHILD_CORRECTO fluxo pode mudar rapidamente.',
+                'Fico na calçada e busco com o adulto uma travessia sinalizada e com boa visão.',
             isCorrect: true,
             consequenceText:
-                'O fluxo pode mudar rapidamente.CHILD_C_OKO fluxo pode mudar rapidamente.',
+                'Você combina observação, planejamento e respeito ao espaço dos outros.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.CHILD_M_OKO fluxo pode mudar rapidamente.',
+                'Nas grandes vias, avalie velocidade, distância, visibilidade e conversões em conjunto. Uma decisão segura considera todo o entorno.',
           ),
           MissionOption(
             id: 'child_wrong_1',
-            text:
-                'O fluxo pode mudar rapidamente.CHILD_WRONG1O fluxo pode mudar rapidamente.',
+            text: 'Passo na frente do ônibus para encurtar o caminho.',
             isCorrect: false,
             consequenceText:
-                'O fluxo pode mudar rapidamente.CHILD_C_W1O fluxo pode mudar rapidamente.',
+                'Você avança com informação insuficiente sobre o que acontece ao redor.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.CHILD_M_W1O fluxo pode mudar rapidamente.',
+                'Não confie apenas em uma brecha ou na reação dos outros. Antecipe os riscos antes de agir.',
           ),
           MissionOption(
             id: 'child_wrong_2',
-            text:
-                'O fluxo pode mudar rapidamente.CHILD_WRONG2O fluxo pode mudar rapidamente.',
+            text: 'Corro entre os carros quando surge um pequeno espaço.',
             isCorrect: false,
             consequenceText:
-                'O fluxo pode mudar rapidamente.CHILD_C_W2O fluxo pode mudar rapidamente.',
+                'Você pode entrar em um ponto cego ou em um espaço já ocupado.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.CHILD_M_W2O fluxo pode mudar rapidamente.',
+                'Antes de mudar de posição, verifique se pode observar e ser visto. Ônibus e caminhões exigem atenção extra.',
           ),
         ],
       );
@@ -54,12 +50,10 @@ Mission buildZone5SpecialMission(PlayerType type) {
       return const Mission(
         id: 'Z5_SPECIAL',
         title: 'Corredor em Equil\u00edbrio',
-        description:
-            'O fluxo pode mudar rapidamente.TEEN_DESCO fluxo pode mudar rapidamente.',
+        description: 'Avalie os movimentos da via antes de decidir.',
         sceneText:
-            'O fluxo pode mudar rapidamente.TEEN_SCENEO fluxo pode mudar rapidamente.',
-        question:
-            'O fluxo pode mudar rapidamente.TEEN_QO fluxo pode mudar rapidamente.',
+            'Você precisa cruzar uma avenida. Um ônibus limita a visão e há carros fazendo conversão.',
+        question: 'Qual plano é mais seguro?',
         maxCitizenship: 50,
         maxKnowledge: 35,
         maxCoins: 60,
@@ -67,32 +61,31 @@ Mission buildZone5SpecialMission(PlayerType type) {
           MissionOption(
             id: 'teen_correct',
             text:
-                'O fluxo pode mudar rapidamente.TEEN_CORRECTO fluxo pode mudar rapidamente.',
+                'Busco a travessia, observo o sinal, a visibilidade e os veículos antes de avançar.',
             isCorrect: true,
             consequenceText:
-                'O fluxo pode mudar rapidamente.TEEN_C_OKO fluxo pode mudar rapidamente.',
+                'Você combina observação, planejamento e respeito ao espaço dos outros.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.TEEN_M_OKO fluxo pode mudar rapidamente.',
+                'Nas grandes vias, avalie velocidade, distância, visibilidade e conversões em conjunto. Uma decisão segura considera todo o entorno.',
           ),
           MissionOption(
             id: 'teen_wrong_1',
             text:
-                'O fluxo pode mudar rapidamente.TEEN_WRONG1O fluxo pode mudar rapidamente.',
+                'Aproveito a primeira brecha sem verificar os veículos que viram.',
             isCorrect: false,
             consequenceText:
-                'O fluxo pode mudar rapidamente.TEEN_C_W1O fluxo pode mudar rapidamente.',
+                'Você avança com informação insuficiente sobre o que acontece ao redor.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.TEEN_M_W1O fluxo pode mudar rapidamente.',
+                'Não confie apenas em uma brecha ou na reação dos outros. Antecipe os riscos antes de agir.',
           ),
           MissionOption(
             id: 'teen_wrong_2',
-            text:
-                'O fluxo pode mudar rapidamente.TEEN_WRONG2O fluxo pode mudar rapidamente.',
+            text: 'Sigo o grupo que atravessa atrás do ônibus.',
             isCorrect: false,
             consequenceText:
-                'O fluxo pode mudar rapidamente.TEEN_C_W2O fluxo pode mudar rapidamente.',
+                'Você pode entrar em um ponto cego ou em um espaço já ocupado.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.TEEN_M_W2O fluxo pode mudar rapidamente.',
+                'Antes de mudar de posição, verifique se pode observar e ser visto. Ônibus e caminhões exigem atenção extra.',
           ),
         ],
       );
@@ -100,12 +93,10 @@ Mission buildZone5SpecialMission(PlayerType type) {
       return const Mission(
         id: 'Z5_SPECIAL',
         title: 'Corredor em Equil\u00edbrio',
-        description:
-            'O fluxo pode mudar rapidamente.ADULT_DESCO fluxo pode mudar rapidamente.',
+        description: 'Planeje sua ação considerando os demais usuários.',
         sceneText:
-            'O fluxo pode mudar rapidamente.ADULT_SCENEO fluxo pode mudar rapidamente.',
-        question:
-            'O fluxo pode mudar rapidamente.ADULT_QO fluxo pode mudar rapidamente.',
+            'Você dirige por um corredor movimentado, com ônibus, acessos e travessias de pedestres.',
+        question: 'Como combinar os cuidados desta zona?',
         maxCitizenship: 50,
         maxKnowledge: 35,
         maxCoins: 60,
@@ -113,32 +104,32 @@ Mission buildZone5SpecialMission(PlayerType type) {
           MissionOption(
             id: 'adult_correct',
             text:
-                'O fluxo pode mudar rapidamente.ADULT_CORRECTO fluxo pode mudar rapidamente.',
+                'Ajusto a velocidade, mantenho distância e verifico pontos cegos e travessias.',
             isCorrect: true,
             consequenceText:
-                'O fluxo pode mudar rapidamente.ADULT_C_OKO fluxo pode mudar rapidamente.',
+                'Você combina observação, planejamento e respeito ao espaço dos outros.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.ADULT_M_OKO fluxo pode mudar rapidamente.',
+                'Nas grandes vias, avalie velocidade, distância, visibilidade e conversões em conjunto. Uma decisão segura considera todo o entorno.',
           ),
           MissionOption(
             id: 'adult_wrong_1',
             text:
-                'O fluxo pode mudar rapidamente.ADULT_WRONG1O fluxo pode mudar rapidamente.',
+                'Mantenho a velocidade e confio que todos evitarão meu caminho.',
             isCorrect: false,
             consequenceText:
-                'O fluxo pode mudar rapidamente.ADULT_C_W1O fluxo pode mudar rapidamente.',
+                'Você avança com informação insuficiente sobre o que acontece ao redor.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.ADULT_M_W1O fluxo pode mudar rapidamente.',
+                'Não confie apenas em uma brecha ou na reação dos outros. Antecipe os riscos antes de agir.',
           ),
           MissionOption(
             id: 'adult_wrong_2',
             text:
-                'O fluxo pode mudar rapidamente.ADULT_WRONG2O fluxo pode mudar rapidamente.',
+                'Mudo de faixa junto ao ônibus sem verificar o espaço ao redor.',
             isCorrect: false,
             consequenceText:
-                'O fluxo pode mudar rapidamente.ADULT_C_W2O fluxo pode mudar rapidamente.',
+                'Você pode entrar em um ponto cego ou em um espaço já ocupado.',
             meloFeedback:
-                'O fluxo pode mudar rapidamente.ADULT_M_W2O fluxo pode mudar rapidamente.',
+                'Antes de mudar de posição, verifique se pode observar e ser visto. Ônibus e caminhões exigem atenção extra.',
           ),
         ],
       );
