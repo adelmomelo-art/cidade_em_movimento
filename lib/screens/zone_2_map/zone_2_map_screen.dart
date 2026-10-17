@@ -181,9 +181,9 @@ class _Zone2MapScreenState extends State<Zone2MapScreen> {
               ),
             Positioned(
               left: 430,
-              top: 870,
+              top: 846,
               width: 755,
-              height: 65,
+              height: 89,
               child: _navigation(),
             ),
           ],
