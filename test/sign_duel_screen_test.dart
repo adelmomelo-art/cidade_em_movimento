@@ -40,6 +40,8 @@ void main() {
         find.byKey(Key('duel-option-${correctIndexes[round]}')),
       );
 
+      await _tapVisible(tester, find.byKey(const Key('duel-confirm')));
+
       expect(find.byKey(const Key('duel-feedback')), findsOneWidget);
       expect(find.text('Boa decisao!'), findsOneWidget);
 
@@ -53,5 +55,6 @@ void main() {
     expect(controller.progress.signDuelBestCorrect, 6);
     expect(controller.progress.signDuelPlays, 1);
     expect(controller.progress.knowledge, 12);
+    await tester.pumpWidget(const SizedBox.shrink());
   });
 }
