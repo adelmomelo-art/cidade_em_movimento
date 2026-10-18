@@ -26,6 +26,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/sign_duel/r42/
     - assets/zone_1/r35/travessia_segura.mp4
     - assets/zone_3/r31/
     - assets/zone_4/r32/
