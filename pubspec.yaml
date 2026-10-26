@@ -27,6 +27,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/build_neighborhood/r43_5/
+    - assets/build_neighborhood/r43_7/
     - assets/build_neighborhood/r43/
     - assets/sign_duel/r42/
     - assets/zone_1/r35/travessia_segura.mp4

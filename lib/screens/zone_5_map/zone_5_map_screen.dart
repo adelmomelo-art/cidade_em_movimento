@@ -131,6 +131,7 @@ class _Zone5MapScreenState extends State<Zone5MapScreen> {
             Positioned.fill(
               child: NeighborhoodUpgradeLayer(
                 zoneId: 'ZONE_5',
+                mapArtwork: zone5MapArtwork,
                 purchased: controller.progress.purchasedUpgrades,
                 night: _night,
               ),

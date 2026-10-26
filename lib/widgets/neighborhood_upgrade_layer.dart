@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../data/upgrades/upgrade_catalog.dart';
 import 'neighborhood_scene_geometry.dart';
 import 'zone_1_construction_art.dart';
+import 'neighborhood_construction_art.dart';
+import 'neighborhood_construction_data.dart';
 
 /// Uses the source artwork's coordinate system inside its own fitted board.
 /// No screen-center positioning, backing card, shadow or independent transform.
@@ -29,6 +31,11 @@ class NeighborhoodUpgradeLayer extends StatelessWidget {
         night: night,
         mapArtwork: mapArtwork,
       );
+    }
+    if (constructionZones.containsKey(zoneId)) {
+      return NeighborhoodConstructionArt(zoneId: zoneId,
+        purchased: purchased, previewId: previewId, night: night,
+        mapArtwork: mapArtwork);
     }
     final surfaces =
         neighborhoodSurfaces[zoneId] ?? const <String, NeighborhoodSurface>{};
