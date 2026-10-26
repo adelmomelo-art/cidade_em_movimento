@@ -70,12 +70,13 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('zone4-open-upgrades')));
       await tester.pumpAndSettle();
-      final button = find.byKey(
-        const Key('zone4-install-TRAVESSIA_EVENTO_SEGURA'),
-      );
+      final button = find.byKey(const Key('r43-build'));
       expect(button.hitTestable(), findsOneWidget);
       final before = controller.progress.coins;
       await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(controller.progress.coins, before);
+      await tester.tap(find.byKey(const Key('r43-confirm')));
       await tester.pumpAndSettle();
       expect(
         controller.progress.purchasedUpgrades,
@@ -85,12 +86,12 @@ void main() {
       expect(tester.widget<FilledButton>(button).onPressed, isNull);
       expect(
         find.descendant(
-          of: find.byKey(const Key('zone4-upgrade-TRAVESSIA_EVENTO_SEGURA')),
-          matching: find.text('INSTALADA'),
+          of: find.byKey(const Key('r43-select-TRAVESSIA_EVENTO_SEGURA')),
+          matching: find.text('Construído'),
         ),
         findsOneWidget,
       );
-      await tester.tap(find.text('VOLTAR AO EVENTO'));
+      await tester.tap(find.byKey(const Key('r43-back')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('zone4-open-upgrades')));
       await tester.pumpAndSettle();

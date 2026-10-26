@@ -28,4 +28,20 @@ const zone1Upgrades = <UpgradeDefinition>[
         'mais organizada e segura.',
     cost: 100,
   ),
+  UpgradeDefinition(
+    id: 'CALCADA_ACESSIVEL_ESCOLAR',
+    zoneId: 'ZONE_1',
+    title: 'Calçada acessível',
+    description:
+        'Mantém o caminho da escola contínuo, livre de obstáculos e acessível a todos.',
+    cost: 40,
+  ),
+  UpgradeDefinition(
+    id: 'BICICLETARIO_ESCOLAR',
+    zoneId: 'ZONE_1',
+    title: 'Bicicletário escolar',
+    description:
+        'Oferece apoio para estacionar bicicletas sem bloquear a passagem.',
+    cost: 60,
+  ),
 ];

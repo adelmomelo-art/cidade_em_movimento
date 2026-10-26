@@ -16,10 +16,10 @@ void main() {
     expect(zone4Definition.prerequisiteMedalId, 'GUARDIAO_DA_ORLA');
   });
 
-  test('economia de melhorias Zona 4 fecha em 240 moedas', () {
+  test('economia de melhorias Zona 4 fecha em 340 moedas', () {
     final upgrades = upgradesForZone('ZONE_4');
 
-    expect(upgrades.length, 3);
-    expect(upgrades.fold<int>(0, (sum, upgrade) => sum + upgrade.cost), 240);
+    expect(upgrades.length, 5);
+    expect(upgrades.fold<int>(0, (sum, upgrade) => sum + upgrade.cost), 340);
   });
 }

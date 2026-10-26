@@ -32,6 +32,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(BuildNeighborhoodScreen), findsOneWidget);
-    expect(find.text('Construa o Bairro'), findsOneWidget);
+    expect(find.text('CONSTRUA O BAIRRO'), findsOneWidget);
   });
 }

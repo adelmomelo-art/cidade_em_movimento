@@ -203,7 +203,7 @@ void main() {
           expect(c.progress.missionStars[id], 3);
           expect(tester.state(find.byType(Zone6MapScreen)), same(mapState));
         }
-        expect(c.progress.coins, expectedCoins + 60);
+        expect(c.progress.coins, expectedCoins + 190);
         expect(c.progress.citizenshipXp, expectedCitizenship);
         expect(c.progress.knowledge, expectedKnowledge);
         expect(c.progress.medals, contains('GUARDIAO_DO_CASTELAO'));
@@ -538,9 +538,11 @@ void main() {
     await tap(tester, find.byKey(const Key('zone6-open-upgrades')));
     await tap(
       tester,
-      find.byKey(const Key('zone6-install-ILUMINACAO_ENTORNO_CASTELAO')),
+      find.byKey(const Key('r43-select-ILUMINACAO_ENTORNO_CASTELAO')),
     );
-    await tap(tester, find.text('VOLTAR AO CASTELÃO'));
+    await tap(tester, find.byKey(const Key('r43-build')));
+    await tap(tester, find.byKey(const Key('r43-confirm')));
+    await tap(tester, find.byKey(const Key('r43-back')));
     expect(c.progress.coins, before - 80);
     expect(glow, findsOneWidget);
     await tap(tester, find.byKey(const Key('zone6-visual-mission-Z6_M01')));

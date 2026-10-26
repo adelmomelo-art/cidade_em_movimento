@@ -122,7 +122,7 @@ void main() {
       controller.progress.claimedZoneCompletionBonuses,
       contains('ZONE_3'),
     );
-    expect(controller.progress.coins - before, 240);
+    expect(controller.progress.coins - before, 370);
 
     final afterFirst = controller.progress.coins;
 

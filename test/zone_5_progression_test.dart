@@ -82,7 +82,7 @@ void main() {
 
     expect(controller.progress.completedZones, contains('ZONE_5'));
     expect(controller.progress.medals, contains('GUARDIAO_DAS_VIAS'));
-    expect(controller.progress.coins - before, 240);
+    expect(controller.progress.coins - before, 370);
 
     final after = controller.progress.coins;
     await controller.completeMission(result: _r('Z5_SPECIAL', 50, 35, 60));

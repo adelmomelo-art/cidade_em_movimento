@@ -125,7 +125,7 @@ void main() {
         }
         expect(c.progress.citizenshipXp, citizenship);
         expect(c.progress.knowledge, knowledge);
-        expect(c.progress.coins, coins + 60);
+        expect(c.progress.coins, coins + 60 + 130);
         expect(c.progress.medals, contains('PROTETOR_DA_ESCOLA'));
         expect(find.byKey(const Key('zone1-earned-medal')), findsOneWidget);
         expect(find.byKey(const Key('zone1-advance-zone2')), findsOneWidget);

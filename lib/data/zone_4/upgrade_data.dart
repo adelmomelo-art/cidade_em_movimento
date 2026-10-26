@@ -25,4 +25,20 @@ const zone4Upgrades = <UpgradeDefinition>[
         'Melhora o embarque e desembarque em locais de grande concentra\u00e7\u00e3o.',
     cost: 100,
   ),
+  UpgradeDefinition(
+    id: 'ROTA_ACESSIVEL_EVENTO',
+    zoneId: 'ZONE_4',
+    title: 'Rota acessível ao evento',
+    description:
+        'Orienta uma chegada acessível, sem obstáculos e separada dos veículos.',
+    cost: 40,
+  ),
+  UpgradeDefinition(
+    id: 'ILUMINACAO_ACESSOS_EVENTO',
+    zoneId: 'ZONE_4',
+    title: 'Iluminação dos acessos',
+    description:
+        'Melhora a visibilidade dos caminhos de entrada e saída do evento.',
+    cost: 60,
+  ),
 ];

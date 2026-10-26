@@ -27,39 +27,28 @@ Future<PlayerController> _controllerWithCoins(int coins) async {
   return controller;
 }
 
-Future<void> _materialize(
-  WidgetTester tester,
-  Finder finder, {
-  int maxSteps = 30,
-}) async {
-  final scrollable = find.byType(Scrollable).first;
-
-  for (var step = 0; step < maxSteps && finder.evaluate().isEmpty; step++) {
-    await tester.drag(scrollable, const Offset(0, -260));
-    await tester.pumpAndSettle();
-  }
-
-  expect(finder, findsWidgets);
-  await tester.ensureVisible(finder.first);
-  await tester.pumpAndSettle();
-}
-
 void main() {
   testWidgets('compra Calcada Acessivel atualiza tela e saldo', (tester) async {
     final controller = await _controllerWithCoins(40);
 
     await tester.pumpWidget(
-      MaterialApp(home: BuildNeighborhoodScreen(controller: controller)),
+      MaterialApp(
+        home: BuildNeighborhoodScreen(
+          controller: controller,
+          initialZoneId: 'BUILD_NEIGHBORHOOD',
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
-    final button = find.byKey(
-      const Key('build-install-BAIRRO_CALCADA_ACESSIVEL'),
-    );
+    final button = find.byKey(const Key('r43-build'));
 
-    await _materialize(tester, button);
+    expect(button.hitTestable(), findsOneWidget);
 
     await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(controller.progress.coins, 40);
+    await tester.tap(find.byKey(const Key('r43-confirm')));
     await tester.pumpAndSettle();
 
     expect(controller.progress.coins, 0);
@@ -68,12 +57,10 @@ void main() {
       contains('BAIRRO_CALCADA_ACESSIVEL'),
     );
 
-    final card = find.byKey(
-      const Key('build-upgrade-BAIRRO_CALCADA_ACESSIVEL'),
-    );
+    final card = find.byKey(const Key('r43-select-BAIRRO_CALCADA_ACESSIVEL'));
 
     expect(
-      find.descendant(of: card, matching: find.text('INSTALADA')),
+      find.descendant(of: card, matching: find.text('Construído')),
       findsOneWidget,
     );
   });

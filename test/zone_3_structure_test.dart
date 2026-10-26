@@ -16,10 +16,10 @@ void main() {
     expect(zone3Definition.prerequisiteMedalId, 'GUARDIAO_DO_CENTRO');
   });
 
-  test('economia de melhorias Zona 3 fecha em 240 moedas', () {
+  test('economia de melhorias Zona 3 fecha em 340 moedas', () {
     final upgrades = upgradesForZone('ZONE_3');
 
-    expect(upgrades.length, 3);
-    expect(upgrades.fold<int>(0, (sum, upgrade) => sum + upgrade.cost), 240);
+    expect(upgrades.length, 5);
+    expect(upgrades.fold<int>(0, (sum, upgrade) => sum + upgrade.cost), 340);
   });
 }

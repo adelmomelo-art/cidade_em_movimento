@@ -11,6 +11,7 @@ class GameProgress {
     Set<String> completedZones = const <String>{},
     Set<String> claimedZoneCompletionBonuses = const <String>{},
     bool zone1Completed = false,
+    this.claimedR43ZoneBonuses = const <String>{},
     this.signDuelBestScore = 0,
     this.signDuelBestCorrect = 0,
     this.signDuelPlays = 0,
@@ -21,6 +22,8 @@ class GameProgress {
        claimedZoneCompletionBonuses = Set<String>.from(
          claimedZoneCompletionBonuses,
        );
+
+  final Set<String> claimedR43ZoneBonuses;
 
   final int citizenshipXp;
   final int knowledge;
@@ -68,6 +71,7 @@ class GameProgress {
 
   Map<String, dynamic> toJson() {
     return {
+      'claimedR43ZoneBonuses': claimedR43ZoneBonuses.toList(),
       'citizenshipXp': citizenshipXp,
       'knowledge': knowledge,
       'coins': coins,
@@ -97,6 +101,7 @@ class GameProgress {
     }
 
     return GameProgress(
+      claimedR43ZoneBonuses: _stringSet(json['claimedR43ZoneBonuses']),
       citizenshipXp: (json['citizenshipXp'] as num?)?.toInt() ?? 0,
       knowledge: (json['knowledge'] as num?)?.toInt() ?? 0,
       coins: (json['coins'] as num?)?.toInt() ?? 0,

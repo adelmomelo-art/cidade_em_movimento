@@ -139,7 +139,7 @@ void main() {
       contains('ZONE_2'),
     );
 
-    expect(controller.progress.coins - coinsBefore, 240);
+    expect(controller.progress.coins - coinsBefore, 370);
 
     final afterFirst = controller.progress.coins;
 

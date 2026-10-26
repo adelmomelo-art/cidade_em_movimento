@@ -15,7 +15,7 @@ Future<PlayerController> _unlockedController() async {
   await controller.initialize();
   await controller.completeMission(
     result: const MissionResult(
-      missionId: 'Z3_SPECIAL',
+      missionId: 'Z4_SPECIAL',
       stars: 3,
       score: 100,
       citizenship: 50,
@@ -24,6 +24,7 @@ Future<PlayerController> _unlockedController() async {
       errors: 0,
     ),
   );
+  expect(controller.isZoneUnlocked('ZONE_5'), isTrue);
   return controller;
 }
 
@@ -70,12 +71,13 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('zone5-open-upgrades')));
       await tester.pumpAndSettle();
-      final button = find.byKey(
-        const Key('zone5-install-TRAVESSIA_GRANDE_VIA'),
-      );
+      final button = find.byKey(const Key('r43-build'));
       expect(button.hitTestable(), findsOneWidget);
       final before = controller.progress.coins;
       await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(controller.progress.coins, before);
+      await tester.tap(find.byKey(const Key('r43-confirm')));
       await tester.pumpAndSettle();
       expect(
         controller.progress.purchasedUpgrades,
@@ -85,12 +87,12 @@ void main() {
       expect(tester.widget<FilledButton>(button).onPressed, isNull);
       expect(
         find.descendant(
-          of: find.byKey(const Key('zone5-upgrade-TRAVESSIA_GRANDE_VIA')),
-          matching: find.text('INSTALADA'),
+          of: find.byKey(const Key('r43-select-TRAVESSIA_GRANDE_VIA')),
+          matching: find.text('Construído'),
         ),
         findsOneWidget,
       );
-      await tester.tap(find.text('VOLTAR ÀS GRANDES VIAS'));
+      await tester.tap(find.byKey(const Key('r43-back')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('zone5-open-upgrades')));
       await tester.pumpAndSettle();

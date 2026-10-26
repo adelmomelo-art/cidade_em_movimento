@@ -176,7 +176,7 @@ void main() {
           expect(c.progress.missionStars[id], 3);
           expect(tester.state(find.byType(Zone2MapScreen)), same(mapState));
         }
-        expect(c.progress.coins, expectedCoins + 60);
+        expect(c.progress.coins, expectedCoins + 190);
         expect(c.progress.citizenshipXp, expectedCitizenship);
         expect(c.progress.knowledge, expectedKnowledge);
         expect(c.progress.medals, contains('GUARDIAO_DO_CENTRO'));
