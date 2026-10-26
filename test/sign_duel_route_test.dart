@@ -29,6 +29,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SignDuelScreen), findsOneWidget);
-    expect(find.text('Duelo das Placas'), findsOneWidget);
+    expect(find.text('DUELO DAS PLACAS'), findsOneWidget);
   });
 }

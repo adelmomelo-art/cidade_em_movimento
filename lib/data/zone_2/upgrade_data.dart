@@ -28,4 +28,20 @@ const zone2Upgrades = <UpgradeDefinition>[
         'e outros modos de transporte.',
     cost: 100,
   ),
+  UpgradeDefinition(
+    id: 'ILUMINACAO_TRAVESSIAS_CENTRO',
+    zoneId: 'ZONE_2',
+    title: 'Iluminação das travessias',
+    description:
+        'Ajuda pedestres e condutores a perceberem a travessia à noite.',
+    cost: 40,
+  ),
+  UpgradeDefinition(
+    id: 'PRACA_CONVIVENCIA_CENTRO',
+    zoneId: 'ZONE_2',
+    title: 'Praça de convivência',
+    description:
+        'Cria espaço de encontro com bancos e árvores fora da circulação.',
+    cost: 60,
+  ),
 ];

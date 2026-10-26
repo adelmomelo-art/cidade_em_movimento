@@ -71,23 +71,23 @@ void main() {
       }
       await tester.tap(find.byKey(const Key('zone1-open-upgrades')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('zone1-upgrades-window')), findsOneWidget);
+      expect(find.byKey(const Key('r43-board')), findsOneWidget);
       for (final upgrade in zone1Upgrades) {
-        expect(find.byKey(Key('zone1-upgrade-${upgrade.id}')), findsOneWidget);
+        expect(find.byKey(Key('r43-select-${upgrade.id}')), findsOneWidget);
       }
-      final balloon = find.byKey(const Key('zone1-upgrade-FAIXA_SEGURA'));
-      final purchase = find.descendant(
-        of: balloon,
-        matching: find.byType(FilledButton),
-      );
+      final balloon = find.byKey(const Key('r43-select-FAIXA_SEGURA'));
+      final purchase = find.byKey(const Key('r43-build'));
       await tester.ensureVisible(purchase);
       await tester.pumpAndSettle();
       await tester.tap(purchase);
       await tester.pumpAndSettle();
+      expect(c.progress.coins, coins);
+      await tester.tap(find.byKey(const Key('r43-confirm')));
+      await tester.pumpAndSettle();
       expect(c.progress.purchasedUpgrades.contains('FAIXA_SEGURA'), isTrue);
       expect(c.progress.coins, coins - zone1Upgrades.first.cost);
       expect(
-        find.descendant(of: balloon, matching: find.text('INSTALADA')),
+        find.descendant(of: balloon, matching: find.text('Construído')),
         findsOneWidget,
       );
       expect(tester.widget<FilledButton>(purchase).onPressed, isNull);

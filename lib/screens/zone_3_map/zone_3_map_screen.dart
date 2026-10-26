@@ -9,7 +9,8 @@ import '../../data/zone_3/mission_03_data.dart';
 import '../../data/zone_3/mission_04_data.dart';
 import '../../data/zone_3/mission_05_data.dart';
 import '../../data/zone_3/special_mission_data.dart';
-import '../../data/zone_3/upgrade_data.dart';
+import '../build_neighborhood/build_neighborhood_screen.dart';
+import '../../widgets/neighborhood_upgrade_layer.dart';
 import '../../models/mission.dart';
 import '../../widgets/approved_artwork_page.dart';
 import '../../widgets/fortaleza_map_avatar.dart';
@@ -56,9 +57,13 @@ class _Zone3MapScreenState extends State<Zone3MapScreen> {
       return;
     }
     final type = controller.profile?.type;
-    if (type == null) return;
+    if (type == null) {
+      return;
+    }
     final mission = _missionForId(id, type);
-    if (mission == null) return;
+    if (mission == null) {
+      return;
+    }
     _openingMission = true;
     try {
       await showDialog<void>(
@@ -91,7 +96,9 @@ class _Zone3MapScreenState extends State<Zone3MapScreen> {
       found = route.settings.name == AppRoutes.fortalezaMap;
       return found || route.isFirst;
     });
-    if (!found) nav.pushReplacementNamed(AppRoutes.fortalezaMap);
+    if (!found) {
+      nav.pushReplacementNamed(AppRoutes.fortalezaMap);
+    }
   }
 
   @override
@@ -109,6 +116,14 @@ class _Zone3MapScreenState extends State<Zone3MapScreen> {
                 key: const Key('zone3-map-night'),
                 night: _night,
                 lighting: false,
+              ),
+            ),
+            Positioned.fill(
+              child: NeighborhoodUpgradeLayer(
+                zoneId: 'ZONE_3',
+                mapArtwork: zone3MapArtwork,
+                purchased: controller.progress.purchasedUpgrades,
+                night: _night,
               ),
             ),
             Positioned(
@@ -348,130 +363,16 @@ class _Zone3MapScreenState extends State<Zone3MapScreen> {
   );
 
   Future<void> _showUpgrades() async {
-    if (_openingUpgrades) return;
+    if (_openingUpgrades) {
+      return;
+    }
     _openingUpgrades = true;
     try {
-      await showDialog<void>(
-        context: context,
-        builder: (context) => Dialog(
-          backgroundColor: zone3Ink,
-          child: SizedBox(
-            width: 760,
-            height: 480,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: SizedBox(
-                width: 760,
-                height: 480,
-                child: AnimatedBuilder(
-                  animation: controller,
-                  builder: (context, _) => Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      key: const Key('zone3-upgrades-window'),
-                      children: [
-                        const SizedBox(
-                          height: 45,
-                          child: Zone3ArtText('MELHORIAS DA ZONA 3'),
-                        ),
-                        const SizedBox(height: 12),
-                        for (final upgrade in zone3Upgrades)
-                          Expanded(
-                            child: Card(
-                              key: Key('zone3-upgrade-${upgrade.id}'),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          Expanded(
-                                            child: Zone3ArtText(
-                                              upgrade.title,
-                                              color: zone3Ink,
-                                              fontSize: 26,
-                                              align: TextAlign.left,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Zone3ArtText(
-                                              upgrade.description,
-                                              color: zone3Ink,
-                                              fontSize: 19,
-                                              align: TextAlign.left,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 14),
-                                    SizedBox(
-                                      width: 170,
-                                      height: 60,
-                                      child: FilledButton(
-                                        key: Key('zone3-install-${upgrade.id}'),
-                                        onPressed:
-                                            controller
-                                                    .progress
-                                                    .purchasedUpgrades
-                                                    .contains(upgrade.id) ||
-                                                controller.progress.coins <
-                                                    upgrade.cost
-                                            ? null
-                                            : () async {
-                                                try {
-                                                  await controller
-                                                      .purchaseUpgrade(
-                                                        upgrade.id,
-                                                      );
-                                                } catch (_) {
-                                                  if (mounted &&
-                                                      context.mounted) {
-                                                    ScaffoldMessenger.of(
-                                                      this.context,
-                                                    ).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                          'Não foi possível salvar a melhoria. Tente novamente.',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                }
-                                              },
-                                        child: Zone3ArtText(
-                                          controller.progress.purchasedUpgrades
-                                                  .contains(upgrade.id)
-                                              ? 'INSTALADA'
-                                              : '${upgrade.cost} MOEDAS',
-                                          fontSize: 22,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        SizedBox(
-                          height: 60,
-                          child: TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text(
-                              'VOLTAR À ORLA',
-                              style: TextStyle(color: zone3Gold, fontSize: 24),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => BuildNeighborhoodScreen(
+            controller: controller,
+            initialZoneId: 'ZONE_3',
           ),
         ),
       );

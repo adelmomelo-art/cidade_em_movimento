@@ -194,7 +194,7 @@ void main() {
           expect(c.progress.missionStars[id], 3);
           expect(tester.state(find.byType(Zone5MapScreen)), same(mapState));
         }
-        expect(c.progress.coins, expectedCoins + 60);
+        expect(c.progress.coins, expectedCoins + 190);
         expect(c.progress.citizenshipXp, expectedCitizenship);
         expect(c.progress.knowledge, expectedKnowledge);
         expect(c.progress.medals, contains('GUARDIAO_DAS_VIAS'));
@@ -514,9 +514,11 @@ void main() {
       await tap(tester, find.byKey(const Key('zone5-open-upgrades')));
       await tap(
         tester,
-        find.byKey(const Key('zone5-install-ILUMINACAO_CORREDOR')),
+        find.byKey(const Key('r43-select-ILUMINACAO_CORREDOR')),
       );
-      await tap(tester, find.text('VOLTAR ÀS GRANDES VIAS'));
+      await tap(tester, find.byKey(const Key('r43-build')));
+      await tap(tester, find.byKey(const Key('r43-confirm')));
+      await tap(tester, find.byKey(const Key('r43-back')));
       expect(c.progress.coins, before - 80);
       expect(glow, findsOneWidget);
       await tap(tester, find.byKey(const Key('zone5-visual-mission-Z5_M01')));

@@ -2,13 +2,15 @@ import 'package:cidade_em_movimento/data/zone_1/upgrade_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('catalogo possui somente as tres melhorias aprovadas', () {
-    expect(zone1Upgrades.length, 3);
+  test('catalogo possui as cinco melhorias aprovadas', () {
+    expect(zone1Upgrades.length, 5);
 
     expect(zone1Upgrades.map((upgrade) => upgrade.id).toSet(), {
       'FAIXA_SEGURA',
       'ILUMINACAO_ESCOLAR',
       'TRECHO_CICLOVIARIO',
+      'CALCADA_ACESSIVEL_ESCOLAR',
+      'BICICLETARIO_ESCOLAR',
     });
   });
 

@@ -15,9 +15,9 @@ void main() {
     expect(zone6Definition.prerequisiteZoneId, 'ZONE_5');
     expect(zone6Definition.prerequisiteMedalId, 'GUARDIAO_DAS_VIAS');
   });
-  test('economia de melhorias Zona 6 fecha em 240 moedas', () {
+  test('economia de melhorias Zona 6 fecha em 340 moedas', () {
     final u = upgradesForZone('ZONE_6');
-    expect(u.length, 3);
-    expect(u.fold<int>(0, (s, x) => s + x.cost), 240);
+    expect(u.length, 5);
+    expect(u.fold<int>(0, (s, x) => s + x.cost), 340);
   });
 }

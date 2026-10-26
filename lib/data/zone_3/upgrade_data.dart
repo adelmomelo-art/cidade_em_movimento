@@ -28,4 +28,20 @@ const zone3Upgrades = <UpgradeDefinition>[
         'em \u00e1reas movimentadas da orla.',
     cost: 100,
   ),
+  UpgradeDefinition(
+    id: 'ACESSO_CALCADAO_ORLA',
+    zoneId: 'ZONE_3',
+    title: 'Acesso acessível ao calçadão',
+    description:
+        'Conecta a calçada ao passeio com uma rota acessível e contínua.',
+    cost: 40,
+  ),
+  UpgradeDefinition(
+    id: 'BICICLETARIO_ORLA',
+    zoneId: 'ZONE_3',
+    title: 'Bicicletário da orla',
+    description:
+        'Organiza o estacionamento de bicicletas e mantém o passeio livre.',
+    cost: 60,
+  ),
 ];

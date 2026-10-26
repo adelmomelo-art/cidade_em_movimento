@@ -46,6 +46,12 @@ class StorageService {
   }
 
   Future<void> saveProgress(GameProgress progress) async {
-    await _preferences.setString(_progressKey, jsonEncode(progress.toJson()));
+    final saved = await _preferences.setString(
+      _progressKey,
+      jsonEncode(progress.toJson()),
+    );
+    if (!saved) {
+      throw StateError('Não foi possível salvar o progresso.');
+    }
   }
 }

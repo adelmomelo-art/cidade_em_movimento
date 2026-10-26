@@ -25,4 +25,20 @@ const zone5Upgrades = <UpgradeDefinition>[
         'Cria uma \u00e1rea intermedi\u00e1ria de prote\u00e7\u00e3o em travessias extensas.',
     cost: 100,
   ),
+  UpgradeDefinition(
+    id: 'PONTO_ACESSIVEL_CORREDOR',
+    zoneId: 'ZONE_5',
+    title: 'Ponto de ônibus acessível',
+    description:
+        'Organiza a espera e oferece acesso contínuo ao transporte coletivo.',
+    cost: 40,
+  ),
+  UpgradeDefinition(
+    id: 'CALCADA_CONTINUA_CORREDOR',
+    zoneId: 'ZONE_5',
+    title: 'Calçada contínua',
+    description:
+        'Conecta os percursos de pedestres e evita interrupções no caminho.',
+    cost: 60,
+  ),
 ];

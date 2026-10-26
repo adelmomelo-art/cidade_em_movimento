@@ -15,6 +15,7 @@ class PlayerController extends ChangeNotifier {
   final StorageService _storage;
   final PedagogicalSyncService? _pedagogicalSync;
 
+  bool _purchasing = false;
   PlayerProfile? _profile;
   GameProgress _progress = GameProgress.initial();
   PlayerProfile? get profile => _profile;
@@ -112,6 +113,7 @@ class PlayerController extends ChangeNotifier {
     }
 
     var updated = GameProgress(
+      claimedR43ZoneBonuses: Set<String>.from(_progress.claimedR43ZoneBonuses),
       citizenshipXp:
           _progress.citizenshipXp +
           (wasAlreadyCompleted ? 0 : result.citizenship),
@@ -141,6 +143,9 @@ class PlayerController extends ChangeNotifier {
   }
 
   Future<bool> purchaseUpgrade(String upgradeId) async {
+    if (_purchasing) {
+      return false;
+    }
     final selected = findUpgradeById(upgradeId);
 
     if (selected == null) {
@@ -155,10 +160,13 @@ class PlayerController extends ChangeNotifier {
       return false;
     }
 
+    final previous = _progress;
+    _purchasing = true;
     final purchasedUpgrades = Set<String>.from(_progress.purchasedUpgrades)
       ..add(selected.id);
 
     _progress = GameProgress(
+      claimedR43ZoneBonuses: Set<String>.from(_progress.claimedR43ZoneBonuses),
       citizenshipXp: _progress.citizenshipXp,
       knowledge: _progress.knowledge,
       coins: _progress.coins - selected.cost,
@@ -176,11 +184,21 @@ class PlayerController extends ChangeNotifier {
       signDuelPlays: _progress.signDuelPlays,
     );
 
-    await _storage.saveProgress(_progress);
-    await _queuePedagogicalSnapshot();
-    notifyListeners();
-
-    return true;
+    final pending = _progress;
+    try {
+      await _storage.saveProgress(pending);
+      await _queuePedagogicalSnapshot();
+      notifyListeners();
+      return true;
+    } catch (_) {
+      if (identical(_progress, pending)) {
+        _progress = previous;
+      }
+      notifyListeners();
+      rethrow;
+    } finally {
+      _purchasing = false;
+    }
   }
 
   Future<int> recordSignDuelResult({
@@ -195,6 +213,7 @@ class PlayerController extends ChangeNotifier {
         : 0;
 
     _progress = GameProgress(
+      claimedR43ZoneBonuses: Set<String>.from(_progress.claimedR43ZoneBonuses),
       citizenshipXp: _progress.citizenshipXp,
       knowledge: _progress.knowledge + knowledgeGain,
       coins: _progress.coins,
@@ -225,7 +244,9 @@ class PlayerController extends ChangeNotifier {
 
   Future<PedagogicalSyncStatus> syncPedagogicalNow() async {
     final service = _pedagogicalSync;
-    if (service == null) return PedagogicalSyncStatus.backendNotConfigured;
+    if (service == null) {
+      return PedagogicalSyncStatus.backendNotConfigured;
+    }
     final result = await service.syncPending();
     notifyListeners();
     return result;
@@ -234,7 +255,9 @@ class PlayerController extends ChangeNotifier {
   Future<void> _queuePedagogicalSnapshot() async {
     final service = _pedagogicalSync;
     final currentProfile = _profile;
-    if (service == null || currentProfile == null) return;
+    if (service == null || currentProfile == null) {
+      return;
+    }
     try {
       await service.queueSnapshot(profile: currentProfile, progress: _progress);
     } catch (_) {
@@ -245,27 +268,28 @@ class PlayerController extends ChangeNotifier {
   GameProgress _withPendingZoneCompletionBonuses(GameProgress source) {
     var bonusCoins = 0;
     final claimed = Set<String>.from(source.claimedZoneCompletionBonuses);
+    final r43Claimed = Set<String>.from(source.claimedR43ZoneBonuses);
 
     for (final zoneId in source.completedZones) {
-      if (claimed.contains(zoneId)) {
-        continue;
-      }
-
       final zone = findZoneById(zoneId);
       if (zone == null) {
         continue;
       }
-
-      bonusCoins += zone.completionBonusCoins;
-      claimed.add(zoneId);
+      if (claimed.add(zoneId)) {
+        bonusCoins += zone.completionBonusCoins;
+      }
+      if (r43Claimed.add(zoneId)) {
+        bonusCoins += 130;
+      }
     }
-
     if (bonusCoins == 0 &&
-        claimed.length == source.claimedZoneCompletionBonuses.length) {
+        claimed.length == source.claimedZoneCompletionBonuses.length &&
+        r43Claimed.length == source.claimedR43ZoneBonuses.length) {
       return source;
     }
 
     return GameProgress(
+      claimedR43ZoneBonuses: r43Claimed,
       citizenshipXp: source.citizenshipXp,
       knowledge: source.knowledge,
       coins: source.coins + bonusCoins,

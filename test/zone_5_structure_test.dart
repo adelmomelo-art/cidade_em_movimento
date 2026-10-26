@@ -16,9 +16,9 @@ void main() {
     expect(zone5Definition.prerequisiteMedalId, 'GUARDIAO_DA_CULTURA');
   });
 
-  test('economia de melhorias Zona 5 fecha em 240 moedas', () {
+  test('economia de melhorias Zona 5 fecha em 340 moedas', () {
     final upgrades = upgradesForZone('ZONE_5');
-    expect(upgrades.length, 3);
-    expect(upgrades.fold<int>(0, (s, u) => s + u.cost), 240);
+    expect(upgrades.length, 5);
+    expect(upgrades.fold<int>(0, (s, u) => s + u.cost), 340);
   });
 }

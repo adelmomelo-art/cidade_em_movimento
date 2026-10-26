@@ -13,29 +13,32 @@ Future<PlayerController> _controller() async {
 }
 
 void main() {
-  test('Zona 1 concede bonus de 60 moedas ao concluir especial', () async {
-    final controller = await _controller();
+  test(
+    'Zona 1 concede bonus original de 60 mais adicional R43 de 130 ao concluir especial',
+    () async {
+      final controller = await _controller();
 
-    await controller.completeMission(
-      result: const MissionResult(
-        missionId: 'Z1_SPECIAL',
-        stars: 3,
-        score: 100,
-        citizenship: 50,
-        knowledge: 30,
-        coins: 50,
-        errors: 0,
-      ),
-    );
+      await controller.completeMission(
+        result: const MissionResult(
+          missionId: 'Z1_SPECIAL',
+          stars: 3,
+          score: 100,
+          citizenship: 50,
+          knowledge: 30,
+          coins: 50,
+          errors: 0,
+        ),
+      );
 
-    expect(controller.progress.completedZones, contains('ZONE_1'));
-    expect(controller.progress.medals, contains('PROTETOR_DA_ESCOLA'));
-    expect(controller.progress.coins, 110);
-    expect(
-      controller.progress.claimedZoneCompletionBonuses,
-      contains('ZONE_1'),
-    );
-  });
+      expect(controller.progress.completedZones, contains('ZONE_1'));
+      expect(controller.progress.medals, contains('PROTETOR_DA_ESCOLA'));
+      expect(controller.progress.coins, 240);
+      expect(
+        controller.progress.claimedZoneCompletionBonuses,
+        contains('ZONE_1'),
+      );
+    },
+  );
 
   test('replay da especial nao duplica recompensa nem bonus', () async {
     final controller = await _controller();
@@ -55,7 +58,7 @@ void main() {
 
     await controller.completeMission(result: result);
 
-    expect(coinsAfterFirst, 110);
+    expect(coinsAfterFirst, 240);
     expect(controller.progress.coins, coinsAfterFirst);
     expect(controller.progress.claimedZoneCompletionBonuses.length, 1);
   });
@@ -80,7 +83,7 @@ void main() {
     final firstController = PlayerController(storage);
     await firstController.initialize();
 
-    expect(firstController.progress.coins, 160);
+    expect(firstController.progress.coins, 290);
     expect(
       firstController.progress.claimedZoneCompletionBonuses,
       contains('ZONE_1'),
@@ -89,7 +92,7 @@ void main() {
     final secondController = PlayerController(storage);
     await secondController.initialize();
 
-    expect(secondController.progress.coins, 160);
+    expect(secondController.progress.coins, 290);
     expect(secondController.progress.claimedZoneCompletionBonuses.length, 1);
   });
 }

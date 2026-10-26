@@ -8,7 +8,7 @@ import '../zone_5/upgrade_data.dart';
 import '../zone_6/upgrade_data.dart';
 
 /// Catalogo oficial das seis zonas do MVP.
-/// Deve permanecer com 18 melhorias: 3 por zona.
+/// R43: 30 melhorias, cinco por zona; IDs antigos preservados.
 const upgradeCatalog = <UpgradeDefinition>[
   ...zone1Upgrades,
   ...zone2Upgrades,

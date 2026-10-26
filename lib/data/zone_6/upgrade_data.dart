@@ -25,4 +25,20 @@ const zone6Upgrades = <UpgradeDefinition>[
         'Organiza pontos de embarque e desembarque longe dos principais conflitos de fluxo.',
     cost: 100,
   ),
+  UpgradeDefinition(
+    id: 'ROTA_ACESSIVEL_CASTELAO',
+    zoneId: 'ZONE_6',
+    title: 'Rota acessível ao estádio',
+    description:
+        'Facilita a chegada ao estádio de pessoas com diferentes mobilidades.',
+    cost: 40,
+  ),
+  UpgradeDefinition(
+    id: 'BICICLETARIO_CASTELAO',
+    zoneId: 'ZONE_6',
+    title: 'Bicicletário do estádio',
+    description:
+        'Oferece estacionamento para bicicletas sem obstruir os acessos.',
+    cost: 60,
+  ),
 ];

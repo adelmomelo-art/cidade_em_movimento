@@ -57,12 +57,12 @@ void main() {
     }
   });
 
-  test('economia homologada da Zona 1 fecha em 220 moedas', () {
+  test('economia homologada da Zona 1 fecha em 320 moedas', () {
     final zone1UpgradeCost = upgradesForZone(
       'ZONE_1',
     ).fold<int>(0, (sum, item) => sum + item.cost);
 
-    expect(zone1UpgradeCost, 220);
+    expect(zone1UpgradeCost, 320);
     expect(zone1Definition.completionBonusCoins, 60);
   });
 }

@@ -2,20 +2,20 @@ import 'package:cidade_em_movimento/data/upgrades/upgrade_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('catalogo generico contem dezoito melhorias oficiais', () {
-    expect(upgradeCatalog.length, 18);
+  test('catalogo generico contem trinta melhorias oficiais', () {
+    expect(upgradeCatalog.length, 30);
   });
   for (final row in <(String, int)>[
-    ('ZONE_1', 220),
-    ('ZONE_2', 240),
-    ('ZONE_3', 240),
-    ('ZONE_4', 240),
-    ('ZONE_5', 240),
-    ('ZONE_6', 240),
+    ('ZONE_1', 320),
+    ('ZONE_2', 340),
+    ('ZONE_3', 340),
+    ('ZONE_4', 340),
+    ('ZONE_5', 340),
+    ('ZONE_6', 340),
   ]) {
-    test('${row.$1} possui tres melhorias e custo esperado', () {
+    test('${row.$1} possui cinco melhorias e custo esperado', () {
       final u = upgradesForZone(row.$1);
-      expect(u.length, 3);
+      expect(u.length, 5);
       expect(u.fold<int>(0, (s, x) => s + x.cost), row.$2);
     });
   }

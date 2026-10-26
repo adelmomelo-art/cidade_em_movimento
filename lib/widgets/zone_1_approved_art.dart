@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../controllers/player_controller.dart';
 import 'fortaleza_map_avatar.dart';
+import 'zone_1_construction_art.dart';
 
 const zone1ArtworkSize = Size(1672, 941);
 const zone1MapArtwork = 'assets/zone_1/r29/mapa_aprovado.png';
@@ -29,7 +30,7 @@ class Zone1ArtworkBoard extends StatelessWidget {
     fit: StackFit.expand,
     children: [
       Image.asset(
-        zone1SceneryArtwork,
+        zone1InitialConstructionArt,
         key: const Key('zone1-ambient-art'),
         fit: BoxFit.cover,
         excludeFromSemantics: true,
@@ -53,6 +54,11 @@ class Zone1ArtworkBoard extends StatelessWidget {
                         fit: BoxFit.fill,
                         filterQuality: FilterQuality.medium,
                         excludeFromSemantics: true,
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Zone1GroundRepair(
+                        mapArtwork: asset == zone1MapArtwork ? asset : null,
                       ),
                     ),
                     ...children,
@@ -320,11 +326,14 @@ class Zone1MissionScene extends StatelessWidget {
                 top: -crop.top,
                 width: 1672,
                 height: 941,
-                child: Image.asset(
-                  zone1SceneryArtwork,
-                  fit: BoxFit.fill,
-                  excludeFromSemantics: true,
-                ),
+                child: Stack(fit: StackFit.expand, children: [
+                  Image.asset(
+                    zone1SceneryArtwork,
+                    fit: BoxFit.fill,
+                    excludeFromSemantics: true,
+                  ),
+                  const Positioned.fill(child: Zone1GroundRepair()),
+                ]),
               ),
             ],
           ),
