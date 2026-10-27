@@ -56,11 +56,12 @@ class Zone1ArtworkBoard extends StatelessWidget {
                         excludeFromSemantics: true,
                       ),
                     ),
-                    Positioned.fill(
-                      child: Zone1GroundRepair(
-                        mapArtwork: asset == zone1MapArtwork ? asset : null,
+                    // Map coordinates must never be painted over the mission
+                    // frame: the same area contains Melo on that artwork.
+                    if (asset == zone1MapArtwork)
+                      const Positioned.fill(
+                        child: Zone1GroundRepair(mapArtwork: zone1MapArtwork),
                       ),
-                    ),
                     ...children,
                   ],
                 ),
