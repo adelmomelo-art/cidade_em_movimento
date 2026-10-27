@@ -6,6 +6,7 @@ import '../../core/enums/player_type.dart';
 import '../../data/zones/zone_catalog.dart';
 import '../../services/global_progress_service.dart';
 import '../../widgets/approved_artwork_page.dart';
+import '../../widgets/city_utility_page.dart';
 import '../../widgets/fortaleza_map_avatar.dart';
 import '../../widgets/fortaleza_boats.dart';
 import '../../widgets/zone_1_approved_art.dart';
@@ -81,63 +82,65 @@ class FortalezaMapScreen extends StatelessWidget {
 
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Mais opções'),
-        content: SizedBox(
-          width: 360,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  key: const Key('fortaleza-faixita'),
-                  leading: const Icon(Icons.support_agent_rounded),
-                  title: const Text('Faixita'),
-                  onTap: () => open(AppRoutes.faixita),
-                ),
-                ListTile(
-                  key: const Key('fortaleza-sign-duel'),
-                  leading: const Icon(Icons.signpost_rounded),
-                  title: const Text('Duelo das Placas'),
-                  subtitle: Text(
-                    progress.signDuelPlays == 0
-                        ? 'Ainda nao jogado'
-                        : 'Recorde: ${progress.signDuelBestScore} pontos - ${progress.signDuelBestCorrect}/6',
-                    key: const Key('fortaleza-sign-duel-status'),
-                  ),
-                  onTap: () => open(AppRoutes.signDuel),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.insights_rounded),
-                  title: const Text('Progressao Global'),
-                  subtitle: Text(
-                    '${summary.completionPercent}% - ${summary.completedMissions}/${summary.totalMissions} missoes',
-                    key: const Key('fortaleza-global-summary-status'),
-                  ),
-                  onTap: () => open(AppRoutes.globalProgress),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.home_rounded),
-                  title: const Text('Tela inicial'),
-                  onTap: () {
-                    navigator.pop();
-                    if (navigator.canPop()) {
-                      navigator.popUntil((route) => route.isFirst);
-                    } else {
-                      navigator.pushReplacementNamed(AppRoutes.home);
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
+      useSafeArea: false,
+      builder: (context) => Dialog.fullscreen(
+        child: CityUtilityPage(
+          title: 'MAIS OPÇÕES',
+          prefix: 'more-options',
+          trailing: TextButton(
             onPressed: () => navigator.pop(),
-            child: const Text('FECHAR'),
+            child: const FittedBox(child: Row(mainAxisSize: MainAxisSize.min,
+              children: [Icon(Icons.close_rounded, color: Colors.white, size: 30),
+                SizedBox(width: 6), Text('FECHAR',
+                  style: TextStyle(color: Colors.white, fontSize: 34,
+                    fontWeight: FontWeight.w800))])),
           ),
-        ],
+          child: Stack(children: [
+            CityMenuAction(
+              key: const Key('fortaleza-faixita'),
+              bounds: const Rect.fromLTWH(750, 294, 414, 246),
+              labelBounds: const Rect.fromLTWH(775, 455, 365, 68),
+              title: 'Faixita', fontSize: 58,
+              onTap: () => open(AppRoutes.faixita),
+            ),
+            CityMenuAction(
+              key: const Key('fortaleza-sign-duel'),
+              bounds: const Rect.fromLTWH(1180, 294, 422, 246),
+              labelBounds: const Rect.fromLTWH(1198, 447, 382, 56),
+              title: 'Duelo das Placas',
+              subtitle: progress.signDuelPlays == 0
+                  ? 'Ainda nao jogado'
+                  : 'Recorde: ${progress.signDuelBestScore} pontos - ${progress.signDuelBestCorrect}/6',
+              subtitleKey: const Key('fortaleza-sign-duel-status'),
+              subtitleBounds: const Rect.fromLTWH(1200, 502, 380, 37),
+              onTap: () => open(AppRoutes.signDuel),
+            ),
+            CityMenuAction(
+              key: const Key('fortaleza-global-progress'),
+              bounds: const Rect.fromLTWH(750, 565, 414, 247),
+              labelBounds: const Rect.fromLTWH(772, 710, 370, 59),
+              title: 'Progressão Global', fontSize: 46,
+              subtitle: '${summary.completionPercent}% - ${summary.completedMissions}/${summary.totalMissions} missoes',
+              subtitleKey: const Key('fortaleza-global-summary-status'),
+              subtitleBounds: const Rect.fromLTWH(777, 765, 360, 36),
+              onTap: () => open(AppRoutes.globalProgress),
+            ),
+            CityMenuAction(
+              key: const Key('fortaleza-menu-home'),
+              bounds: const Rect.fromLTWH(1180, 565, 422, 247),
+              labelBounds: const Rect.fromLTWH(1220, 718, 340, 80),
+              title: 'Tela inicial', fontSize: 58,
+              onTap: () {
+                navigator.pop();
+                if (navigator.canPop()) {
+                  navigator.popUntil((route) => route.isFirst);
+                } else {
+                  navigator.pushReplacementNamed(AppRoutes.home);
+                }
+              },
+            ),
+          ]),
+        ),
       ),
     );
   }

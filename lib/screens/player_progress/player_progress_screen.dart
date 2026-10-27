@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
+import '../../widgets/city_utility_page.dart';
 
 import '../../controllers/player_controller.dart';
 import '../../core/enums/player_type.dart';
@@ -58,31 +59,21 @@ class PlayerProgressScreen extends StatelessWidget {
             .where((zone) => progress.completedZones.contains(zone.id))
             .toList(growable: false);
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Meu Progresso'),
-            actions: [
-              IconButton(
-                key: const Key('open-pedagogical-dashboard'),
-                tooltip: 'Painel Pedagogico',
-                onPressed: () {
-                  Navigator.of(
-                    context,
-                  ).pushNamed(AppRoutes.pedagogicalDashboard);
-                },
-                icon: const Icon(Icons.school_rounded),
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: CustomScrollView(
+        return CityUtilityPage(
+          title: 'Meu Progresso',
+          prefix: 'player-progress',
+          child: CustomScrollView(
+            key: const Key('player-progress-scroll'),
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
+                  sliver: SliverToBoxAdapter(
+                    child: Column(children: [
                       _PlayerHeader(
                         profileTitle: profile?.type.initialTitle ?? 'Jogador',
+                        onDashboard: () => Navigator.of(context).pushNamed(
+                          AppRoutes.pedagogicalDashboard,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _ResourceGrid(
@@ -93,15 +84,15 @@ class PlayerProgressScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       _SectionCard(
-                        title: 'Zonas concluÃ­das',
+                        title: 'Zonas concluídas',
                         icon: Icons.map_rounded,
-                        emptyText: 'Nenhuma zona concluÃ­da ainda.',
+                        emptyText: 'Nenhuma zona concluída ainda.',
                         children: [
                           for (final zone in completedZones)
                             _ProgressRow(
                               icon: Icons.check_circle_rounded,
                               title: zone.title,
-                              subtitle: 'ConcluÃ­da',
+                              subtitle: 'Concluída',
                             ),
                         ],
                       ),
@@ -137,7 +128,6 @@ class PlayerProgressScreen extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
           ),
         );
       },
@@ -146,9 +136,10 @@ class PlayerProgressScreen extends StatelessWidget {
 }
 
 class _PlayerHeader extends StatelessWidget {
-  const _PlayerHeader({required this.profileTitle});
+  const _PlayerHeader({required this.profileTitle, required this.onDashboard});
 
   final String profileTitle;
+  final VoidCallback onDashboard;
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +170,12 @@ class _PlayerHeader extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            IconButton(
+              key: const Key('open-pedagogical-dashboard'),
+              tooltip: 'Painel Pedagogico',
+              onPressed: onDashboard,
+              icon: const Icon(Icons.school_rounded, size: 40),
             ),
           ],
         ),
@@ -265,10 +262,14 @@ class _MetricCard extends StatelessWidget {
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 2),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelMedium,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
             ),
           ],
         ),

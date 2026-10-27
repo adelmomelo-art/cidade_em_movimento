@@ -32,6 +32,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(GlobalProgressScreen), findsOneWidget);
-    expect(find.text('Progressao Global'), findsOneWidget);
+    expect(find.text('PROGRESSÃO GLOBAL'), findsOneWidget);
   });
 }

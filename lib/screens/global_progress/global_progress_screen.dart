@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../controllers/player_controller.dart';
 import '../../services/global_progress_service.dart';
+import '../../widgets/city_utility_page.dart';
 
 class GlobalProgressScreen extends StatelessWidget {
   const GlobalProgressScreen({super.key, required this.controller});
@@ -17,10 +18,10 @@ class GlobalProgressScreen extends StatelessWidget {
           controller.progress,
         );
 
-        return Scaffold(
-          appBar: AppBar(title: const Text('Progressao Global')),
-          body: SafeArea(
-            child: CustomScrollView(
+        return CityUtilityPage(
+          title: 'PROGRESSÃO GLOBAL',
+          prefix: 'global-progress',
+          child: CustomScrollView(
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
@@ -43,7 +44,6 @@ class GlobalProgressScreen extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
           ),
         );
       },
@@ -53,121 +53,65 @@ class GlobalProgressScreen extends StatelessWidget {
 
 class _JourneyHeader extends StatelessWidget {
   const _JourneyHeader({required this.summary});
-
   final GlobalProgressSummary summary;
-
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      key: const Key('global-progress-header'),
-      child: Padding(
-        padding: const EdgeInsets.all(22),
-        child: Column(
+  Widget build(BuildContext context) => Card(
+    key: const Key('global-progress-header'),
+    child: Padding(padding: const EdgeInsets.all(24),
+      child: Row(children: [
+        Icon(summary.fortalezaComplete ? Icons.workspace_premium_rounded
+          : Icons.map_rounded, size: 84, color: const Color(0xFF0062CF)),
+        const SizedBox(width: 20),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              summary.fortalezaComplete
-                  ? Icons.workspace_premium_rounded
-                  : Icons.explore_rounded,
-              size: 68,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              summary.fortalezaComplete
-                  ? 'Fortaleza concluida'
-                  : 'Jornada Fortaleza',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              summary.fortalezaComplete
-                  ? 'Voce concluiu as seis zonas, todas as missoes e conquistou as seis medalhas.'
-                  : 'Avance pelas seis zonas para concluir a jornada principal do MVP Fortaleza.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 18),
-            LinearProgressIndicator(
-              key: const Key('global-progress-bar'),
-              value: summary.completionRatio,
-              minHeight: 12,
-              borderRadius: BorderRadius.circular(12),
-            ),
+            Text(summary.fortalezaComplete ? 'Fortaleza concluida' : 'Jornada Fortaleza',
+              style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 14),
+            LinearProgressIndicator(key: const Key('global-progress-bar'),
+              value: summary.completionRatio, minHeight: 16,
+              borderRadius: BorderRadius.circular(12)),
             const SizedBox(height: 10),
-            Text(
-              '${summary.completionPercent}% da jornada principal',
+            Text('${summary.completionPercent}% da jornada principal',
               key: const Key('global-progress-percent'),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
           ],
-        ),
-      ),
-    );
-  }
+        )),
+      ]),
+    ),
+  );
 }
 
 class _CoreProgress extends StatelessWidget {
   const _CoreProgress({required this.summary});
-
   final GlobalProgressSummary summary;
-
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      key: const Key('global-core-progress'),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Criterios de conclusao Fortaleza',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'O 100% da jornada principal exige as 6 zonas, as 6 medalhas e as 36 missoes concluidas.',
-            ),
-            const SizedBox(height: 16),
-            _ProgressRow(
-              key: const Key('global-zones'),
-              icon: Icons.map_rounded,
-              title: 'Zonas',
-              value: '${summary.completedZones}/${summary.totalZones}',
-              complete: summary.completedZones == summary.totalZones,
-            ),
-            const Divider(height: 24),
-            _ProgressRow(
-              key: const Key('global-medals'),
-              icon: Icons.emoji_events_rounded,
-              title: 'Medalhas',
-              value: '${summary.medals}/${summary.totalMedals}',
-              complete: summary.medals == summary.totalMedals,
-            ),
-            const Divider(height: 24),
-            _ProgressRow(
-              key: const Key('global-missions'),
-              icon: Icons.flag_rounded,
-              title: 'Missoes',
-              value: '${summary.completedMissions}/${summary.totalMissions}',
-              complete: summary.completedMissions == summary.totalMissions,
-            ),
-            const Divider(height: 24),
-            _ProgressRow(
-              key: const Key('global-stars'),
-              icon: Icons.star_rounded,
-              title: 'Estrelas acumuladas',
-              value: '${summary.totalStars}',
-              complete: false,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Card(
+    key: const Key('global-core-progress'),
+    child: Padding(padding: const EdgeInsets.all(22),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Critérios de conclusão Fortaleza',
+          style: TextStyle(fontSize: 36, fontWeight: FontWeight.w900)),
+        const SizedBox(height: 8),
+        const Text('O 100% exige as 6 zonas, as 6 medalhas e as 36 missões concluídas.',
+          style: TextStyle(fontSize: 26)),
+        const SizedBox(height: 14),
+        _ProgressRow(key: const Key('global-zones'), icon: Icons.map_rounded,
+          title: 'Zonas', value: '${summary.completedZones}/${summary.totalZones}',
+          complete: summary.completedZones == summary.totalZones),
+        const Divider(height: 14),
+        _ProgressRow(key: const Key('global-medals'), icon: Icons.emoji_events_rounded,
+          title: 'Medalhas', value: '${summary.medals}/${summary.totalMedals}',
+          complete: summary.medals == summary.totalMedals),
+        const Divider(height: 14),
+        _ProgressRow(key: const Key('global-missions'), icon: Icons.flag_rounded,
+          title: 'Missões', value: '${summary.completedMissions}/${summary.totalMissions}',
+          complete: summary.completedMissions == summary.totalMissions),
+        const Divider(height: 14),
+        _ProgressRow(key: const Key('global-stars'), icon: Icons.star_rounded,
+          title: 'Estrelas acumuladas', value: '${summary.totalStars}', complete: false),
+      ]),
+    ),
+  );
 }
 
 class _ExtraPillars extends StatelessWidget {
@@ -305,30 +249,23 @@ class _ProgressRow extends StatelessWidget {
   final bool complete;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 3),
-              Text(value),
-            ],
-          ),
-        ),
-        Icon(
-          complete
-              ? Icons.check_circle_rounded
-              : Icons.radio_button_unchecked_rounded,
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6),
+    child: Row(children: [
+      Icon(icon, size: 38, color: const Color(0xFF0062CF)),
+      const SizedBox(width: 14),
+      Expanded(flex: 3, child: Text(title,
+        style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700))),
+      const SizedBox(width: 12),
+      Flexible(flex: 4, child: Text(value, textAlign: TextAlign.right,
+        style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w800))),
+      const SizedBox(width: 10),
+      Icon(complete ? Icons.check_circle_rounded
+        : Icons.radio_button_unchecked_rounded,
+        size: 30, color: complete ? const Color(0xFF239947)
+          : const Color(0xFF8293A3)),
+    ]),
+  );
 }
 
 class _AchievementRow extends StatelessWidget {

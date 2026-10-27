@@ -62,7 +62,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Nenhuma zona concluÃ­da ainda.'), findsOneWidget);
+    expect(find.text('Nenhuma zona concluída ainda.'), findsOneWidget);
     expect(find.text('Nenhuma medalha conquistada ainda.'), findsOneWidget);
     expect(find.text('Nenhuma melhoria instalada ainda.'), findsOneWidget);
   });
