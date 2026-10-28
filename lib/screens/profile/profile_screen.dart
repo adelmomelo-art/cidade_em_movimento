@@ -8,7 +8,7 @@ import '../../core/enums/player_type.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  static const artworkAsset = 'assets/profile/escolha_perfil_r25.png';
+  static const artworkAsset = 'assets/profile/escolha_perfil_r25.webp';
   static const artworkSize = Size(1672, 940);
   static const _profiles = [
     (

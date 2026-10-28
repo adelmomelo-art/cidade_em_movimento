@@ -35,7 +35,7 @@ class Zone1NeighborhoodArt extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Image.asset(
-                  'assets/zone_1/bairro_escola_base_r7.png',
+                  'assets/zone_1/bairro_escola_base_r7.webp',
                   key: Key(
                     nightPreview
                         ? 'zone1-night-background'

@@ -32,13 +32,13 @@ class _BuildNeighborhoodScreenState extends State<BuildNeighborhoodScreen> {
     'Meu Bairro',
   ];
   static const _scenes = [
-    'assets/zone_1/r29/cenario_bairro.png',
-    'assets/zone_2/r30/cenario_centro.png',
-    'assets/zone_3/r31/cenario_orla.png',
-    'assets/zone_4/r32/cenario_eventos.png',
-    'assets/zone_5/r33/cenario_grandes_vias.png',
-    'assets/zone_6/r34/cenario_castelao.png',
-    'assets/zone_1/r29/cenario_bairro.png',
+    'assets/zone_1/r29/cenario_bairro.webp',
+    'assets/zone_2/r30/cenario_centro.webp',
+    'assets/zone_3/r31/cenario_orla.webp',
+    'assets/zone_4/r32/cenario_eventos.webp',
+    'assets/zone_5/r33/cenario_grandes_vias.webp',
+    'assets/zone_6/r34/cenario_castelao.webp',
+    'assets/zone_1/r29/cenario_bairro.webp',
   ];
   late int _zone;
   int _selected = 0;

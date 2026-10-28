@@ -201,7 +201,7 @@ void main() {
       await tester.pumpAndSettle();
       await expectLater(
         find.byKey(const Key('avatar-artwork')),
-        matchesGoldenFile('../assets/avatar/escolha_${profile.$4}_r26.png'),
+        matchesGoldenFile('../assets/avatar/escolha_${profile.$4}_r26.webp'),
       );
       expect(tester.takeException(), isNull);
     });
@@ -217,7 +217,7 @@ void main() {
     await capture(tester, 'intro', 'melo_native');
     await expectLater(
       find.byKey(const Key('intro-artwork')),
-      matchesGoldenFile('../assets/intro/apresentacao_melo_r26.png'),
+      matchesGoldenFile('../assets/intro/apresentacao_melo_r26.webp'),
     );
     expect(tester.takeException(), isNull);
   });

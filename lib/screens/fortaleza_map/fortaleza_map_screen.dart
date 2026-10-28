@@ -15,7 +15,7 @@ class FortalezaMapScreen extends StatelessWidget {
   const FortalezaMapScreen({super.key, required this.controller});
 
   final PlayerController controller;
-  static const artworkAsset = 'assets/fortaleza/mapa_sem_barcos_r28.png';
+  static const artworkAsset = 'assets/fortaleza/mapa_sem_barcos_r28.webp';
   static const artworkSize = Size(1672, 941);
   static const _zones = [
     (
@@ -202,7 +202,7 @@ class FortalezaMapScreen extends StatelessWidget {
                   child: Transform.translate(
                     offset: const Offset(-327, -630),
                     child: Image.asset(
-                      'assets/fortaleza/mapa_sem_avatar_r27.png',
+                      'assets/fortaleza/mapa_sem_avatar_r27.webp',
                       fit: BoxFit.fill,
                       excludeFromSemantics: true,
                     ),

@@ -184,7 +184,7 @@ void main() {
     await tester.pumpAndSettle();
     await expectLater(
       find.byKey(const Key('home-artwork')),
-      matchesGoldenFile('../assets/home/tela_inicial_r24.png'),
+      matchesGoldenFile('../assets/home/tela_inicial_r24.webp'),
     );
     expect(tester.takeException(), isNull);
   });

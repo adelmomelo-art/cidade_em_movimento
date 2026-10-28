@@ -38,15 +38,15 @@ flutter:
     - assets/zone_6/r34/
     - assets/zone_2/r30/
     - assets/zone_1/r29/
-    - assets/zone_1/bairro_escola_base_r7.png
+    - assets/zone_1/bairro_escola_base_r7.webp
     - assets/zone_1/melo_mentor_r7.png
     - assets/zone_1/melo_guia_busto_r8.png
     - assets/zone_1/melo_apresentador_r13.png
     - assets/zone_1/melo_perguntas_r19.png
-    - assets/home/tela_inicial_r24.png
-    - assets/profile/escolha_perfil_r25.png
-    - assets/avatar/escolha_crianca_r26.png
-    - assets/avatar/escolha_adolescente_r26.png
-    - assets/avatar/escolha_adulto_r26.png
-    - assets/intro/apresentacao_melo_r26.png
+    - assets/home/tela_inicial_r24.webp
+    - assets/profile/escolha_perfil_r25.webp
+    - assets/avatar/escolha_crianca_r26.webp
+    - assets/avatar/escolha_adolescente_r26.webp
+    - assets/avatar/escolha_adulto_r26.webp
+    - assets/intro/apresentacao_melo_r26.webp
     - assets/fortaleza/
