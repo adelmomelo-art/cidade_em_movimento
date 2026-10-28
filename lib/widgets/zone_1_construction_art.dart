@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'neighborhood_scene_geometry.dart';
 
 const zone1InitialConstructionArt =
-    'assets/build_neighborhood/r43_5/escola_inicial.png';
-const _completedRoadArt = 'assets/zone_1/r29/cenario_bairro.png';
+    'assets/build_neighborhood/r43_5/escola_inicial.webp';
+const _completedRoadArt = 'assets/zone_1/r29/cenario_bairro.webp';
 const _artSize = Size(1672, 941);
 
 /// Local replacements and alpha sprites, all registered to the original board.

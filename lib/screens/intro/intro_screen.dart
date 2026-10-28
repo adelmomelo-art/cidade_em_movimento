@@ -11,7 +11,7 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ApprovedArtworkPage(
-    asset: 'assets/intro/apresentacao_melo_r26.png',
+    asset: 'assets/intro/apresentacao_melo_r26.webp',
     size: const Size(1672, 941),
     prefix: 'intro',
     description:

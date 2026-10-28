@@ -71,21 +71,21 @@ class _AvatarScreenState extends State<AvatarScreen> {
     // Bounds measured separately on each approved image; no regenerated art.
     final art = switch (widget.type) {
       PlayerType.child => (
-        asset: 'assets/avatar/escolha_crianca_r26.png',
+        asset: 'assets/avatar/escolha_crianca_r26.webp',
         height: 941.0,
         back: const Rect.fromLTWH(24, 132, 246, 80),
         male: const Rect.fromLTWH(297, 206, 529, 665),
         female: const Rect.fromLTWH(844, 206, 530, 665),
       ),
       PlayerType.teen => (
-        asset: 'assets/avatar/escolha_adolescente_r26.png',
+        asset: 'assets/avatar/escolha_adolescente_r26.webp',
         height: 941.0,
         back: const Rect.fromLTWH(50, 143, 240, 72),
         male: const Rect.fromLTWH(293, 229, 533, 652),
         female: const Rect.fromLTWH(844, 229, 533, 652),
       ),
       PlayerType.adult => (
-        asset: 'assets/avatar/escolha_adulto_r26.png',
+        asset: 'assets/avatar/escolha_adulto_r26.webp',
         height: 940.0,
         back: const Rect.fromLTWH(50, 148, 237, 70),
         male: const Rect.fromLTWH(313, 222, 515, 653),

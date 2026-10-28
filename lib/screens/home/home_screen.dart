@@ -10,7 +10,7 @@ class HomeScreen extends StatelessWidget {
 
   final PlayerController controller;
 
-  static const artworkAsset = 'assets/home/tela_inicial_r24.png';
+  static const artworkAsset = 'assets/home/tela_inicial_r24.webp';
   static const artworkSize = Size(1672, 941);
   static const _brandLabel =
       'CIDADE EM MOVIMENTO. Aprenda. Decida. Transforme a cidade. '

@@ -14,7 +14,7 @@ void main() {
     'illustrated assets decode from the bundle and Melo has real alpha',
     () async {
       final background = await rootBundle.load(
-        'assets/zone_1/bairro_escola_base_r7.png',
+        'assets/zone_1/bairro_escola_base_r7.webp',
       );
       final backgroundCodec = await ui.instantiateImageCodec(
         background.buffer.asUint8List(),

@@ -5,9 +5,9 @@ import 'fortaleza_map_avatar.dart';
 import 'zone_1_construction_art.dart';
 
 const zone1ArtworkSize = Size(1672, 941);
-const zone1MapArtwork = 'assets/zone_1/r29/mapa_aprovado.png';
-const zone1MissionArtwork = 'assets/zone_1/r29/missao_template.png';
-const zone1SceneryArtwork = 'assets/zone_1/r29/cenario_bairro.png';
+const zone1MapArtwork = 'assets/zone_1/r29/mapa_aprovado.webp';
+const zone1MissionArtwork = 'assets/zone_1/r29/missao_template.webp';
+const zone1SceneryArtwork = 'assets/zone_1/r29/cenario_bairro.webp';
 const zone1Ink = Color(0xFF062565);
 const zone1Gold = Color(0xFFFFD900);
 const zone1Cyan = Color(0xFF27DBFF);

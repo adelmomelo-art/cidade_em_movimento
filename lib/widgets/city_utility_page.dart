@@ -7,8 +7,8 @@ import 'approved_artwork_page.dart';
 class CityUtilityPage extends StatelessWidget {
   const CityUtilityPage({super.key, required this.title,
     required this.prefix, required this.child, this.trailing});
-  static const menuAsset = 'assets/utility/r44/mais_opcoes_base.png';
-  static const progressAsset = 'assets/utility/r44/progresso_global_base.png';
+  static const menuAsset = 'assets/utility/r44/mais_opcoes_base.webp';
+  static const progressAsset = 'assets/utility/r44/progresso_global_base.webp';
   static const artworkSize = Size(1672, 941);
   final String title;
   final String prefix;

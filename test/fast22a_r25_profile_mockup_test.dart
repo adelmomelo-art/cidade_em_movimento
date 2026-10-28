@@ -159,7 +159,7 @@ void main() {
     await tester.pumpAndSettle();
     await expectLater(
       find.byKey(const Key('profile-artwork')),
-      matchesGoldenFile('../assets/profile/escolha_perfil_r25.png'),
+      matchesGoldenFile('../assets/profile/escolha_perfil_r25.webp'),
     );
     expect(tester.takeException(), isNull);
   });

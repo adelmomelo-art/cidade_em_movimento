@@ -87,7 +87,7 @@ class Zone1VisualScene extends StatelessWidget {
                   child: Opacity(
                     opacity: .28,
                     child: Image.asset(
-                      'assets/zone_1/bairro_escola_base_r7.png',
+                      'assets/zone_1/bairro_escola_base_r7.webp',
                       cacheWidth: 768,
                       fit: BoxFit.cover,
                       excludeFromSemantics: true,

@@ -4,9 +4,9 @@ import '../controllers/player_controller.dart';
 import 'fortaleza_map_avatar.dart';
 
 const zone5ArtworkSize = Size(1672, 941);
-const zone5MapArtwork = 'assets/zone_5/r33/mapa_aprovado.png';
-const zone5MissionArtwork = 'assets/zone_5/r33/missao_template.png';
-const zone5SceneryArtwork = 'assets/zone_5/r33/cenario_grandes_vias.png';
+const zone5MapArtwork = 'assets/zone_5/r33/mapa_aprovado.webp';
+const zone5MissionArtwork = 'assets/zone_5/r33/missao_template.webp';
+const zone5SceneryArtwork = 'assets/zone_5/r33/cenario_grandes_vias.webp';
 const zone5Ink = Color(0xFF062565);
 const zone5Gold = Color(0xFFFFD900);
 const zone5Cyan = Color(0xFF27DBFF);

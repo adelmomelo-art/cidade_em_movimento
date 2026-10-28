@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'zone_1_approved_art.dart';
 
-const duelArtwork = 'assets/sign_duel/r42/duelo_base.png';
+const duelArtwork = 'assets/sign_duel/r42/duelo_base.webp';
 const duelInk = Color(0xFF061C54);
 
 class DuelPanel extends StatelessWidget {

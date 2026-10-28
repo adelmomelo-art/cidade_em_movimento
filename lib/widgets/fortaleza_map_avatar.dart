@@ -38,9 +38,9 @@ class FortalezaMapAvatar extends StatelessWidget {
     final type = profile?.type ?? PlayerType.child;
     final female = variant.endsWith('female');
     final source = switch (type) {
-      PlayerType.child => 'assets/avatar/escolha_crianca_r26.png',
-      PlayerType.teen => 'assets/avatar/escolha_adolescente_r26.png',
-      PlayerType.adult => 'assets/avatar/escolha_adulto_r26.png',
+      PlayerType.child => 'assets/avatar/escolha_crianca_r26.webp',
+      PlayerType.teen => 'assets/avatar/escolha_adolescente_r26.webp',
+      PlayerType.adult => 'assets/avatar/escolha_adulto_r26.webp',
     };
     final crop = switch (type) {
       PlayerType.child =>
