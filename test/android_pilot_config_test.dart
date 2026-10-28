@@ -28,8 +28,8 @@ void main() {
     );
   });
 
-  test('versao do piloto esta fixada em 1.0.0+3', () {
+  test('versao de distribuicao R47 esta fixada em 1.0.0+4', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(pubspec, contains('version: 1.0.0+3'));
+    expect(pubspec, contains('version: 1.0.0+4'));
   });
 }
