@@ -6,7 +6,7 @@
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
   "description": "Jogo educativo de transito, cidadania e mobilidade urbana.",
-  "orientation": "portrait-primary",
+  "orientation": "landscape",
   "prefer_related_applications": false,
   "icons": [
     {
